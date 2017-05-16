@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'CQAssetsDisplay_Example' do
+  pod 'CQAssetsDisplay', :path => '../'
+
+  target 'CQAssetsDisplay_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
