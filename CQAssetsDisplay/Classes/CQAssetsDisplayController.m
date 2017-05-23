@@ -343,18 +343,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     _animateShowBlock = ^() {
         
         CGRect frame = weakSelf.currentCell.imageView.frame;
-        weakSelf.currentCell.imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
-        
-        [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
-        [UIView animateWithDuration:DEFAULT_DURATION
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseInOut
-                         animations:^{
-            weakSelf.currentCell.imageView.frame = frame;
-        } completion:^(BOOL finished) {
-             
-            [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
-        }];
+        if (!CGRectEqualToRect(frame, CGRectZero)) {
+            
+            weakSelf.currentCell.imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
+            [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
+            [UIView animateWithDuration:DEFAULT_DURATION
+                                  delay:0
+                                options:UIViewAnimationOptionCurveEaseInOut
+                             animations:^{
+                weakSelf.currentCell.imageView.frame = frame;
+            } completion:^(BOOL finished) {
+                 
+                [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
+            }];
+        }
     };
 }
 

@@ -51,8 +51,24 @@
         imageView.backgroundColor = [UIColor clearColor];
         [self addSubview:imageView];
         _imageView = imageView;
+        
+        // 增加kvo
+        [_imageView addObserver:self forKeyPath:@"image" options:NSKeyValueObservingOptionNew context:nil];
     }
     return self;
+}
+
+- (void)dealloc {
+    
+    [_imageView removeObserver:self forKeyPath:@"image"];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if (_imageView.image) {
+        
+        [self layoutImageView:self.bounds.size];
+    }
 }
 
 - (UILabel *)textLabel {
