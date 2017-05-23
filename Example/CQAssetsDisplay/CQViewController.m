@@ -8,6 +8,7 @@
 
 #import "CQViewController.h"
 #import "CQCollectionViewCell.h"
+#import "CQAssetsDisplayController.h"
 #import <YYWebImage/YYWebImage.h>
 
 #define kAlbumY                  64                                         // 相册上边距
@@ -19,8 +20,9 @@
 #define kAlbumCellColumnSpacing  5                                          // 列间距
 #define kAlbumSectionSpacing     5                                          // 节外边距
 #define kAlbumPlistName          @"album.plist"                             // 图片数组
+#define kAssetsDisplayCell       @"assetsDisplayCell"                       // 图片浏览器cell key
 
-@interface CQViewController ()<UICollectionViewDataSource,UICollectionViewDelegate>
+@interface CQViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,CQAssetsDisplayControllerDataSource>
 
 @property (weak, nonatomic) UICollectionView *album;
 @property (strong, nonatomic) NSArray *albumArray;
@@ -103,6 +105,50 @@
     [photoCell.imageView yy_cancelCurrentImageRequest];
     [photoCell.imageView yy_setImageWithURL:photoURL placeholder:nil];
     
+    return photoCell;
+}
+
+// MARK: - UICollectionViewDelegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    
+    // 清除缓存
+//    [self clearImagesCache];
+    
+    CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+    CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
+    assetsDisplayController.dataSource = self;
+    assetsDisplayController.currentPage = indexPath.row;
+    [assetsDisplayController showWithFromView:cell];
+}
+
+// MARK: - CQAssetsDisplayControllerDataSource
+
+- (NSInteger)numberOfCellsInAssetsDisplayController:(CQAssetsDisplayController *)controller {
+    
+    return _albumArray ? _albumArray.count : 0;
+}
+
+- (CQAssetsDisplayCell *)assetsDisplayController:(CQAssetsDisplayController *)controller cellForIndex:(NSInteger)index {
+    
+    CQAssetsDisplayCell *cell = [controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
+    if (cell == nil) {
+        
+        cell = [[CQAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
+    }
+    
+    NSString *photoStr = [_albumArray objectAtIndex:index];
+    NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
+    
+    [cell.imageView yy_cancelCurrentImageRequest];
+    [cell.imageView yy_setImageWithURL:photoURL placeholder:nil];
+    
+    return cell;
+}
+
+- (UIView *)getEndView:(CQAssetsDisplayController *)controller {
+    
+    CQCollectionViewCell *photoCell = (CQCollectionViewCell *)[_album cellForItemAtIndexPath:[NSIndexPath indexPathForRow:controller.currentPage inSection:0]];
     return photoCell;
 }
 
