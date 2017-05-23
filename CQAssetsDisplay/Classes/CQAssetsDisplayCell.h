@@ -15,7 +15,7 @@
 
 @protocol CQAssetProtocol <NSObject>
 
-- (void)getImageURL:(void (^)(NSURL *,NSError *))completion withProgress:(void (^)(double))progress; // 获取远程图片
+- (void)getImageURL:(void (^)(UIImage *,NSError *))completion withProgress:(void (^)(double))progress; // 获取远程图片
 
 @end
 
