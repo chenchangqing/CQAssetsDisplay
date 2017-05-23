@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   album.plist
-   CQAssetsDisplay
-
-   Created by 陈长青 on 2017/5/23.
-   Copyright (c) 2017年 chenchangqing198@126.com. All rights reserved.
--->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-    
-    </dict>
+<array>
+	<string>http://www.jiemeng8.com/uploads/jiemeng/556654.jpg</string>
+	<string>http://pic33.photophoto.cn/20141028/0036036117242848_b.jpg</string>
+	<string>http://img.taopic.com/uploads/allimg/140815/234989-140Q50QA653.jpg</string>
+	<string>http://pic35.photophoto.cn/20150624/0036036316813964_b.jpg</string>
+	<string>https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1495536389547&amp;di=a70de099388622bb4c775eeb18fe1fb8&amp;imgtype=0&amp;src=http%3A%2F%2Fimg01.taopic.com%2F150602%2F267819-1506020R94089.jpg</string>
+	<string>http://img01.taopic.com/150602/267819-1506020U62054.jpg</string>
+	<string>http://img.pconline.com.cn/images/upload/upc/tx/photoblog/1506/15/c20/8478915_1434383315430.jpg</string>
+	<string>http://pic.birdnet.cn/forum/201312/30/224138vvvraih8ik5qr5aj.jpg</string>
+	<string>http://img01.taopic.com/150526/267813-1505260G62116.jpg</string>
+	<string>http://www.360changshi.com/uploadfile/2016/0311/20160311020543558.jpg</string>
+	<string>http://pic31.photophoto.cn/20140525/0010023150252958_b.jpg</string>
+	<string>http://pic.58pic.com/58pic/11/70/70/38358PICGkD.jpg</string>
+</array>
 </plist>

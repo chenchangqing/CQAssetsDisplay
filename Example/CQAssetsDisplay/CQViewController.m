@@ -7,8 +7,23 @@
 //
 
 #import "CQViewController.h"
+#import "CQCollectionViewCell.h"
+#import <YYWebImage/YYWebImage.h>
 
-@interface CQViewController ()
+#define kAlbumY                  64                                         // 相册上边距
+#define kAlbumW                  CGRectGetWidth(self.view.bounds)           // 相册宽度
+#define kAlbumH                  CGRectGetHeight(self.view.bounds)-kAlbumY  // 相册高度
+#define kAlbumCell               @"albumCell"                               // 重用cell key
+#define kAlbumCellW              (kAlbumW - 20) / 3                         // cell宽度
+#define kAlbumCellRowSpacing     5                                          // 行间距
+#define kAlbumCellColumnSpacing  5                                          // 列间距
+#define kAlbumSectionSpacing     5                                          // 节外边距
+#define kAlbumPlistName          @"album.plist"                             // 图片数组
+
+@interface CQViewController ()<UICollectionViewDataSource,UICollectionViewDelegate>
+
+@property (weak, nonatomic) UICollectionView *album;
+@property (strong, nonatomic) NSArray *albumArray;
 
 @end
 
@@ -17,13 +32,78 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    
+    self.automaticallyAdjustsScrollViewInsets = NO;
+	
+    // 相册
+    UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc]init];
+    
+    flowLayout.minimumInteritemSpacing  = kAlbumCellRowSpacing;
+    flowLayout.minimumLineSpacing       = kAlbumCellColumnSpacing;
+    flowLayout.itemSize                 = (CGSize){kAlbumCellW,kAlbumCellW};
+    flowLayout.sectionInset             = UIEdgeInsetsMake(kAlbumSectionSpacing, kAlbumSectionSpacing, kAlbumSectionSpacing, kAlbumSectionSpacing);
+    flowLayout.scrollDirection          = UICollectionViewScrollDirectionVertical;
+    
+    UICollectionView *album = [[UICollectionView alloc]initWithFrame:CGRectMake(0, kAlbumY, kAlbumW, kAlbumH)
+                                                collectionViewLayout:flowLayout];
+    album.delegate = self;
+    album.dataSource = self;
+    album.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:album];
+    _album = album;
+    
+    // 重用cell
+    [_album registerClass:[CQCollectionViewCell class] forCellWithReuseIdentifier:kAlbumCell];
+    
+    // 加载数据
+    [self loadAlbumArray];
+    
+    // 清除缓存
+    [self clearImagesCache];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+}
+
+// 加载相册数据
+- (void)loadAlbumArray {
+    
+    NSString *albumDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kAlbumPlistName];
+    NSArray *albumArray = [[NSArray alloc] initWithContentsOfFile:albumDataFilePath];
+    _albumArray = albumArray;
+    
+}
+
+// 清图片缓存
+- (void)clearImagesCache {
+    
+    YYImageCache *cache = [YYWebImageManager sharedManager].cache;
+    [cache.memoryCache removeAllObjects];
+    [cache.diskCache removeAllObjects];
+    
+}
+
+// MARK: - UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
+    return _albumArray ? _albumArray.count : 0;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath{
+    
+    CQCollectionViewCell *photoCell = [collectionView dequeueReusableCellWithReuseIdentifier:kAlbumCell forIndexPath:indexPath];
+    
+    photoCell.imageView.backgroundColor = [UIColor blackColor];
+    
+    NSString *photoStr = [_albumArray objectAtIndex:indexPath.row];
+    NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
+    
+    [photoCell.imageView yy_cancelCurrentImageRequest];
+    [photoCell.imageView yy_setImageWithURL:photoURL placeholder:nil];
+    
+    return photoCell;
 }
 
 @end

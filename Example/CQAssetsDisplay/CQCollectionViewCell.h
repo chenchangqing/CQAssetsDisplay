@@ -10,4 +10,6 @@
 
 @interface CQCollectionViewCell : UICollectionViewCell
 
+@property (weak, nonatomic) UIImageView *imageView;
+
 @end
