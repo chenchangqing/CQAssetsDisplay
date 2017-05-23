@@ -141,7 +141,23 @@
     NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
     
     [cell.imageView yy_cancelCurrentImageRequest];
-    [cell.imageView yy_setImageWithURL:photoURL placeholder:nil];
+    [cell.imageView yy_setImageWithURL:photoURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        
+    } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
+        if (error != nil) {
+            
+        }else {
+            
+            if (stage == YYWebImageStageFinished) {
+                
+                if (image != nil) {
+                    
+                }else {
+                    
+                }
+            }
+        }
+    }];
     
     return cell;
 }
