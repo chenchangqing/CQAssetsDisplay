@@ -585,7 +585,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         UIView *contentView = [UIView new];
         contentView.userInteractionEnabled = NO;
         contentView.translatesAutoresizingMaskIntoConstraints = NO;
-        contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+        contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:1];
         [_scrollViewContentView addSubview:contentView];
         item.contentView = contentView;
         
