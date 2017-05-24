@@ -38,5 +38,5 @@ TODO: 像tableView一样，使用非常简单的图片浏览器
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
-  s.dependency 'YYWebImage'
+  s.dependency 'YYWebImage','~>1.0.5'
 end
