@@ -25,7 +25,7 @@ TODO: 像tableView一样，使用非常简单的图片浏览器
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'chenchangqing198@126.com' => 'chenchangqing198@126.com' }
-  s.source           = { :git => 'https://github.com/chenchangqing198@126.com/CQAssetsDisplay.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/chenchangqing/CQAssetsDisplay.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
