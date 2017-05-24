@@ -113,7 +113,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // 清除缓存
-//    [self clearImagesCache];
+    [self clearImagesCache];
     
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
@@ -143,17 +143,19 @@
     [cell.imageView yy_cancelCurrentImageRequest];
     [cell.imageView yy_setImageWithURL:photoURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         
+        CGFloat progress = (CGFloat)receivedSize / expectedSize ;
+        cell.progressView.progress = progress;
     } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
         if (error != nil) {
             
+            [cell.progressView showError];
         }else {
             
             if (stage == YYWebImageStageFinished) {
                 
                 if (image != nil) {
                     
-                }else {
-                    
+                    cell.progressView.progress = 1;
                 }
             }
         }

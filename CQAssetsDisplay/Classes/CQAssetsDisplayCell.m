@@ -90,6 +90,31 @@
     return _textLabel;
 }
 
+- (UIView *)contentView {
+    
+    if (!_contentView) {
+        
+        // 内容视图
+        _contentView = [UIView new];
+        _contentView.userInteractionEnabled = NO;
+        _contentView.translatesAutoresizingMaskIntoConstraints = NO;
+        _contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+    }
+    return _contentView;
+}
+
+- (ESPictureProgressView *)progressView {
+    
+    if (!_progressView) {
+        
+        // 进度视图
+        _progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+        _progressView.userInteractionEnabled = NO;
+        _progressView.translatesAutoresizingMaskIntoConstraints = NO;
+    }
+    return _progressView;
+}
+
 - (void)fix {
     
     _fixView = [UIView new];

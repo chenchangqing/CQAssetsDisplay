@@ -24,10 +24,10 @@
 
 @interface CQAssetsDisplayCell : UIScrollView
 
-@property (nonatomic, readonly, strong) UIImageView *imageView;     // 显示图片
-@property (nonatomic, readonly, strong) UILabel     *textLabel;     // 显示文字
-@property (nonatomic, weak) UIView                  *contentView;   // 内容视图
-@property (nonatomic, weak) ESPictureProgressView   *progressView;  // 加载进度
+@property (nonatomic, readonly, strong) UIImageView   *imageView;     // 显示图片
+@property (nonatomic, readonly, strong) UILabel       *textLabel;     // 显示文字
+@property (nonatomic, strong) UIView                  *contentView;   // 内容视图
+@property (nonatomic, strong) ESPictureProgressView   *progressView;  // 加载进度
 
 @property (nonatomic, copy, readonly) NSString *reuseIdentifier;                    // 重用id
 @property (nonatomic, assign) NSInteger index;                                      // 索引
