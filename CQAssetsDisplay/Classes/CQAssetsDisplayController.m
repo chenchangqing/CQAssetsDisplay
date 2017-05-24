@@ -513,6 +513,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             UIView *leftView = [_leftPlaceholdViewDic objectForKey:[NSString stringWithFormat:@"%d",cell.index]];
             [leftView removeFromSuperview];
             [_leftPlaceholdViewDic removeObjectForKey:[NSString stringWithFormat:@"%d",cell.index]];
+            // 移除内容视图
+            [cell.contentView removeFromSuperview];
+            // 移除进度
+            [cell.progressView removeFromSuperview];
             // 增加重用
             [_prepareShowCells addObject:cell];
         }
@@ -586,6 +590,33 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 获得占位，然后设置cell的左边约束
     UIView *leftView = [self createCellLeftPlaceholderView:index];
     [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:leftView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+    
+    // 设置内容视图
+    UIView *contentView = [UIView new];
+    contentView.userInteractionEnabled = NO;
+    [_scrollViewContentView addSubview:contentView];
+    cell.contentView = contentView;
+    
+    contentView.translatesAutoresizingMaskIntoConstraints = NO;
+    contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+    views = NSDictionaryOfVariableBindings(contentView);
+    [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];
+    [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:leftView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+    
+    // 设置进度
+    ESPictureProgressView *progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    progressView.userInteractionEnabled = NO;
+    progressView.progress = 0.5;
+    [_scrollViewContentView addSubview:progressView];
+    cell.progressView = progressView;
+    
+    progressView.translatesAutoresizingMaskIntoConstraints = NO;
+    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:40]];
+    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:40]];
+    
     
     return nil;
 }
