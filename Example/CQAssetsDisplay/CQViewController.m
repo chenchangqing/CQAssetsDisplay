@@ -143,19 +143,15 @@
     [cell.imageView yy_cancelCurrentImageRequest];
     [cell.imageView yy_setImageWithURL:photoURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         
-        CGFloat progress = (CGFloat)receivedSize / expectedSize ;
-        cell.progressView.progress = progress;
     } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
         if (error != nil) {
             
-            [cell.progressView showError];
         }else {
             
             if (stage == YYWebImageStageFinished) {
                 
                 if (image != nil) {
                     
-                    cell.progressView.progress = 1;
                 }
             }
         }

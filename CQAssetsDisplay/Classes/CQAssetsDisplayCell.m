@@ -7,16 +7,18 @@
 //
 
 #import "CQAssetsDisplayCell.h"
+#import "CQAssetsDisplayItem.h"
 
 @interface CQAssetsDisplayCell ()
 
 @property (strong, nonatomic) UIView *fixView;
 
+@property (weak, nonatomic) CQAssetsDisplayItem *item;
+
 @end
 
 @implementation CQAssetsDisplayCell
 @synthesize imageView = _imageView;
-@synthesize textLabel = _textLabel;
 
 #pragma mark - 生命周期
 
@@ -69,50 +71,6 @@
         
         [self layoutImageView:self.bounds.size];
     }
-}
-
-- (UILabel *)textLabel {
-    
-    if (!_textLabel) {
-        
-        UILabel *textLabel = [UILabel new];
-        textLabel.textAlignment = NSTextAlignmentCenter;
-        textLabel.font = [UIFont systemFontOfSize:12];
-        textLabel.textColor = [UIColor redColor];
-        [self addSubview:textLabel];
-        _textLabel = textLabel;
-        
-        _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_textLabel attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-        [self addConstraint:[NSLayoutConstraint constraintWithItem:_textLabel attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-        
-    }
-    return _textLabel;
-}
-
-- (UIView *)contentView {
-    
-    if (!_contentView) {
-        
-        // 内容视图
-        _contentView = [UIView new];
-        _contentView.userInteractionEnabled = NO;
-        _contentView.translatesAutoresizingMaskIntoConstraints = NO;
-        _contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
-    }
-    return _contentView;
-}
-
-- (ESPictureProgressView *)progressView {
-    
-    if (!_progressView) {
-        
-        // 进度视图
-        _progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
-        _progressView.userInteractionEnabled = NO;
-        _progressView.translatesAutoresizingMaskIntoConstraints = NO;
-    }
-    return _progressView;
 }
 
 - (void)fix {

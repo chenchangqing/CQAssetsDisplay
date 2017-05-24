@@ -7,13 +7,14 @@
 //
 
 #import "CQAssetsDisplayController.h"
+#import "CQAssetsDisplayItem.h"
 
 //默认动画时间，单位秒
 #define DEFAULT_DURATION 0.25
 
 typedef void(^DelayBlock)();
 
-typedef NSMutableArray<CQAssetsDisplayCell *> AssetsDisplayCells;
+typedef NSMutableArray<CQAssetsDisplayItem *> AssetsDisplayItems;
 typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 @interface CQAssetsDisplayController ()<UIScrollViewDelegate> {
@@ -25,9 +26,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @property (nonatomic, weak) UIView             *scrollViewContentView;      // scrollView内容视图
 @property (nonatomic, weak) NSLayoutConstraint *scrollViewContentViewWidth; // scrollView内容视图宽
 
-@property (nonatomic, strong) AssetsDisplayCells    *alreadyShowCells;      // 正在 显示的cell数组（最多3个）
-@property (nonatomic, strong) AssetsDisplayCells    *prepareShowCells;      // 准备 显示的cell数组(复用)
-@property (nonatomic, strong) LeftPlaceholdViewDic  *leftPlaceholdViewDic;  // 正在 显示的cell左边占位视图(约束要用)
+@property (nonatomic, strong) AssetsDisplayItems    *alreadyShowItems;      // 正在 显示的cell数组（最多3个）
+@property (nonatomic, strong) AssetsDisplayItems    *prepareShowItems;      // 准备 显示的cell数组(复用)
 @property (nonatomic, weak)   CQAssetsDisplayCell   *currentCell;           // 当前cell
 
 @property (nonatomic, strong) DelayBlock scrollToPageBlock;                 // scrollview还没加载，延迟设置当前页
@@ -95,9 +95,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     // 初始化数组、字典及其他
-    _alreadyShowCells = [AssetsDisplayCells array];
-    _prepareShowCells = [AssetsDisplayCells array];
-    _leftPlaceholdViewDic = [LeftPlaceholdViewDic dictionary];
+    _alreadyShowItems = [AssetsDisplayItems array];
+    _prepareShowItems = [AssetsDisplayItems array];
     _currentPage = _currentPage == 0 ? -1 : _currentPage;
     _cellPadding = 10;
     _isFromScrollViewDidScroll = NO;
@@ -180,22 +179,18 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)clearCells {
     
     // 清除正在显示的cells
-    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
-        [cell removeFromSuperview];
+    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
+        [item.cell removeFromSuperview];
+        [item.placeView removeFromSuperview];
     }
-    [_alreadyShowCells removeAllObjects];
+    [_alreadyShowItems removeAllObjects];
     
     // 清除准备显示的cells
-    for (CQAssetsDisplayCell *cell in _prepareShowCells) {
-        [cell removeFromSuperview];
+    for (CQAssetsDisplayItem *item in _prepareShowItems) {
+        [item.cell removeFromSuperview];
+        [item.placeView removeFromSuperview];
     }
-    [_prepareShowCells removeAllObjects];
-    
-    // 清除占位的cells
-    for (UIView *placeView in _leftPlaceholdViewDic.allValues) {
-        [placeView removeFromSuperview];
-    }
-    [_leftPlaceholdViewDic removeAllObjects];
+    [_prepareShowItems removeAllObjects];
 }
 
 // 重置 scrollView 的 contentSize
@@ -268,8 +263,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     [self scrollToCurrentPage];
     
     // 更新图片大小
-    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
-        [cell fix];
+    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
+        [item.cell fix];
     }
 }
 
@@ -398,15 +393,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CQAssetsDisplayCell *cell;
     
-    AssetsDisplayCells *_prepareShowCellByFilter = [_prepareShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"reuseIdentifier MATCHES %@", identifier]];
+    AssetsDisplayItems *_prepareShowCellByFilter = [_prepareShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cell.reuseIdentifier MATCHES %@", identifier]];
     
     if (_prepareShowCellByFilter.count == 0) {
         
         return nil;
     }else {
         
-        cell = [_prepareShowCellByFilter firstObject];
-        [_prepareShowCells removeObject:cell];
+        cell = [_prepareShowCellByFilter firstObject].cell;
+        [_prepareShowItems removeObject:[_prepareShowCellByFilter firstObject]];
     }
     return cell;
 }
@@ -422,9 +417,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 - (CQAssetsDisplayCell *)currentCell {
     
-    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage]];
+    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage]];
     if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0];
+        return currentShowCellByFilter[0].cell;
     }
     return nil;
 }
@@ -435,8 +430,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
-    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
-        if (CGRectContainsPoint(cell.frame, point) && cell.index != _currentPage) {
+    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
+        if (CGRectContainsPoint(item.cell.frame, point) && item.index != _currentPage) {
             
             _isFromScrollViewDidScroll = YES;
             NSInteger tpage = (int)scrollView.contentOffset.x/(int)scrollView.frame.size.width;
@@ -504,55 +499,23 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)removeCellToReUse {
     
     NSMutableArray *tempArray = [NSMutableArray array];
-    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
+    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
         // 判断某个view的页数与当前页数相差值为2的话，那么让这个view从视图上移除
-        if (abs((int)cell.index - (int)_currentPage) >= 2){
-            [tempArray addObject:cell];
-            
-            // 移除占位图
-            UIView *leftView = [_leftPlaceholdViewDic objectForKey:[NSString stringWithFormat:@"%d",cell.index]];
-            [leftView removeFromSuperview];
-            [_leftPlaceholdViewDic removeObjectForKey:[NSString stringWithFormat:@"%d",cell.index]];
-            // 移除内容视图
-            [cell.contentView removeFromSuperview];
-            // 移除进度
-            [cell.progressView removeFromSuperview];
+        if (abs((int)item.index - (int)_currentPage) >= 2){
+            [tempArray addObject:item];
             // 增加重用
-            [_prepareShowCells addObject:cell];
+            [_prepareShowItems addObject:item];
         }
     }
     // 移除显示
-    [_alreadyShowCells removeObjectsInArray:tempArray];
-}
-
-// 创建占位图
-- (UIView *)createCellLeftPlaceholderView:(NSInteger) index {
-    
-    UIView *leftView = [_leftPlaceholdViewDic objectForKey:[NSString stringWithFormat:@"%d",index]];
-    
-    if (!leftView) {
-        
-        leftView = [UIView new];
-        leftView.backgroundColor = [UIColor clearColor];
-        [_scrollViewContentView insertSubview:leftView atIndex:0];
-        [_leftPlaceholdViewDic setObject:leftView forKey:[NSString stringWithFormat:@"%d",index]];
-        
-        leftView.translatesAutoresizingMaskIntoConstraints = NO;
-        NSDictionary *views = NSDictionaryOfVariableBindings(leftView);
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[leftView]-0-|" options:0 metrics:nil views:views]];
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[leftView]" options:0 metrics:nil views:views]];
-        
-        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:leftView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0]];
-        
-    }
-    return leftView;
+    [_alreadyShowItems removeObjectsInArray:tempArray];
 }
 
 // 设置cell
 - (CQAssetsDisplayCell * )setCellForIndex:(NSInteger)index {
     
     // 已经设置过
-    AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
+    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
     if (exists.count!=0) {
         return exists[0];
     }
@@ -560,55 +523,90 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 设置重用
     [self removeCellToReUse];
     
-    // 获取cell
+    // item
     CQAssetsDisplayCell *cell;
     if ([_dataSource respondsToSelector:@selector(assetsDisplayController:cellForIndex:)]) {
         
         cell = [_dataSource assetsDisplayController:self cellForIndex:index];
+        cell.delegate = self;
     }
-    if (cell == nil)
-        return nil;
+    if (cell == nil) return nil;
+    CQAssetsDisplayItem *item = [cell valueForKey:@"item"];
+    if (item) {
+        
+        item.index = index;
+        [_alreadyShowItems addObject:item];
+        
+        [_scrollView removeConstraint:item.placeViewWith];
+        
+        NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:item.placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
+        [_scrollView addConstraint:placeViewWith];
+        item.placeViewWith = placeViewWith;
+    } else {
+        
+        item = [CQAssetsDisplayItem new];
+        item.index = index;
+        [_alreadyShowItems addObject:item];
+        
+        // 创建占位
+        UIView *placeView = [UIView new];
+        placeView.backgroundColor = [UIColor clearColor];
+        [_scrollViewContentView insertSubview:placeView atIndex:0];
+        item.placeView = placeView;
+        
+        placeView.translatesAutoresizingMaskIntoConstraints = NO;
+        NSDictionary *views = NSDictionaryOfVariableBindings(placeView);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[placeView]-0-|" options:0 metrics:nil views:views]];
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[placeView]" options:0 metrics:nil views:views]];
+        
+        NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
+        [_scrollView addConstraint:placeViewWith];
+        item.placeViewWith = placeViewWith;
+        
+        // 增加cell
+        [_scrollViewContentView addSubview:cell];
+        item.cell = cell;
+        [cell setValue:item forKey:@"item"];
+        
+        cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+        [cell fix];
+        
+        cell.translatesAutoresizingMaskIntoConstraints = NO;
+        views = NSDictionaryOfVariableBindings(cell);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[cell]-0-|" options:0 metrics:nil views:views]];
+        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+        
+        // 获得占位，然后设置cell的左边约束
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        
+        // 内容视图
+        UIView *contentView = [UIView new];
+        contentView.userInteractionEnabled = NO;
+        contentView.translatesAutoresizingMaskIntoConstraints = NO;
+        contentView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+        [_scrollViewContentView addSubview:contentView];
+        item.contentView = contentView;
+        
+        views = @{@"contentView":contentView};
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];
+        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        
+        // 进度视图
+        ESPictureProgressView *progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
+        progressView.userInteractionEnabled = NO;
+        progressView.translatesAutoresizingMaskIntoConstraints = NO;
+        progressView.progress = 0.01;
+        [_scrollViewContentView addSubview:progressView];
+        item.progressView = progressView;
+        
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:50]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:50]];
+    }
     
-    // 设置索引
-    cell.index = index;
-    cell.delegate = self;
-    
-    // 增加cell
-    [_scrollViewContentView addSubview:cell];
-    [_alreadyShowCells addObject:cell];
-    
-    // 更新图片大小
-    cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
-    [cell fix];
-    
-    // cell约束
-    cell.translatesAutoresizingMaskIntoConstraints = NO;
-    NSDictionary *views = NSDictionaryOfVariableBindings(cell);
-    [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[cell]-0-|" options:0 metrics:nil views:views]];
-    [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-    
-    // 获得占位，然后设置cell的左边约束
-    UIView *leftView = [self createCellLeftPlaceholderView:index];
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:leftView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-    
-    // 设置内容视图
-    [_scrollViewContentView addSubview:cell.contentView];
-    
-    views = @{@"contentView":cell.contentView};
-    [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];
-    [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:cell.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell.contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:leftView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-    
-    // 设置进度
-    cell.progressView.progress = 0.01;
-    [_scrollViewContentView addSubview:cell.progressView];
-    
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell.progressView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell.progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:cell.contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell.progressView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:50]];
-    [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell.progressView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:50]];
-    
-    return nil;
+    return cell;
 }
 
 #pragma mark - 处理缩放
