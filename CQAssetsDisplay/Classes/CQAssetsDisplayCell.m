@@ -14,11 +14,14 @@
 @property (strong, nonatomic) UIView *fixView;
 
 @property (weak, nonatomic) CQAssetsDisplayItem *item;
+@property (copy, nonatomic) NSString *imageURL;
+@property (strong, nonatomic) UIImage *placeHolder;
+
+@property (nonatomic, weak) UIImageView   *imageView;
 
 @end
 
 @implementation CQAssetsDisplayCell
-@synthesize imageView = _imageView;
 
 #pragma mark - 生命周期
 
@@ -71,6 +74,12 @@
         
         [self layoutImageView:self.bounds.size];
     }
+}
+
+- (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder {
+    
+    _imageURL = remoteUrl;
+    _placeHolder = placeHolder;
 }
 
 - (void)fix {

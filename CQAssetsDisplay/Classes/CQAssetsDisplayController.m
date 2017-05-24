@@ -8,6 +8,7 @@
 
 #import "CQAssetsDisplayController.h"
 #import "CQAssetsDisplayItem.h"
+#import <YYWebImage/YYWebImage.h>
 
 //默认动画时间，单位秒
 #define DEFAULT_DURATION 0.25
@@ -288,7 +289,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         if (endView) {
             
-            UIImageView *targetView = weakSelf.currentCell.imageView;
+            UIImageView *targetView = [weakSelf.currentCell valueForKey:@"imageView"];
             [weakSelf.currentVC.view addSubview:targetView];
             [UIView animateWithDuration:DEFAULT_DURATION delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 
@@ -337,16 +338,17 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     __weak typeof(self) weakSelf = self;
     _animateShowBlock = ^() {
         
-        CGRect frame = weakSelf.currentCell.imageView.frame;
+        UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
+        CGRect frame = imageView.frame;
         if (!CGRectEqualToRect(frame, CGRectZero)) {
             
-            weakSelf.currentCell.imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
+            imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
             [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
             [UIView animateWithDuration:DEFAULT_DURATION
                                   delay:0
                                 options:UIViewAnimationOptionCurveEaseInOut
                              animations:^{
-                weakSelf.currentCell.imageView.frame = frame;
+                imageView.frame = frame;
             } completion:^(BOOL finished) {
                  
                 [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
@@ -596,7 +598,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         ESPictureProgressView *progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
         progressView.userInteractionEnabled = NO;
         progressView.translatesAutoresizingMaskIntoConstraints = NO;
-        progressView.progress = 0.01;
         [_scrollViewContentView addSubview:progressView];
         item.progressView = progressView;
         
@@ -604,6 +605,40 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:50]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:50]];
+    }
+    
+    // 设置图片
+    NSString *imageURLStr = [cell valueForKey:@"imageURL"];
+    UIImage *placeHolder = [cell valueForKey: @"placeHolder"];
+    UIImageView *imageView = [cell valueForKey:@"imageView"];
+    if (placeHolder) {
+        imageView.image = placeHolder;
+    }
+    if (imageURLStr) {
+        
+        item.progressView.hidden = NO;
+        item.progressView.progress = 0.01;
+        NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
+        
+        [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+            
+            item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
+        } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
+            
+            if (error) {
+                
+                [item.progressView showError];
+            } else {
+                
+                if (stage == YYWebImageStageFinished) {
+                    
+                    if (image != nil) {
+                        item.progressView.progress = 1;
+                        item.progressView.hidden = YES;
+                    }
+                }
+            }
+        }];
     }
     
     return cell;
@@ -614,7 +649,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     if (![scrollView isKindOfClass:[CQAssetsDisplayCell class]])
         return nil;
-    return ((CQAssetsDisplayCell *)scrollView).imageView;
+    return [scrollView valueForKey:@"imageView"];
 }
 
 //处理双击放大、缩小
