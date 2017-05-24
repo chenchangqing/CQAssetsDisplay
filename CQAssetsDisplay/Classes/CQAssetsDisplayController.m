@@ -183,6 +183,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     for (CQAssetsDisplayItem *item in _alreadyShowItems) {
         [item.cell removeFromSuperview];
         [item.placeView removeFromSuperview];
+        [item.progressView removeFromSuperview];
+        [item.contentView removeFromSuperview];
     }
     [_alreadyShowItems removeAllObjects];
     
@@ -190,6 +192,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     for (CQAssetsDisplayItem *item in _prepareShowItems) {
         [item.cell removeFromSuperview];
         [item.placeView removeFromSuperview];
+        [item.progressView removeFromSuperview];
+        [item.contentView removeFromSuperview];
     }
     [_prepareShowItems removeAllObjects];
 }
