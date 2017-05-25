@@ -55,6 +55,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 // 视频总时间
 
 @property (assign, nonatomic) NSTimeInterval totalDuration;
+@property (assign, nonatomic) BOOL isAddObserverStatusKeyPath;
 
 @end
 
@@ -66,6 +67,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     self = [super init];
     if (self) {
         
+        _isAddObserverStatusKeyPath = NO;
         _isAlreadyFree = NO;
         _willChangeStatus = CQVPWillChangeStatusPause;
         
@@ -177,7 +179,8 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     
     self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset
                            automaticallyLoadedAssetKeys:keys];
-    
+    _isAddObserverStatusKeyPath = YES;
+
     [self.playerItem addObserver:self
                       forKeyPath:STATUS_KEYPATH
                          options:0
@@ -200,7 +203,11 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
         __weak typeof(self) weakSelf = self;
         dispatch_async(dispatch_get_main_queue(), ^{
             
-            [weakSelf.playerItem removeObserver:weakSelf forKeyPath:STATUS_KEYPATH];
+            
+            if (weakSelf.isAddObserverStatusKeyPath) {
+                weakSelf.isAddObserverStatusKeyPath = NO;
+                [weakSelf.playerItem removeObserver:weakSelf forKeyPath:STATUS_KEYPATH];
+            }
             
             if (weakSelf.playerItem.status == AVPlayerItemStatusReadyToPlay) {
                 
@@ -248,6 +255,11 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
         return;
     }
     _isAlreadyFree = YES;
+    
+    if (_isAddObserverStatusKeyPath) {
+        _isAddObserverStatusKeyPath = NO;
+        [self.playerItem removeObserver:self forKeyPath:STATUS_KEYPATH];
+    }
     
     if (self.itemEndObserver) {
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];

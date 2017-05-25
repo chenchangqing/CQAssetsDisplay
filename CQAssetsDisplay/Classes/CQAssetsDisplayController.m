@@ -668,7 +668,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         CQVideoPlayer *videoPlayer = [CQVideoPlayer new];
         videoPlayer.delegate = item;
         item.videoPlayer = videoPlayer;
-//        [videoPlayer play];
+        [videoPlayer play];
     }
     
     return cell;
