@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
 TODO: 像tableView一样，使用非常简单的图片浏览器
                        DESC
 
-  s.homepage         = 'https://github.com/chenchangqing198@126.com/CQAssetsDisplay'
+  s.homepage         = 'https://github.com/chenchangqing/CQAssetsDisplay'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'chenchangqing198@126.com' => 'chenchangqing198@126.com' }
@@ -39,4 +39,5 @@ TODO: 像tableView一样，使用非常简单的图片浏览器
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'YYWebImage','~>1.0.5'
+  s.dependency 'MCDownloadManager','~>1.0.3'
 end

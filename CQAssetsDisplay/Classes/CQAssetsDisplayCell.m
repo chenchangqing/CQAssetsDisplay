@@ -15,6 +15,7 @@
 
 @property (weak, nonatomic) CQAssetsDisplayItem *item;
 @property (copy, nonatomic) NSString *imageURL;
+@property (copy, nonatomic) NSString *videoUrl;
 @property (strong, nonatomic) UIImage *placeHolder;
 
 @property (nonatomic, weak) UIImageView   *imageView;
@@ -80,6 +81,10 @@
     
     _imageURL = remoteUrl;
     _placeHolder = placeHolder;
+}
+
+- (void)setVideoUrl:(NSString *)videoUrl {
+    _videoUrl = videoUrl;
 }
 
 - (void)fix {

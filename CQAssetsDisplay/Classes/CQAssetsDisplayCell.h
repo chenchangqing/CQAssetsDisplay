@@ -15,10 +15,11 @@
 
 @interface CQAssetsDisplayCell : UIScrollView
 
-@property (nonatomic, copy, readonly) NSString *reuseIdentifier;                    // 重用id
+@property (nonatomic, copy, readonly) NSString *reuseIdentifier;// 重用id
 
-- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;                // 初始化
-- (void)fix;                                                                        // imageView适配cell
-- (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder;    // 设置远程图片和占位图
+- (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;// 初始化
+- (void)fix;// imageView适配cell
+- (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder;// 设置远程图片和占位图
+- (void)setVideoUrl:(NSString *)videoUrl;// 设置视频播放地址
 
 @end

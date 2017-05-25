@@ -569,6 +569,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:placeViewWith];
         item.placeViewWith = placeViewWith;
         
+        // 增加playerView
+        CQVideoPlayerView *playerView = [CQVideoPlayerView new];
+        playerView.userInteractionEnabled = NO;
+        playerView.translatesAutoresizingMaskIntoConstraints = NO;
+        playerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+        [_scrollViewContentView addSubview:playerView];
+        item.videoPlayerView = playerView;
+        
+        views = @{@"playerView":playerView};
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[playerView]-0-|" options:0 metrics:nil views:views]];
+        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        
+        
         // 增加cell
         [_scrollViewContentView addSubview:cell];
         item.cell = cell;
@@ -643,6 +657,18 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 }
             }
         }];
+    }
+    
+    // 设置视频
+    NSString *videoUrl = [cell valueForKey:@"videoUrl"];
+    [item.videoPlayer stop];
+    [item.videoPlayer free];
+    item.videoPlayer = nil;
+    if (videoUrl) {
+        CQVideoPlayer *videoPlayer = [CQVideoPlayer new];
+        videoPlayer.delegate = item;
+        item.videoPlayer = videoPlayer;
+//        [videoPlayer play];
     }
     
     return cell;
