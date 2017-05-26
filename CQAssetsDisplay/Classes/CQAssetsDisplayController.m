@@ -436,16 +436,39 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
+    
+    // NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+    // NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+    
+    if (self.currentCell) {//防止快速滑动引发的问题
+        
+        CQAssetsDisplayItem *item = [self.currentCell valueForKey:@"item"];
+        CGFloat maxContentOffsetX = CGRectGetMaxX(item.frame);
+        CGFloat minContentOffsetX = maxContentOffsetX - self.scrollViewContentView.frame.size.width/self.numberOfCells * 2;
+        if (scrollView.contentOffset.x > maxContentOffsetX) {
+            scrollView.contentOffset = CGPointMake(maxContentOffsetX, scrollView.contentOffset.y);
+        }
+        if (scrollView.contentOffset.x < minContentOffsetX) {
+            scrollView.contentOffset = CGPointMake(minContentOffsetX, scrollView.contentOffset.y);
+        }
+    }
+
     for (CQAssetsDisplayItem *item in _alreadyShowItems) {
-        if (CGRectContainsPoint(item.cell.frame, point) && item.index != _currentPage) {
+        
+        if (item.index != _currentPage) {
             
-            _isFromScrollViewDidScroll = YES;
-            NSInteger tpage = (int)scrollView.contentOffset.x/(int)scrollView.frame.size.width;
-            if (tpage == _currentPage) {
+            // NSLog(@"item.frame:%@",NSStringFromCGRect(item.frame));
+            if (CGRectContainsPoint(item.frame, point)) {
+                
+                _isFromScrollViewDidScroll = YES;
+                NSInteger tpage = ceil(scrollView.contentOffset.x/scrollView.frame.size.width);
+                if (tpage == _currentPage) {
+                    break;
+                }
+                self.currentPage = tpage;
+                // NSLog(@"翻页：%d",tpage);
                 break;
             }
-            self.currentPage = tpage;
-            break;
         }
     }
 }
@@ -540,7 +563,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CQAssetsDisplayItem *item = [cell valueForKey:@"item"];
     if (item) {
         
+        // item属性重置
         item.index = index;
+        item.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
         [_alreadyShowItems addObject:item];
         
         [_scrollView removeConstraint:item.placeViewWith];
@@ -551,7 +576,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     } else {
         
         item = [CQAssetsDisplayItem new];
+        
+        // item属性重置
         item.index = index;
+        item.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
         [_alreadyShowItems addObject:item];
         
         // 创建占位
@@ -588,7 +616,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         item.cell = cell;
         [cell setValue:item forKey:@"item"];
         
-        cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
         [cell fix];
         
         cell.translatesAutoresizingMaskIntoConstraints = NO;
