@@ -573,7 +573,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         CQVideoPlayerView *playerView = [CQVideoPlayerView new];
         playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
-        playerView.backgroundColor = [UIColor colorWithWhite:1 alpha:0.3];
+        playerView.backgroundColor = [UIColor redColor];
         [_scrollViewContentView addSubview:playerView];
         item.videoPlayerView = playerView;
         

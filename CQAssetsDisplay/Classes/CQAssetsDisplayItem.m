@@ -32,7 +32,7 @@
 }
 - (void)videoPlayerSuccessToPlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
 {
-    _cell.hidden = YES;
+//    _cell.hidden = YES;
     _progressView.hidden = YES;
     _progressView.progress = 1;
     

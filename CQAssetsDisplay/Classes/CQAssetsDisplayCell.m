@@ -40,7 +40,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        self.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor clearColor];
         self.pagingEnabled = NO;
         self.delaysContentTouches = YES;
         self.canCancelContentTouches = YES;

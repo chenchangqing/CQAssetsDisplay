@@ -179,15 +179,15 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     
     self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset
                            automaticallyLoadedAssetKeys:keys];
-    _isAddObserverStatusKeyPath = YES;
 
     [self.playerItem addObserver:self
                       forKeyPath:STATUS_KEYPATH
                          options:0
                          context:&PlayerItemStatusContext];
+    _isAddObserverStatusKeyPath = YES;
     self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
     
-    if ([_delegate respondsToSelector:@selector(videoPlayerPrepareToPlay:)]) {
+    if ([_delegate respondsToSelector:@selector(videoPlayerPrepareToPlay:andAVPlayer:)]) {
         
         [_delegate videoPlayerPrepareToPlay:self andAVPlayer:self.player];
     }
