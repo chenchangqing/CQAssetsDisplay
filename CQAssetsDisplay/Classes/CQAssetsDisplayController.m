@@ -440,25 +440,25 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // NSLog(@"中心点：%@", NSStringFromCGPoint(point));
     // NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
     
-    if (self.currentCell) {//防止快速滑动引发的问题
-        
-        CQAssetsDisplayItem *item = [self.currentCell valueForKey:@"item"];
-        CGFloat maxContentOffsetX = CGRectGetMaxX(item.frame);
-        CGFloat minContentOffsetX = maxContentOffsetX - self.scrollViewContentView.frame.size.width/self.numberOfCells * 2;
-        if (scrollView.contentOffset.x > maxContentOffsetX) {
-            scrollView.contentOffset = CGPointMake(maxContentOffsetX, scrollView.contentOffset.y);
-        }
-        if (scrollView.contentOffset.x < minContentOffsetX) {
-            scrollView.contentOffset = CGPointMake(minContentOffsetX, scrollView.contentOffset.y);
-        }
-    }
+//    if (self.currentCell) {//防止快速滑动引发的问题
+//        
+//        CQAssetsDisplayItem *item = [self.currentCell valueForKey:@"item"];
+//        CGFloat maxContentOffsetX = CGRectGetMaxX(item.frame);
+//        CGFloat minContentOffsetX = maxContentOffsetX - self.scrollViewContentView.frame.size.width/self.numberOfCells * 2;
+//        if (scrollView.contentOffset.x > maxContentOffsetX) {
+//            scrollView.contentOffset = CGPointMake(maxContentOffsetX, scrollView.contentOffset.y);
+//        }
+//        if (scrollView.contentOffset.x < minContentOffsetX) {
+//            scrollView.contentOffset = CGPointMake(minContentOffsetX, scrollView.contentOffset.y);
+//        }
+//    }
 
     for (CQAssetsDisplayItem *item in _alreadyShowItems) {
         
         if (item.index != _currentPage) {
             
             // NSLog(@"item.frame:%@",NSStringFromCGRect(item.frame));
-            if (CGRectContainsPoint(item.frame, point)) {
+            if (CGRectContainsPoint(item.cell.frame, point)) {
                 
                 _isFromScrollViewDidScroll = YES;
                 NSInteger tpage = ceil(scrollView.contentOffset.x/scrollView.frame.size.width);
@@ -565,7 +565,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // item属性重置
         item.index = index;
-        item.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+        item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
         [_alreadyShowItems addObject:item];
         
         [_scrollView removeConstraint:item.placeViewWith];
@@ -579,7 +579,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // item属性重置
         item.index = index;
-        item.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+        item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
         [_alreadyShowItems addObject:item];
         
         // 创建占位

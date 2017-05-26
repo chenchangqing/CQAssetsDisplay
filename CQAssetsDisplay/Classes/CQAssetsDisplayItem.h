@@ -24,6 +24,5 @@
 @property (weak, nonatomic) CQVideoPlayerView *videoPlayerView;
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;
-@property (assign, nonatomic) CGRect frame;
 
 @end
