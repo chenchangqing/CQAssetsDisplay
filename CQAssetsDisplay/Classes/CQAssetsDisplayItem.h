@@ -22,6 +22,7 @@
 @property (weak, nonatomic) UIView *contentView;
 @property (strong, nonatomic) CQVideoPlayer *videoPlayer;
 @property (weak, nonatomic) CQVideoPlayerView *videoPlayerView;
+@property (weak, nonatomic) UIButton *videoPlayBtn;
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;
 

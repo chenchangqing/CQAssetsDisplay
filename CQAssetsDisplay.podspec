@@ -32,9 +32,9 @@ TODO: 像tableView一样，使用非常简单的图片浏览器
 
   s.source_files = 'CQAssetsDisplay/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'CQAssetsDisplay' => ['CQAssetsDisplay/Assets/*.png']
-  # }
+  s.resource_bundles = {
+    'CQAssetsDisplay' => ['CQAssetsDisplay/Assets/*.png']
+  }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'

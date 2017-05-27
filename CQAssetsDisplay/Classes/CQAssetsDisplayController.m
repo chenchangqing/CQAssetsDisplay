@@ -457,8 +457,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
     
-     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+//     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+//     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
     
     if (CGRectContainsPoint(self.preCell.frame, point)) {// 左滑
         
@@ -632,7 +632,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         CQVideoPlayerView *playerView = [CQVideoPlayerView new];
         playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
-        playerView.backgroundColor = [UIColor redColor];
+        playerView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:playerView];
         item.videoPlayerView = playerView;
         
@@ -681,7 +681,24 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:50]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:50]];
+        
+        // 播放按钮
+        UIButton *videoPlayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        videoPlayBtn.tintColor = [UIColor whiteColor];
+        videoPlayBtn.hidden = YES;
+        videoPlayBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        [videoPlayBtn setImage:[self videoPlayImage] forState:UIControlStateNormal];
+        [_scrollViewContentView addSubview:videoPlayBtn];
+        item.videoPlayBtn = videoPlayBtn;
+        
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:100]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:100]];
     }
+    
+    // 是否隐藏播放按钮
+    BOOL videoPlayBtnHidden = [cell valueForKey:@"videoUrl"] ? NO : YES;
     
     // 设置图片
     NSString *imageURLStr = [cell valueForKey:@"imageURL"];
@@ -701,6 +718,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             
+            item.videoPlayBtn.hidden = YES;
             if (error) {
                 
                 [item.progressView showError];
@@ -711,25 +729,38 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                     if (image != nil) {
                         item.progressView.progress = 1;
                         item.progressView.hidden = YES;
+                        item.videoPlayBtn.hidden = videoPlayBtnHidden;
                     }
                 }
             }
         }];
-    }
-    
-    // 设置视频
-    NSString *videoUrl = [cell valueForKey:@"videoUrl"];
-    [item.videoPlayer stop];
-    [item.videoPlayer free];
-    item.videoPlayer = nil;
-    if (videoUrl) {
-        CQVideoPlayer *videoPlayer = [CQVideoPlayer new];
-        videoPlayer.delegate = item;
-        item.videoPlayer = videoPlayer;
-//        [videoPlayer play];
+    } else {
+        
+        item.videoPlayBtn.hidden = videoPlayBtnHidden;
     }
     
     return cell;
+}
+
+// MARK: - 资源
+
+- (NSBundle *)assetsBundle
+{
+    NSBundle *assetsBundle = nil;
+    if (assetsBundle == nil) {
+        // 这里不使用mainBundle是为了适配pod 1.x和0.x
+        assetsBundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"CQAssetsDisplay" ofType:@"bundle"]];
+    }
+    return assetsBundle;
+}
+
+- (UIImage *)videoPlayImage
+{
+    UIImage *arrowImage = nil;
+    if (arrowImage == nil) {
+        arrowImage = [[UIImage imageWithContentsOfFile:[[self assetsBundle] pathForResource:@"video_play@3x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    return arrowImage;
 }
 
 #pragma mark - 处理缩放
