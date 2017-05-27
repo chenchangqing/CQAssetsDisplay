@@ -608,11 +608,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CQAssetsDisplayItem *item = [cell valueForKey:@"item"];
     if (item) {
         
-        // item属性重置
-        item.index = index;
-        item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
-        [_alreadyShowItems addObject:item];
-        
         [_scrollView removeConstraint:item.placeViewWith];
         
         NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:item.placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
@@ -621,11 +616,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     } else {
         
         item = [CQAssetsDisplayItem new];
-        
-        // item属性重置
-        item.index = index;
-        item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
-        [_alreadyShowItems addObject:item];
         
         // 创建占位
         UIView *placeView = [UIView new];
@@ -699,7 +689,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 播放按钮
         UIButton *videoPlayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         videoPlayBtn.tintColor = [UIColor whiteColor];
-        videoPlayBtn.hidden = YES;
         [videoPlayBtn addTarget:item action:@selector(playVideo) forControlEvents:UIControlEventTouchUpInside];
         videoPlayBtn.translatesAutoresizingMaskIntoConstraints = NO;
         [videoPlayBtn setImage:[self videoPlayImage] forState:UIControlStateNormal];
@@ -711,6 +700,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:100]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:100]];
     }
+    
+    // item属性重置
+    item.index = index;
+    item.videoPlayBtn.hidden = YES;
+    item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+    [_alreadyShowItems addObject:item];
     
     // 是否隐藏播放按钮
     BOOL videoPlayBtnHidden = [cell valueForKey:@"videoUrl"] ? NO : YES;
