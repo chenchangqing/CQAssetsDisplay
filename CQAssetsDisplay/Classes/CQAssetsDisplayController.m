@@ -586,8 +586,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             UIImageView *imageView = [item.cell valueForKey:@"imageView"];
             [imageView yy_cancelCurrentImageRequest];
             imageView.image = nil;
+            [item.cell setValue:nil forKey:@"videoUrl"];
+            [item.cell setValue:nil forKey:@"imageURL"];
             
-            [self changeAssetViewToInitialState:item.cell];
+//            [self changeAssetViewToInitialState:item.cell];
             
             // 增加重用
             [_prepareShowItems addObject:item];

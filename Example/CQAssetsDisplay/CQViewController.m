@@ -139,7 +139,14 @@
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
     [cell setImageUrl:photoStr andPlaceHolder:nil];
-    [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
+    if (index == 1
+        || index == 3
+        || index == 5
+        || index == 7
+        || index == 11) {
+        
+        [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
+    }
     
     return cell;
 }
