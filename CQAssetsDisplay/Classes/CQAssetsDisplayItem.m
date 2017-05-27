@@ -15,6 +15,34 @@
 
 @implementation CQAssetsDisplayItem
 
+- (void)dealloc {
+    
+    if (_videoPlayer) {
+        
+        [_videoPlayer free];
+        _videoPlayer = nil;
+    }
+    
+    NSString *downloadURL = [_cell valueForKey:@"videoUrl"];
+    if (downloadURL) {
+        
+        [self suspendDownload:downloadURL];
+    }
+}
+
+- (void)playVideo {
+    
+    if (_videoPlayer) {
+        
+        [_videoPlayer free];
+        _videoPlayer = nil;
+    }
+    
+    _videoPlayer = [CQVideoPlayer new];
+    _videoPlayer.delegate = self;
+    [_videoPlayer play];
+}
+
 // MARK: - CQVideoPlayerDelegate
 
 - (void)videoPlayerPrepareToLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)

@@ -26,4 +26,6 @@
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;
 
+- (void)playVideo;
+
 @end
