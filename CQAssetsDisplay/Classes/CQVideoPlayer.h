@@ -19,6 +19,7 @@
 - (void)videoPlayerPrepareToPlay:(CQVideoPlayer *)videoPlayer andAVPlayer:(AVPlayer *)avPlayer;// 准备播放（开始设置avPlayer）
 - (void)videoPlayerSuccessToPlay:(CQVideoPlayer *)videoPlayer;// 成功播放（隐藏图片）
 - (void)videoPlayerFailureToPlay:(CQVideoPlayer *)videoPlayer;// 失败播放（显示错误提示）
+- (void)videoPlayerFinishToPlay:(CQVideoPlayer *)videoPlayer;// 播放完成
 
 @end
 

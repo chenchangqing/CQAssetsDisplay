@@ -179,6 +179,14 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     
     self.playerItem = [AVPlayerItem playerItemWithAsset:self.asset
                            automaticallyLoadedAssetKeys:keys];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+     
+                                             selector:@selector(playerItemDidReachEnd)
+     
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+     
+                                               object:self.playerItem];
 
     [self.playerItem addObserver:self
                       forKeyPath:STATUS_KEYPATH
@@ -353,6 +361,12 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
                                                   usingBlock:callback];
 }
 
+- (void)playerItemDidReachEnd {
+    if ([_delegate respondsToSelector:@selector(videoPlayerFinishToPlay:)]) {
+        [_delegate videoPlayerFinishToPlay:self];
+    }
+}
+
 #pragma mark - CQVideoPlayerProtocol
 
 - (void)play {
@@ -385,6 +399,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 //        
 ////        [self.toolBar playbackComplete];
 //    }
+    [self playerItemDidReachEnd];
 }
 
 - (void)scrubbingDidStart {

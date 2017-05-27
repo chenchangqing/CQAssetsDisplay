@@ -21,6 +21,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @interface CQAssetsDisplayController ()<UIScrollViewDelegate> {
     
     BOOL _isFromScrollViewDidScroll;// 当载scrollViewDidScroll方法中设置当前页，不需要改变contentoffset
+    BOOL _isFiting;// 正在适配
 }
 
 @property (nonatomic, weak) UIScrollView       *scrollView;                 // scrollView控件
@@ -248,6 +249,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 适配旋转
 - (void)fitOrientation:(CGAffineTransform) transform {
     
+    _isFiting = YES;
+    
     CGFloat duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
     [UIView animateWithDuration:duration animations:^{
         
@@ -267,12 +270,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }];
     
     [self resetScrollViewContentSize];
-    [self scrollToCurrentPage];
     
     // 更新图片大小
     for (CQAssetsDisplayItem *item in _alreadyShowItems) {
         [item.cell fix];
     }
+    [self scrollToCurrentPage];
+    
+    _isFiting = NO;
 }
 
 // MARK: - 显示 or 退出
@@ -457,10 +462,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
     
-//     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-//     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+//    NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+//    NSLog(@"self.scrollView.frame:%@",NSStringFromCGRect(self.scrollView.frame));
+//    NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+//    NSLog(@"self.preCell.frame:%@",NSStringFromCGRect(self.preCell.frame));
+//    NSLog(@"self.nextCell.frame:%@",NSStringFromCGRect(self.nextCell.frame));
     
     if (CGRectContainsPoint(self.preCell.frame, point)) {// 左滑
+        
         
         NSInteger willGoPage = _currentPage-1;
         if (willGoPage >=0) {
@@ -473,11 +482,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
         
-        NSInteger willGoPage = _currentPage-1;
-        if (willGoPage >=0) {
-            
-            self.currentPage = willGoPage;
-            NSLog(@"翻页：%d", willGoPage);
+        if (!_isFiting) {
+            NSInteger willGoPage = _currentPage-1;
+            if (willGoPage >=0) {
+                
+                self.currentPage = willGoPage;
+                NSLog(@"翻页：%d", willGoPage);
+            }
         }
     }
     
@@ -495,11 +506,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
         
-        NSInteger willGoPage = _currentPage+1;
-        if (willGoPage < self.numberOfCells) {
+        if (!_isFiting) {
             
-            self.currentPage = willGoPage;
-            NSLog(@"翻页：%d", willGoPage);
+            NSInteger willGoPage = _currentPage+1;
+            if (willGoPage < self.numberOfCells) {
+                
+                self.currentPage = willGoPage;
+                NSLog(@"翻页：%d", willGoPage);
+            }
         }
     }
 }
@@ -813,6 +827,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [assetsDisplayCell setZoomScale:1.0 animated:NO];
         assetsDisplayCell.scrollEnabled = YES;
     }
+    
+    CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
+    [item.videoPlayer stop];
 }
 
 @end

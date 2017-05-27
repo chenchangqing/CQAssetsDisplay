@@ -47,6 +47,7 @@
 
 - (void)videoPlayerPrepareToLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)
 {
+    _videoPlayBtn.hidden = YES;
     _progressView.hidden = NO;
     _progressView.progress = 0.01;
 }
@@ -60,7 +61,7 @@
 }
 - (void)videoPlayerSuccessToPlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
 {
-//    _cell.hidden = YES;
+    _cell.hidden = YES;
     _progressView.hidden = YES;
     _progressView.progress = 1;
     
@@ -110,6 +111,12 @@
             }
         }];
     }
+}
+
+- (void)videoPlayerFinishToPlay:(CQVideoPlayer *)videoPlayer {
+    
+    _cell.hidden = NO;
+    _videoPlayBtn.hidden = NO;
 }
 
 // MARK: - 下载
