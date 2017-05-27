@@ -283,7 +283,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (void)dealloc {
     
-    NSLog(@"%s",__FUNCTION__);
+//    NSLog(@"%s",__FUNCTION__);
 }
 
 /// MARK: - Override Getters/Setters

@@ -29,7 +29,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 @property (nonatomic, strong) AssetsDisplayItems    *alreadyShowItems;      // 正在 显示的cell数组（最多3个）
 @property (nonatomic, strong) AssetsDisplayItems    *prepareShowItems;      // 准备 显示的cell数组(复用)
+@property (nonatomic, weak)   CQAssetsDisplayCell   *preCell;// 前一个cell
 @property (nonatomic, weak)   CQAssetsDisplayCell   *currentCell;           // 当前cell
+@property (nonatomic, weak)   CQAssetsDisplayCell   *nextCell;// 后一个cell
 
 @property (nonatomic, strong) DelayBlock scrollToPageBlock;                 // scrollview还没加载，延迟设置当前页
 @property (nonatomic, strong) DelayBlock animateShowBlock;                  // 动画显示
@@ -430,6 +432,24 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     return nil;
 }
 
+- (CQAssetsDisplayCell *)preCell {
+    
+    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage-1]];
+    if (currentShowCellByFilter.count > 0) {
+        return currentShowCellByFilter[0].cell;
+    }
+    return nil;
+}
+
+- (CQAssetsDisplayCell *)nextCell {
+    
+    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage+1]];
+    if (currentShowCellByFilter.count > 0) {
+        return currentShowCellByFilter[0].cell;
+    }
+    return nil;
+}
+
 // MARK: - 处理左右滑动
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -437,38 +457,30 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
     
-    // NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-    // NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+//     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+//     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
     
-//    if (self.currentCell) {//防止快速滑动引发的问题
-//        
-//        CQAssetsDisplayItem *item = [self.currentCell valueForKey:@"item"];
-//        CGFloat maxContentOffsetX = CGRectGetMaxX(item.frame);
-//        CGFloat minContentOffsetX = maxContentOffsetX - self.scrollViewContentView.frame.size.width/self.numberOfCells * 2;
-//        if (scrollView.contentOffset.x > maxContentOffsetX) {
-//            scrollView.contentOffset = CGPointMake(maxContentOffsetX, scrollView.contentOffset.y);
-//        }
-//        if (scrollView.contentOffset.x < minContentOffsetX) {
-//            scrollView.contentOffset = CGPointMake(minContentOffsetX, scrollView.contentOffset.y);
-//        }
-//    }
-
-    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
+    if (CGRectContainsPoint(self.preCell.frame, point)
+        || CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
         
-        if (item.index != _currentPage) {
+        NSInteger willGoPage = _currentPage-1;
+        if (willGoPage >=0) {
             
-            // NSLog(@"item.frame:%@",NSStringFromCGRect(item.frame));
-            if (CGRectContainsPoint(item.cell.frame, point)) {
-                
-                _isFromScrollViewDidScroll = YES;
-                NSInteger tpage = ceil(scrollView.contentOffset.x/scrollView.frame.size.width);
-                if (tpage == _currentPage) {
-                    break;
-                }
-                self.currentPage = tpage;
-                // NSLog(@"翻页：%d",tpage);
-                break;
-            }
+            _isFromScrollViewDidScroll = YES;
+            self.currentPage = willGoPage;
+            NSLog(@"翻页：%d", willGoPage);
+        }
+    }
+    
+    if (CGRectContainsPoint(self.nextCell.frame, point)
+        || CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
+        
+        NSInteger willGoPage = _currentPage+1;
+        if (willGoPage < self.numberOfCells) {
+            
+            _isFromScrollViewDidScroll = YES;
+            self.currentPage = willGoPage;
+            NSLog(@"翻页：%d", willGoPage);
         }
     }
 }
