@@ -22,12 +22,7 @@
         [_videoPlayer free];
         _videoPlayer = nil;
     }
-    
-    NSString *downloadURL = [_cell valueForKey:@"videoUrl"];
-    if (downloadURL) {
-        
-        [self suspendDownload:downloadURL];
-    }
+    [self suspendDownload];
 }
 
 - (void)playVideo {
@@ -138,11 +133,16 @@
 }
 
 // 暂停下载
-- (void)suspendDownload:(NSString *)downloadURL {
+- (void)suspendDownload {
     
-    MCDownloadReceipt *receipt = [[MCDownloadManager defaultInstance] downloadReceiptForURL:downloadURL];
-    if (receipt.state == MCDownloadStateDownloading) {
-        [[MCDownloadManager defaultInstance] suspendWithDownloadReceipt:receipt];
+    
+    NSString *downloadURL = [_cell valueForKey:@"videoUrl"];
+    if (downloadURL) {
+        
+        MCDownloadReceipt *receipt = [[MCDownloadManager defaultInstance] downloadReceiptForURL:downloadURL];
+        if (receipt.state == MCDownloadStateDownloading) {
+            [[MCDownloadManager defaultInstance] suspendWithDownloadReceipt:receipt];
+        }
     }
 }
 

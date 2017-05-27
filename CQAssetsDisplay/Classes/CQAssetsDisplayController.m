@@ -577,6 +577,18 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 判断某个view的页数与当前页数相差值为2的话，那么让这个view从视图上移除
         if (abs((int)item.index - (int)_currentPage) >= 2){
             [tempArray addObject:item];
+            
+            // item属性重置
+            item.videoPlayBtn.hidden = YES;
+            item.progressView.progress = 1;
+            item.progressView.hidden = YES;
+            [item suspendDownload];
+            UIImageView *imageView = [item.cell valueForKey:@"imageView"];
+            [imageView yy_cancelCurrentImageRequest];
+            imageView.image = nil;
+            
+            [self changeAssetViewToInitialState:item.cell];
+            
             // 增加重用
             [_prepareShowItems addObject:item];
         }
@@ -701,14 +713,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:100]];
     }
     
-    // item属性重置
-    item.index = index;
-    item.videoPlayBtn.hidden = YES;
+    // 属性重置
+    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] ? NO : YES;
+    item.videoPlayBtn.hidden = videoPlayBtnHidden;
     item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+    item.index = index;
     [_alreadyShowItems addObject:item];
-    
-    // 是否隐藏播放按钮
-    BOOL videoPlayBtnHidden = [cell valueForKey:@"videoUrl"] ? NO : YES;
     
     // 设置图片
     NSString *imageURLStr = [cell valueForKey:@"imageURL"];
@@ -719,16 +729,16 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     if (imageURLStr) {
         
+        item.videoPlayBtn.hidden = YES;
         item.progressView.hidden = NO;
         item.progressView.progress = 0.01;
         NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
-        
+        [imageView yy_cancelCurrentImageRequest];
         [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
             
             item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             
-            item.videoPlayBtn.hidden = YES;
             if (error) {
                 
                 [item.progressView showError];
@@ -825,6 +835,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
     [item.videoPlayer stop];
+    
 }
 
 @end

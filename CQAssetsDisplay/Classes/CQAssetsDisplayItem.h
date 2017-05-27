@@ -28,4 +28,5 @@
 
 - (void)playVideo;
 
+- (void)suspendDownload;
 @end
