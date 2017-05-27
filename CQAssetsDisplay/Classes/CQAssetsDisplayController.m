@@ -457,16 +457,25 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
     CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
     
-//     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-//     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+     NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+     NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
     
-    if (CGRectContainsPoint(self.preCell.frame, point)
-        || CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
+    if (CGRectContainsPoint(self.preCell.frame, point)) {// 左滑
         
         NSInteger willGoPage = _currentPage-1;
         if (willGoPage >=0) {
             
             _isFromScrollViewDidScroll = YES;
+            self.currentPage = willGoPage;
+            NSLog(@"翻页：%d", willGoPage);
+        }
+    }
+    
+    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
+        
+        NSInteger willGoPage = _currentPage-1;
+        if (willGoPage >=0) {
+            
             self.currentPage = willGoPage;
             NSLog(@"翻页：%d", willGoPage);
         }
@@ -479,6 +488,16 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         if (willGoPage < self.numberOfCells) {
             
             _isFromScrollViewDidScroll = YES;
+            self.currentPage = willGoPage;
+            NSLog(@"翻页：%d", willGoPage);
+        }
+    }
+    
+    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
+        
+        NSInteger willGoPage = _currentPage+1;
+        if (willGoPage < self.numberOfCells) {
+            
             self.currentPage = willGoPage;
             NSLog(@"翻页：%d", willGoPage);
         }
