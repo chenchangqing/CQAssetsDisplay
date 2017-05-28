@@ -480,20 +480,19 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         }
     }
     
-    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
-        
-        if (!_isFiting) {
-            NSInteger willGoPage = _currentPage-1;
-            if (willGoPage >=0) {
-                
-                self.currentPage = willGoPage;
-                NSLog(@"翻页：%d", willGoPage);
-            }
-        }
-    }
+//    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
+//        
+//        if (!_isFiting) {
+//            NSInteger willGoPage = _currentPage-1;
+//            if (willGoPage >=0) {
+//                
+//                self.currentPage = willGoPage;
+//                NSLog(@"翻页：%d", willGoPage);
+//            }
+//        }
+//    }
     
-    if (CGRectContainsPoint(self.nextCell.frame, point)
-        || CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
+    if (CGRectContainsPoint(self.nextCell.frame, point)) {// 右滑
         
         NSInteger willGoPage = _currentPage+1;
         if (willGoPage < self.numberOfCells) {
@@ -504,18 +503,18 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         }
     }
     
-    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
-        
-        if (!_isFiting) {
-            
-            NSInteger willGoPage = _currentPage+1;
-            if (willGoPage < self.numberOfCells) {
-                
-                self.currentPage = willGoPage;
-                NSLog(@"翻页：%d", willGoPage);
-            }
-        }
-    }
+//    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
+//        
+//        if (!_isFiting) {
+//            
+//            NSInteger willGoPage = _currentPage+1;
+//            if (willGoPage < self.numberOfCells) {
+//                
+//                self.currentPage = willGoPage;
+//                NSLog(@"翻页：%d", willGoPage);
+//            }
+//        }
+//    }
 }
 
 // 设置当前页
