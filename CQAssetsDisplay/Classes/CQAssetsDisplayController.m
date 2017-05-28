@@ -835,9 +835,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     
     CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
-    [item.videoPlayer stop];
     
-    item.progressView.progress = 1;
+    // 已经设置过
+    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", item.index]];
+    if (exists.count!=0) {
+        return ;
+    }
+    
+    [item.videoPlayer stop];
     item.progressView.hidden = YES;
     
 }
