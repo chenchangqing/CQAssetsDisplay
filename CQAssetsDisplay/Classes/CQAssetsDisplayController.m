@@ -581,17 +581,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [tempArray addObject:item];
             
             // item属性重置
-            item.videoPlayBtn.hidden = YES;
-            item.progressView.progress = 1;
-            item.progressView.hidden = YES;
-            [item suspendDownload];
             UIImageView *imageView = [item.cell valueForKey:@"imageView"];
             [imageView yy_cancelCurrentImageRequest];
             imageView.image = nil;
+            [item suspendDownload];
             [item.cell setValue:nil forKey:@"videoUrl"];
             [item.cell setValue:nil forKey:@"imageURL"];
-            
-//            [self changeAssetViewToInitialState:item.cell];
             
             // 增加重用
             [_prepareShowItems addObject:item];
@@ -737,7 +732,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         item.progressView.hidden = NO;
         item.progressView.progress = 0.01;
         NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
-        [imageView yy_cancelCurrentImageRequest];
         [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
             
             item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
@@ -842,6 +836,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
     [item.videoPlayer stop];
+    
+    item.progressView.progress = 1;
+    item.progressView.hidden = YES;
     
 }
 

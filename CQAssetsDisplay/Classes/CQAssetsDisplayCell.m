@@ -107,14 +107,14 @@
 }
 
 // 更新图片布局
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
-    [self layoutImageView:frame.size];
-}
+//- (void)setFrame:(CGRect)frame {
+//    [super setFrame:frame];
+//    [self layoutImageView:frame.size];
+//}
 
 - (void)layoutImageView:(CGSize)size {
     
-    NSLog(@"ImageViewSize:%@",NSStringFromCGSize(size));
+//    NSLog(@"ImageViewSize:%@",NSStringFromCGSize(size));
     
     if (!_imageView.image) {
         return;
