@@ -459,62 +459,65 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
-    CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
-    
-//    NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-//    NSLog(@"self.scrollView.frame:%@",NSStringFromCGRect(self.scrollView.frame));
-//    NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
-//    NSLog(@"self.preCell.frame:%@",NSStringFromCGRect(self.preCell.frame));
-//    NSLog(@"self.nextCell.frame:%@",NSStringFromCGRect(self.nextCell.frame));
-    
-    if (CGRectContainsPoint(self.preCell.frame, point)) {// 左滑
+    if (_scrollView == scrollView) {
         
+        CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
+        CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
         
-        NSInteger willGoPage = _currentPage-1;
-        if (willGoPage >=0) {
+        //    NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+        //    NSLog(@"self.scrollView.frame:%@",NSStringFromCGRect(self.scrollView.frame));
+//        NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
+        //    NSLog(@"self.preCell.frame:%@",NSStringFromCGRect(self.preCell.frame));
+//        NSLog(@"self.nextCell.frame:%@",NSStringFromCGRect(self.nextCell.frame));
+//        NSLog(@"self.scrollViewContentView.frame:%@",NSStringFromCGRect(self.scrollViewContentView.frame));
+        
+        if (CGRectContainsPoint(self.preCell.frame, point)) {// 左滑
             
-            _isFromScrollViewDidScroll = YES;
-            self.currentPage = willGoPage;
-            NSLog(@"翻页：%d", willGoPage);
+            NSInteger willGoPage = _currentPage-1;
+            if (willGoPage >=0) {
+                
+                _isFromScrollViewDidScroll = YES;
+                self.currentPage = willGoPage;
+                NSLog(@"翻页：%d", willGoPage);
+            }
         }
-    }
-    
-//    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
-//        
-//        if (!_isFiting) {
-//            NSInteger willGoPage = _currentPage-1;
-//            if (willGoPage >=0) {
-//                
-//                self.currentPage = willGoPage;
-//                NSLog(@"翻页：%d", willGoPage);
-//            }
-//        }
-//    }
-    
-    if (CGRectContainsPoint(self.nextCell.frame, point)) {// 右滑
         
-        NSInteger willGoPage = _currentPage+1;
-        if (willGoPage < self.numberOfCells) {
+        //    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
+        //
+        //        if (!_isFiting) {
+        //            NSInteger willGoPage = _currentPage-1;
+        //            if (willGoPage >=0) {
+        //
+        //                self.currentPage = willGoPage;
+        //                NSLog(@"翻页：%d", willGoPage);
+        //            }
+        //        }
+        //    }
+        
+        if (CGRectContainsPoint(self.nextCell.frame, point)) {// 右滑
             
-            _isFromScrollViewDidScroll = YES;
-            self.currentPage = willGoPage;
-            NSLog(@"翻页：%d", willGoPage);
+            NSInteger willGoPage = _currentPage+1;
+            if (willGoPage < self.numberOfCells) {
+                
+                _isFromScrollViewDidScroll = YES;
+                self.currentPage = willGoPage;
+                NSLog(@"翻页：%d", willGoPage);
+            }
         }
+        
+        //    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
+        //
+        //        if (!_isFiting) {
+        //
+        //            NSInteger willGoPage = _currentPage+1;
+        //            if (willGoPage < self.numberOfCells) {
+        //                
+        //                self.currentPage = willGoPage;
+        //                NSLog(@"翻页：%d", willGoPage);
+        //            }
+        //        }
+        //    }
     }
-    
-//    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
-//        
-//        if (!_isFiting) {
-//            
-//            NSInteger willGoPage = _currentPage+1;
-//            if (willGoPage < self.numberOfCells) {
-//                
-//                self.currentPage = willGoPage;
-//                NSLog(@"翻页：%d", willGoPage);
-//            }
-//        }
-//    }
 }
 
 // 设置当前页
@@ -717,7 +720,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 属性重置
     BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] ? NO : YES;
     item.videoPlayBtn.hidden = videoPlayBtnHidden;
-    item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells, self.scrollViewContentView.frame.size.height);
+    item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells-_cellPadding/** 关键 **/, self.scrollViewContentView.frame.size.height);
     item.index = index;
     [_alreadyShowItems addObject:item];
     
@@ -810,6 +813,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 - (void)scrollViewDidZoom:(CQAssetsDisplayCell *)scrollView {
+    
+    if (![scrollView isKindOfClass:[CQAssetsDisplayCell class]])
+        return ;
     UIImageView *zoomImageView = (UIImageView *)[self viewForZoomingInScrollView: scrollView];
     
     CGRect frame = zoomImageView.frame;

@@ -114,6 +114,8 @@
 
 - (void)layoutImageView:(CGSize)size {
     
+    NSLog(@"ImageViewSize:%@",NSStringFromCGSize(size));
+    
     if (!_imageView.image) {
         return;
     }
