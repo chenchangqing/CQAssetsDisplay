@@ -351,12 +351,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 重置contentSize
         [weakSelf resetScrollViewContentSize];
-        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item) {
+        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item, BOOL loadImageOK) {
             
             UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
             CGRect frame = imageView.frame;
             CGRect startFrame = [fromView convertRect:fromView.bounds toView:[UIApplication sharedApplication].keyWindow];
-            if (!CGRectEqualToRect(frame, CGRectZero)&&!CGRectEqualToRect(startFrame, CGRectZero)) {
+            if (!CGRectEqualToRect(frame, CGRectZero)) {
                 
                 imageView.frame = startFrame;
                 [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
@@ -368,8 +368,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 } completion:^(BOOL finished) {
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
-                    [weakSelf setHidePlayerIconWithItem:item];
+                    [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
                 }];
+            } else {
+                
+                [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
             }
         }];
     };
@@ -530,14 +533,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 设置当前页
 - (void)setCurrentPage:(NSInteger)currentPage{
     __weak typeof(self) weakSelf = self;
-    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item){
-        [weakSelf setHidePlayerIconWithItem:item];
+    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item, BOOL loadImageOK){
+        [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
     }];
 }
 
 
 // 设置当前页
-- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayItem *))callback {
+- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayItem *,BOOL loadImageOk))callback {
     
     // 延迟设置
     __weak typeof(self) weakSelf = self;
@@ -559,23 +562,23 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         _currentPage = currentPage;
         
         CQAssetsDisplayItem *citem = [self setCellForIndex:_currentPage];
-        [self loadImageDataWithItem:citem andCompletion:^{
-            callback(citem);
+        [self loadImageDataWithItem:citem andCompletion:^(BOOL loadImageOK){
+            callback(citem,loadImageOK);
         }];
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
             CQAssetsDisplayItem *ritem = [self setCellForIndex:currentPage + 1];
-            [self loadImageDataWithItem:ritem andCompletion:^{
-                [weakSelf setHidePlayerIconWithItem:ritem];
+            [self loadImageDataWithItem:ritem andCompletion:^(BOOL loadImageOK){
+                [weakSelf setHidePlayerIconWithItem:ritem andLoadImageOk:loadImageOK];
             }];
         }
         
         // 设置左边的视图
         if (currentPage > 0) {
             CQAssetsDisplayItem *litem = [self setCellForIndex:currentPage - 1];
-            [self loadImageDataWithItem:litem andCompletion:^{
-                [weakSelf setHidePlayerIconWithItem:litem];
+            [self loadImageDataWithItem:litem andCompletion:^(BOOL loadImageOK){
+                [weakSelf setHidePlayerIconWithItem:litem andLoadImageOk:loadImageOK];
             }];
         }
         
@@ -746,14 +749,29 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 设置播放按钮
-- (void)setHidePlayerIconWithItem:(CQAssetsDisplayItem *)item {
+- (void)setHidePlayerIconWithItem:(CQAssetsDisplayItem *)item andLoadImageOk:(BOOL)loadImageOK {
     
     BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] != nil ? NO : YES;
-    item.videoPlayBtn.hidden = videoPlayBtnHidden;
+    if (videoPlayBtnHidden) {
+        
+        if (loadImageOK) {
+            item.progressView.hidden = YES;
+        } else {
+            [item.progressView showError];
+            item.progressView.hidden = NO;
+        }
+        
+        item.videoPlayBtn.hidden = YES;
+    } else {
+        
+        item.progressView.progress = 0.01;
+        item.progressView.hidden = YES;
+        item.videoPlayBtn.hidden = NO;
+    }
 }
 
 // 加载图片
-- (void)loadImageDataWithItem:(CQAssetsDisplayItem *)item andCompletion:(void(^)())callback {
+- (void)loadImageDataWithItem:(CQAssetsDisplayItem *)item andCompletion:(void(^)(BOOL))callback {
     
     CQAssetsDisplayCell *cell = item.cell;
     NSString *imageURLStr = [cell valueForKey:@"imageURL"];
@@ -773,8 +791,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             
+            callback(NO);
             if (error) {
-                
                 [item.progressView showError];
             } else {
                 
@@ -783,13 +801,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                     if (image != nil) {
                         item.progressView.progress = 1;
                         item.progressView.hidden = YES;
-                        callback();
+                        callback(YES);
                     }
                 }
             }
         }];
     } else {
-        callback();
+        callback(NO);
     }
 }
 

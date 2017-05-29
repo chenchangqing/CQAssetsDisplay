@@ -137,7 +137,15 @@
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
-    [cell setImageUrl:photoStr andPlaceHolder:nil];
+    if (index == 1
+        || index == 2
+        || index == 4
+        || index == 5
+        || index == 7) {
+        
+        [cell setImageUrl:photoStr andPlaceHolder:nil];
+    }
+
     if (index == 1
         || index == 3
         || index == 5
