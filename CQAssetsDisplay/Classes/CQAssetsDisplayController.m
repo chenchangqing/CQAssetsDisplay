@@ -713,7 +713,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     
     // 属性重置
-    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] ? NO : YES;
+    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] != nil ? NO : YES;
     item.videoPlayBtn.hidden = videoPlayBtnHidden;
     item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells-_cellPadding/** 关键 **/, self.scrollViewContentView.frame.size.height);
     item.index = index;
@@ -842,7 +842,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         return ;
     }
     
-    [item.videoPlayer stop];
+    if (item.videoPlayer) {
+        
+        [item.videoPlayer free];
+        [item.videoPlayer stop];
+        item.videoPlayer = nil;
+    }
+    
     item.progressView.hidden = YES;
     
 }

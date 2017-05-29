@@ -111,7 +111,13 @@
 - (void)videoPlayerFinishToPlay:(CQVideoPlayer *)videoPlayer {
     
     _cell.hidden = NO;
-    _videoPlayBtn.hidden = NO;
+    if ([_cell valueForKey:@"videoUrl"]) {// 避免播放显示错误
+        
+        _videoPlayBtn.hidden = NO;
+    } else {
+        
+        _videoPlayBtn.hidden = YES;
+    }
 }
 
 // MARK: - 下载

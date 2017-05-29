@@ -146,6 +146,9 @@
         || index == 11) {
         
         [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
+    } else {
+        
+        [cell setVideoUrl:nil];
     }
     
     return cell;
