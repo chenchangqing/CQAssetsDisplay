@@ -40,6 +40,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @property (nonatomic, assign, readonly) NSInteger numberOfCells;            // 单元格格数
 @property (nonatomic, strong) UIViewController *currentVC;                  // 当前控制器
 @property (nonatomic, weak) UIView *fromView;                               // 来自哪个view
+@property (nonatomic, assign) CGFloat cellPadding;                          // cell之间的间隔
 
 @end
 
@@ -101,8 +102,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 初始化数组、字典及其他
     _alreadyShowItems = [AssetsDisplayItems array];
     _prepareShowItems = [AssetsDisplayItems array];
-    _currentPage = _currentPage == 0 ? -1 : _currentPage;
-    _cellPadding = 10;
     _isFromScrollViewDidScroll = NO;
     
     // scrollView控件
@@ -176,7 +175,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     [self resetScrollViewContentSize];
     
     // 显示
-    [self setCurrentPage:_currentPage == -1 ? 0 : _currentPage];
+    [self setCurrentPage:_currentPage];
 }
 
 // 清除cells
@@ -331,7 +330,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 显示
-- (void)showWithFromView:(UIView *)fromView {
+- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage{
 
     if ([self.currentVC isKindOfClass:[UINavigationController class]]) {
         
@@ -345,7 +344,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self.currentVC presentViewController:self animated:NO completion:nil];
     }
     
+    _cellPadding = cellPadding > 0 ? cellPadding : 0;
     _fromView = fromView;
+    _currentPage = currentPage > 0 && currentPage < self.numberOfCells ? currentPage : 0;
     __weak typeof(self) weakSelf = self;
     _animateShowBlock = ^() {
         

@@ -28,10 +28,9 @@
 
 @property (nonatomic, weak) id<CQAssetsDisplayControllerDataSource> dataSource;     // 数据源
 @property (nonatomic, assign) NSInteger currentPage;                                // 当前页数
-@property (nonatomic, assign) CGFloat cellPadding;                                  // cell之间的间隔
 
 - (void)reloadData;                                                                 // 刷新
-- (void)showWithFromView:(UIView *)fromView;                                        // 显示
+- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage;    // 显示
 - (void)exit;                                                                       // 退出
 - (CQAssetsDisplayCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // 得到可复用视图
 

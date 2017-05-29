@@ -118,8 +118,7 @@
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
     assetsDisplayController.dataSource = self;
-    assetsDisplayController.currentPage = indexPath.row;
-    [assetsDisplayController showWithFromView:cell];
+    [assetsDisplayController showWithFromView:cell andCellPadding:50 andCurrentPage:indexPath.row];
 }
 
 // MARK: - CQAssetsDisplayControllerDataSource
