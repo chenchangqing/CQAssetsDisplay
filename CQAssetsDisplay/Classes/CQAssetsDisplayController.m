@@ -836,17 +836,17 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
     
-    // 已经设置过
-    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", item.index]];
-    if (exists.count!=0) {
-        return ;
-    }
-    
     if (item.videoPlayer) {
         
         [item.videoPlayer stop];
         [item.videoPlayer free];
         item.videoPlayer = nil;
+    }
+    
+    // 已经设置过
+    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", item.index]];
+    if (exists.count!=0) {
+        return ;
     }
     
     item.progressView.hidden = YES;
