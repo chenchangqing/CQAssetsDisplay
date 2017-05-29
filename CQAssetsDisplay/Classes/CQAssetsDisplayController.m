@@ -52,7 +52,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setup];
-    [self reloadData];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -346,26 +345,32 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     _cellPadding = cellPadding > 0 ? cellPadding : 0;
     _fromView = fromView;
-    _currentPage = currentPage > 0 && currentPage < self.numberOfCells ? currentPage : 0;
+    
     __weak typeof(self) weakSelf = self;
     _animateShowBlock = ^() {
         
-        UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
-        CGRect frame = imageView.frame;
-        if (!CGRectEqualToRect(frame, CGRectZero)) {
+        // 重置contentSize
+        [weakSelf resetScrollViewContentSize];
+        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item) {
             
-            imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
-            [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
-            [UIView animateWithDuration:DEFAULT_DURATION
-                                  delay:0
-                                options:UIViewAnimationOptionCurveEaseInOut
-                             animations:^{
-                imageView.frame = frame;
-            } completion:^(BOOL finished) {
-                 
-                [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
-            }];
-        }
+            UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
+            CGRect frame = imageView.frame;
+            if (!CGRectEqualToRect(frame, CGRectZero)) {
+                
+                imageView.frame = [fromView convertRect:fromView.bounds toView:fromView.window];
+                [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
+                [UIView animateWithDuration:DEFAULT_DURATION
+                                      delay:0
+                                    options:UIViewAnimationOptionCurveEaseInOut
+                                 animations:^{
+                    imageView.frame = frame;
+                } completion:^(BOOL finished) {
+                     
+                    [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
+                    [weakSelf setHidePlayerIconWithItem:item];
+                }];
+            }
+        }];
     };
 }
 
@@ -522,7 +527,16 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 设置当前页
-- (void)setCurrentPage:(NSInteger)currentPage {
+- (void)setCurrentPage:(NSInteger)currentPage{
+    __weak typeof(self) weakSelf = self;
+    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item){
+        [weakSelf setHidePlayerIconWithItem:item];
+    }];
+}
+
+
+// 设置当前页
+- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayItem *))callback {
     
     // 延迟设置
     __weak typeof(self) weakSelf = self;
@@ -543,24 +557,24 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self changeAssetViewToInitialState:self.currentCell];
         _currentPage = currentPage;
         
-        CQAssetsDisplayItem *titem = [self setCellForIndex:_currentPage];
-        [self loadImageDataWithItem:titem andCompletion:^{
-            [weakSelf setHidePlayerIconWithItem:titem];
+        CQAssetsDisplayItem *citem = [self setCellForIndex:_currentPage];
+        [self loadImageDataWithItem:citem andCompletion:^{
+            callback(citem);
         }];
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
-            titem = [self setCellForIndex:currentPage + 1];
-            [self loadImageDataWithItem:titem andCompletion:^{
-                [weakSelf setHidePlayerIconWithItem:titem];
+            CQAssetsDisplayItem *ritem = [self setCellForIndex:currentPage + 1];
+            [self loadImageDataWithItem:ritem andCompletion:^{
+                [weakSelf setHidePlayerIconWithItem:ritem];
             }];
         }
         
         // 设置左边的视图
         if (currentPage > 0) {
-            titem = [self setCellForIndex:currentPage - 1];
-            [self loadImageDataWithItem:titem andCompletion:^{
-                [weakSelf setHidePlayerIconWithItem:titem];
+            CQAssetsDisplayItem *litem = [self setCellForIndex:currentPage - 1];
+            [self loadImageDataWithItem:litem andCompletion:^{
+                [weakSelf setHidePlayerIconWithItem:litem];
             }];
         }
         

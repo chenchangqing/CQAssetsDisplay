@@ -113,12 +113,12 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // 清除缓存
-    [self clearImagesCache];
+//    [self clearImagesCache];
     
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
     assetsDisplayController.dataSource = self;
-    [assetsDisplayController showWithFromView:cell andCellPadding:50 andCurrentPage:indexPath.row];
+    [assetsDisplayController showWithFromView:cell andCellPadding:20 andCurrentPage:indexPath.row];
 }
 
 // MARK: - CQAssetsDisplayControllerDataSource
