@@ -839,8 +839,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     if (item.videoPlayer) {
         
         [item.videoPlayer stop];
-        [item.videoPlayer free];
-        item.videoPlayer = nil;
+//        [item.videoPlayer free];
+//        item.videoPlayer = nil;
     }
     
     // 已经设置过
