@@ -355,7 +355,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             
             UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
             CGRect frame = imageView.frame;
-            NSLog(@"%@", NSStringFromCGRect(fromView.window.frame));
             CGRect startFrame = [fromView convertRect:fromView.bounds toView:[UIApplication sharedApplication].keyWindow];
             if (!CGRectEqualToRect(frame, CGRectZero)&&!CGRectEqualToRect(startFrame, CGRectZero)) {
                 
