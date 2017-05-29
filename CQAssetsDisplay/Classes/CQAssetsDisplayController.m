@@ -525,9 +525,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)setCurrentPage:(NSInteger)currentPage {
     
     // 延迟设置
+    __weak typeof(self) weakSelf = self;
     if (!_scrollView) {
         
-        __weak typeof(self) weakSelf = self;
         _scrollToPageBlock = ^() {
             weakSelf.currentPage = currentPage;
         };
@@ -543,16 +543,25 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self changeAssetViewToInitialState:self.currentCell];
         _currentPage = currentPage;
         
-        [self setCellForIndex:_currentPage];
+        CQAssetsDisplayItem *titem = [self setCellForIndex:_currentPage];
+        [self loadImageDataWithItem:titem andCompletion:^{
+            [weakSelf setHidePlayerIconWithItem:titem];
+        }];
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
-            [self setCellForIndex:currentPage + 1];
+            titem = [self setCellForIndex:currentPage + 1];
+            [self loadImageDataWithItem:titem andCompletion:^{
+                [weakSelf setHidePlayerIconWithItem:titem];
+            }];
         }
         
         // 设置左边的视图
         if (currentPage > 0) {
-            [self setCellForIndex:currentPage - 1];
+            titem = [self setCellForIndex:currentPage - 1];
+            [self loadImageDataWithItem:titem andCompletion:^{
+                [weakSelf setHidePlayerIconWithItem:titem];
+            }];
         }
         
         // 滑动到当前页
@@ -598,7 +607,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 设置cell
-- (CQAssetsDisplayCell * )setCellForIndex:(NSInteger)index {
+- (CQAssetsDisplayItem * )setCellForIndex:(NSInteger)index {
     
     // 已经设置过
     AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
@@ -714,13 +723,24 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     
     // 属性重置
-    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] != nil ? NO : YES;
-    item.videoPlayBtn.hidden = videoPlayBtnHidden;
     item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells-_cellPadding/** 关键 **/, self.scrollViewContentView.frame.size.height);
     item.index = index;
     [_alreadyShowItems addObject:item];
     
-    // 设置图片
+    return item;
+}
+
+// 设置播放按钮
+- (void)setHidePlayerIconWithItem:(CQAssetsDisplayItem *)item {
+    
+    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] != nil ? NO : YES;
+    item.videoPlayBtn.hidden = videoPlayBtnHidden;
+}
+
+// 加载图片
+- (void)loadImageDataWithItem:(CQAssetsDisplayItem *)item andCompletion:(void(^)())callback {
+    
+    CQAssetsDisplayCell *cell = item.cell;
     NSString *imageURLStr = [cell valueForKey:@"imageURL"];
     UIImage *placeHolder = [cell valueForKey: @"placeHolder"];
     UIImageView *imageView = [cell valueForKey:@"imageView"];
@@ -748,17 +768,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                     if (image != nil) {
                         item.progressView.progress = 1;
                         item.progressView.hidden = YES;
-                        item.videoPlayBtn.hidden = videoPlayBtnHidden;
+                        callback();
                     }
                 }
             }
         }];
     } else {
-        
-        item.videoPlayBtn.hidden = videoPlayBtnHidden;
+        callback();
     }
-    
-    return cell;
 }
 
 // MARK: - 资源
