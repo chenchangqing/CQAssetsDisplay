@@ -791,8 +791,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             
-            callback(NO);
             if (error) {
+                callback(NO);
                 [item.progressView showError];
             } else {
                 
@@ -802,7 +802,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                         item.progressView.progress = 1;
                         item.progressView.hidden = YES;
                         callback(YES);
+                    } else {
+                        callback(NO);
                     }
+                } else {
+                    callback(NO);
                 }
             }
         }];
