@@ -7,8 +7,8 @@
 //
 
 #import "CQAssetsDisplayController.h"
-#import "CQAssetsDisplayItem.h"
 #import "CQAssetsDisplayCellPrivate.h"
+#import "CQAssetsDisplayCell.h"
 #import <YYWebImage/YYWebImage.h>
 
 //默认动画时间，单位秒
@@ -16,7 +16,7 @@
 
 typedef void(^DelayBlock)();
 
-typedef NSMutableArray<CQAssetsDisplayItem *> AssetsDisplayItems;
+typedef NSMutableArray<CQAssetsDisplayCell *> AssetsDisplayCells;
 typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 @interface CQAssetsDisplayController ()<UIScrollViewDelegate> {
@@ -29,8 +29,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @property (nonatomic, weak) UIView             *scrollViewContentView;      // scrollView内容视图
 @property (nonatomic, weak) NSLayoutConstraint *scrollViewContentViewWidth; // scrollView内容视图宽
 
-@property (nonatomic, strong) AssetsDisplayItems    *alreadyShowItems;      // 正在 显示的cell数组（最多3个）
-@property (nonatomic, strong) AssetsDisplayItems    *prepareShowItems;      // 准备 显示的cell数组(复用)
+@property (nonatomic, strong) AssetsDisplayCells    *alreadyShowCells;      // 正在 显示的cell数组（最多3个）
+@property (nonatomic, strong) AssetsDisplayCells    *prepareShowCells;      // 准备 显示的cell数组(复用)
 @property (nonatomic, weak)   CQAssetsDisplayCell   *preCell;// 前一个cell
 @property (nonatomic, weak)   CQAssetsDisplayCell   *currentCell;           // 当前cell
 @property (nonatomic, weak)   CQAssetsDisplayCell   *nextCell;// 后一个cell
@@ -100,8 +100,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     // 初始化数组、字典及其他
-    _alreadyShowItems = [AssetsDisplayItems array];
-    _prepareShowItems = [AssetsDisplayItems array];
+    _alreadyShowCells = [AssetsDisplayCells array];
+    _prepareShowCells = [AssetsDisplayCells array];
     _isFromScrollViewDidScroll = NO;
     
     // scrollView控件
@@ -182,22 +182,22 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)clearCells {
     
     // 清除正在显示的cells
-    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
-        [item.cell removeFromSuperview];
-        [item.placeView removeFromSuperview];
-        [item.progressView removeFromSuperview];
-        [item.contentView removeFromSuperview];
+    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
+        [cell removeFromSuperview];
+        [cell.placeView removeFromSuperview];
+        [cell.progressView removeFromSuperview];
+        [cell.contentView removeFromSuperview];
     }
-    [_alreadyShowItems removeAllObjects];
+    [_alreadyShowCells removeAllObjects];
     
     // 清除准备显示的cells
-    for (CQAssetsDisplayItem *item in _prepareShowItems) {
-        [item.cell removeFromSuperview];
-        [item.placeView removeFromSuperview];
-        [item.progressView removeFromSuperview];
-        [item.contentView removeFromSuperview];
+    for (CQAssetsDisplayCell *cell in _prepareShowCells) {
+        [cell removeFromSuperview];
+        [cell.placeView removeFromSuperview];
+        [cell.progressView removeFromSuperview];
+        [cell.contentView removeFromSuperview];
     }
-    [_prepareShowItems removeAllObjects];
+    [_prepareShowCells removeAllObjects];
 }
 
 // 重置 scrollView 的 contentSize
@@ -271,8 +271,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     [self resetScrollViewContentSize];
     
     // 更新图片大小
-    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
-        [item.cell fix];
+    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
+        [cell fix];
     }
     [self scrollToCurrentPage];
     
@@ -352,7 +352,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 重置contentSize
         [weakSelf resetScrollViewContentSize];
-        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item, BOOL loadImageOK) {
+        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK) {
             
             UIImageView *imageView = weakSelf.currentCell.imageView;
             CGRect frame = imageView.frame;
@@ -417,15 +417,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     CQAssetsDisplayCell *cell;
     
-    AssetsDisplayItems *_prepareShowCellByFilter = [_prepareShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"cell.reuseIdentifier MATCHES %@", identifier]];
+    AssetsDisplayCells *_prepareShowCellByFilter = [_prepareShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"reuseIdentifier MATCHES %@", identifier]];
     
     if (_prepareShowCellByFilter.count == 0) {
         
         return nil;
     }else {
         
-        cell = [_prepareShowCellByFilter firstObject].cell;
-        [_prepareShowItems removeObject:[_prepareShowCellByFilter firstObject]];
+        cell = [_prepareShowCellByFilter firstObject];
+        [_prepareShowCells removeObject:[_prepareShowCellByFilter firstObject]];
     }
     return cell;
 }
@@ -441,27 +441,27 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 - (CQAssetsDisplayCell *)currentCell {
     
-    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage]];
+    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage]];
     if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0].cell;
+        return currentShowCellByFilter[0];
     }
     return nil;
 }
 
 - (CQAssetsDisplayCell *)preCell {
     
-    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage-1]];
+    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage-1]];
     if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0].cell;
+        return currentShowCellByFilter[0];
     }
     return nil;
 }
 
 - (CQAssetsDisplayCell *)nextCell {
     
-    AssetsDisplayItems *currentShowCellByFilter = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage+1]];
+    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage+1]];
     if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0].cell;
+        return currentShowCellByFilter[0];
     }
     return nil;
 }
@@ -507,14 +507,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 设置当前页
 - (void)setCurrentPage:(NSInteger)currentPage{
     __weak typeof(self) weakSelf = self;
-    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item, BOOL loadImageOK){
+    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
         [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
     }];
 }
 
 
 // 设置当前页
-- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayItem *,BOOL loadImageOk))callback {
+- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayCell *,BOOL loadImageOk))callback {
     
     // 延迟设置
     __weak typeof(self) weakSelf = self;
@@ -535,14 +535,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self changeAssetViewToInitialState:self.currentCell];
         _currentPage = currentPage;
         
-        CQAssetsDisplayItem *citem = [self setCellForIndex:_currentPage];
+        CQAssetsDisplayCell *citem = [self setCellForIndex:_currentPage];
         [self loadImageDataWithItem:citem andCompletion:^(BOOL loadImageOK){
             callback(citem,loadImageOK);
         }];
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
-            CQAssetsDisplayItem *ritem = [self setCellForIndex:currentPage + 1];
+            CQAssetsDisplayCell *ritem = [self setCellForIndex:currentPage + 1];
             [self loadImageDataWithItem:ritem andCompletion:^(BOOL loadImageOK){
                 [weakSelf setHidePlayerIconWithItem:ritem andLoadImageOk:loadImageOK];
             }];
@@ -550,7 +550,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 设置左边的视图
         if (currentPage > 0) {
-            CQAssetsDisplayItem *litem = [self setCellForIndex:currentPage - 1];
+            CQAssetsDisplayCell *litem = [self setCellForIndex:currentPage - 1];
             [self loadImageDataWithItem:litem andCompletion:^(BOOL loadImageOK){
                 [weakSelf setHidePlayerIconWithItem:litem andLoadImageOk:loadImageOK];
             }];
@@ -577,32 +577,32 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)removeCellToReUse {
     
     NSMutableArray *tempArray = [NSMutableArray array];
-    for (CQAssetsDisplayItem *item in _alreadyShowItems) {
+    for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
         // 判断某个view的页数与当前页数相差值为2的话，那么让这个view从视图上移除
-        if (abs((int)item.index - (int)_currentPage) >= 2){
-            [tempArray addObject:item];
+        if (abs((int)cell.index - (int)_currentPage) >= 2){
+            [tempArray addObject:cell];
             
             // item属性重置
-            UIImageView *imageView = item.cell.imageView;
+            UIImageView *imageView = cell.imageView;
             [imageView yy_cancelCurrentImageRequest];
             imageView.image = nil;
-            [item suspendDownload];
-            [item.cell setVideoUrl:nil];
-            [item.cell setImageURL:nil];
+            [cell suspendDownload];
+            [cell setVideoUrl:nil];
+            [cell setImageURL:nil];
             
             // 增加重用
-            [_prepareShowItems addObject:item];
+            [_prepareShowCells addObject:cell];
         }
     }
     // 移除显示
-    [_alreadyShowItems removeObjectsInArray:tempArray];
+    [_alreadyShowCells removeObjectsInArray:tempArray];
 }
 
 // 设置cell
-- (CQAssetsDisplayItem * )setCellForIndex:(NSInteger)index {
+- (CQAssetsDisplayCell * )setCellForIndex:(NSInteger)index {
     
     // 已经设置过
-    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
+    AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
     if (exists.count!=0) {
         return exists[0];
     }
@@ -618,23 +618,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         cell.delegate = self;
     }
     if (cell == nil) return nil;
-    CQAssetsDisplayItem *item = [cell valueForKey:@"item"];
-    if (item) {
+    if (cell.placeView) {
         
-        [_scrollView removeConstraint:item.placeViewWith];
+        [_scrollView removeConstraint:cell.placeViewWith];
         
-        NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:item.placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
+        NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:cell.placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
         [_scrollView addConstraint:placeViewWith];
-        item.placeViewWith = placeViewWith;
+        cell.placeViewWith = placeViewWith;
     } else {
-        
-        item = [CQAssetsDisplayItem new];
         
         // 创建占位
         UIView *placeView = [UIView new];
         placeView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView insertSubview:placeView atIndex:0];
-        item.placeView = placeView;
+        cell.placeView = placeView;
         
         placeView.translatesAutoresizingMaskIntoConstraints = NO;
         NSDictionary *views = NSDictionaryOfVariableBindings(placeView);
@@ -643,7 +640,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         NSLayoutConstraint *placeViewWith = [NSLayoutConstraint constraintWithItem:placeView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:index constant:0];
         [_scrollView addConstraint:placeViewWith];
-        item.placeViewWith = placeViewWith;
+        cell.placeViewWith = placeViewWith;
         
         // 增加playerView
         CQVideoPlayerView *playerView = [CQVideoPlayerView new];
@@ -651,18 +648,16 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:playerView];
-        item.videoPlayerView = playerView;
+        cell.videoPlayerView = playerView;
         
         views = @{@"playerView":playerView};
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[playerView]-0-|" options:0 metrics:nil views:views]];
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         
         // 增加cell
         [_scrollViewContentView addSubview:cell];
-        item.cell = cell;
-        [cell setValue:item forKey:@"item"];
         
         [cell fix];
         
@@ -672,7 +667,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         
         // 获得占位，然后设置cell的左边约束
-        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         // 内容视图
         UIView *contentView = [UIView new];
@@ -680,19 +675,19 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         contentView.translatesAutoresizingMaskIntoConstraints = NO;
         contentView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:contentView];
-        item.contentView = contentView;
+        cell.contentView = contentView;
         
         views = @{@"contentView":contentView};
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:item.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         // 进度视图
         ESPictureProgressView *progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
         progressView.userInteractionEnabled = NO;
         progressView.translatesAutoresizingMaskIntoConstraints = NO;
         [_scrollViewContentView addSubview:progressView];
-        item.progressView = progressView;
+        cell.progressView = progressView;
         
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:progressView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
@@ -702,11 +697,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 播放按钮
         UIButton *videoPlayBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         videoPlayBtn.tintColor = [UIColor whiteColor];
-        [videoPlayBtn addTarget:item action:@selector(playVideo) forControlEvents:UIControlEventTouchUpInside];
+        [videoPlayBtn addTarget:cell action:@selector(playVideo) forControlEvents:UIControlEventTouchUpInside];
         videoPlayBtn.translatesAutoresizingMaskIntoConstraints = NO;
         [videoPlayBtn setImage:[self videoPlayImage] forState:UIControlStateNormal];
         [_scrollViewContentView addSubview:videoPlayBtn];
-        item.videoPlayBtn = videoPlayBtn;
+        cell.videoPlayBtn = videoPlayBtn;
         
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
@@ -715,39 +710,38 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     
     // 属性重置
-    item.cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells-_cellPadding/** 关键 **/, self.scrollViewContentView.frame.size.height);
-    item.index = index;
-    [_alreadyShowItems addObject:item];
+    cell.frame = CGRectMake(self.scrollViewContentView.frame.size.width/self.numberOfCells*index, 0, self.scrollViewContentView.frame.size.width/self.numberOfCells-_cellPadding/** 关键 **/, self.scrollViewContentView.frame.size.height);
+    cell.index = index;
+    [_alreadyShowCells addObject:cell];
     
-    return item;
+    return cell;
 }
 
 // 设置播放按钮
-- (void)setHidePlayerIconWithItem:(CQAssetsDisplayItem *)item andLoadImageOk:(BOOL)loadImageOK {
+- (void)setHidePlayerIconWithItem:(CQAssetsDisplayCell *)cell andLoadImageOk:(BOOL)loadImageOK {
     
-    BOOL videoPlayBtnHidden = item.cell.videoUrl != nil ? NO : YES;
+    BOOL videoPlayBtnHidden = cell.videoUrl != nil ? NO : YES;
     if (videoPlayBtnHidden) {
         
         if (loadImageOK) {
-            item.progressView.hidden = YES;
+            cell.progressView.hidden = YES;
         } else {
-            [item.progressView showError];
-            item.progressView.hidden = NO;
+            [cell.progressView showError];
+            cell.progressView.hidden = NO;
         }
         
-        item.videoPlayBtn.hidden = YES;
+        cell.videoPlayBtn.hidden = YES;
     } else {
         
-        item.progressView.progress = 0.01;
-        item.progressView.hidden = YES;
-        item.videoPlayBtn.hidden = NO;
+        cell.progressView.progress = 0.01;
+        cell.progressView.hidden = YES;
+        cell.videoPlayBtn.hidden = NO;
     }
 }
 
 // 加载图片
-- (void)loadImageDataWithItem:(CQAssetsDisplayItem *)item andCompletion:(void(^)(BOOL))callback {
+- (void)loadImageDataWithItem:(CQAssetsDisplayCell *)cell andCompletion:(void(^)(BOOL))callback {
     
-    CQAssetsDisplayCell *cell = item.cell;
     NSString *imageURLStr = cell.imageURL;
     UIImage *placeHolder = cell.placeHolder;
     UIImageView *imageView = cell.imageView;
@@ -756,25 +750,25 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     if (imageURLStr) {
         
-        item.videoPlayBtn.hidden = YES;
-        item.progressView.hidden = NO;
-        item.progressView.progress = 0.01;
+        cell.videoPlayBtn.hidden = YES;
+        cell.progressView.hidden = NO;
+        cell.progressView.progress = 0.01;
         NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
         [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
             
-            item.progressView.progress = (CGFloat)receivedSize / expectedSize ;
+            cell.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
             
             if (error) {
                 callback(NO);
-                [item.progressView showError];
+                [cell.progressView showError];
             } else {
                 
                 if (stage == YYWebImageStageFinished) {
                     
                     if (image != nil) {
-                        item.progressView.progress = 1;
-                        item.progressView.hidden = YES;
+                        cell.progressView.progress = 1;
+                        cell.progressView.hidden = YES;
                         callback(YES);
                     } else {
                         callback(NO);
@@ -863,22 +857,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         assetsDisplayCell.scrollEnabled = YES;
     }
     
-    CQAssetsDisplayItem *item = [assetsDisplayCell valueForKey:@"item"];
-    
-    if (item.videoPlayer) {
+    if (assetsDisplayCell.videoPlayer) {
         
-        [item.videoPlayer stop];
+        [assetsDisplayCell.videoPlayer stop];
 //        [item.videoPlayer free];
 //        item.videoPlayer = nil;
     }
     
     // 已经设置过
-    AssetsDisplayItems *exists = [_alreadyShowItems filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", item.index]];
+    AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", assetsDisplayCell.index]];
     if (exists.count!=0) {
         return ;
     }
     
-    item.progressView.hidden = YES;
+    assetsDisplayCell.progressView.hidden = YES;
     
 }
 
