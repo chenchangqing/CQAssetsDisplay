@@ -8,17 +8,11 @@
 
 #import "CQAssetsDisplayCell.h"
 #import "CQAssetsDisplayItem.h"
+#import "CQAssetsDisplayCellPrivate.h"
 
 @interface CQAssetsDisplayCell ()
 
 @property (strong, nonatomic) UIView *fixView;
-
-@property (weak, nonatomic) CQAssetsDisplayItem *item;
-@property (copy, nonatomic) NSString *imageURL;
-@property (copy, nonatomic) NSString *videoUrl;
-@property (strong, nonatomic) UIImage *placeHolder;
-
-@property (nonatomic, weak) UIImageView   *imageView;
 
 @end
 

@@ -8,6 +8,7 @@
 
 #import "CQAssetsDisplayController.h"
 #import "CQAssetsDisplayItem.h"
+#import "CQAssetsDisplayCellPrivate.h"
 #import <YYWebImage/YYWebImage.h>
 
 //默认动画时间，单位秒
@@ -298,7 +299,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         if (endView) {
             
-            UIImageView *targetView = [weakSelf.currentCell valueForKey:@"imageView"];
+            UIImageView *targetView = weakSelf.currentCell.imageView;
             [weakSelf.currentVC.view addSubview:targetView];
             [UIView animateWithDuration:DEFAULT_DURATION delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
                 
@@ -353,7 +354,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [weakSelf resetScrollViewContentSize];
         [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayItem *item, BOOL loadImageOK) {
             
-            UIImageView *imageView = [weakSelf.currentCell valueForKey:@"imageView"];
+            UIImageView *imageView = weakSelf.currentCell.imageView;
             CGRect frame = imageView.frame;
             CGRect startFrame = [fromView convertRect:fromView.bounds toView:[UIApplication sharedApplication].keyWindow];
             if (!CGRectEqualToRect(frame, CGRectZero)) {
@@ -474,10 +475,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
         CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
         
-        //    NSLog(@"中心点：%@", NSStringFromCGPoint(point));
-        //    NSLog(@"self.scrollView.frame:%@",NSStringFromCGRect(self.scrollView.frame));
+//        NSLog(@"中心点：%@", NSStringFromCGPoint(point));
+//        NSLog(@"self.scrollView.frame:%@",NSStringFromCGRect(self.scrollView.frame));
 //        NSLog(@"scrollView.contentOffset.x：%f",scrollView.contentOffset.x);
-        //    NSLog(@"self.preCell.frame:%@",NSStringFromCGRect(self.preCell.frame));
+//        NSLog(@"self.preCell.frame:%@",NSStringFromCGRect(self.preCell.frame));
 //        NSLog(@"self.nextCell.frame:%@",NSStringFromCGRect(self.nextCell.frame));
 //        NSLog(@"self.scrollViewContentView.frame:%@",NSStringFromCGRect(self.scrollViewContentView.frame));
         
@@ -488,21 +489,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 
                 _isFromScrollViewDidScroll = YES;
                 self.currentPage = willGoPage;
-                NSLog(@"翻页：%d", willGoPage);
             }
         }
-        
-        //    if (CGRectGetMidX(self.preCell.frame) > point.x) {// 左滑
-        //
-        //        if (!_isFiting) {
-        //            NSInteger willGoPage = _currentPage-1;
-        //            if (willGoPage >=0) {
-        //
-        //                self.currentPage = willGoPage;
-        //                NSLog(@"翻页：%d", willGoPage);
-        //            }
-        //        }
-        //    }
         
         if (CGRectContainsPoint(self.nextCell.frame, point)) {// 右滑
             
@@ -511,22 +499,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 
                 _isFromScrollViewDidScroll = YES;
                 self.currentPage = willGoPage;
-                NSLog(@"翻页：%d", willGoPage);
             }
         }
-        
-        //    if (CGRectGetMidX(self.nextCell.frame) < point.x) {// 右滑
-        //
-        //        if (!_isFiting) {
-        //
-        //            NSInteger willGoPage = _currentPage+1;
-        //            if (willGoPage < self.numberOfCells) {
-        //                
-        //                self.currentPage = willGoPage;
-        //                NSLog(@"翻页：%d", willGoPage);
-        //            }
-        //        }
-        //    }
     }
 }
 
@@ -609,12 +583,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [tempArray addObject:item];
             
             // item属性重置
-            UIImageView *imageView = [item.cell valueForKey:@"imageView"];
+            UIImageView *imageView = item.cell.imageView;
             [imageView yy_cancelCurrentImageRequest];
             imageView.image = nil;
             [item suspendDownload];
-            [item.cell setValue:nil forKey:@"videoUrl"];
-            [item.cell setValue:nil forKey:@"imageURL"];
+            [item.cell setVideoUrl:nil];
+            [item.cell setImageURL:nil];
             
             // 增加重用
             [_prepareShowItems addObject:item];
@@ -751,7 +725,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 设置播放按钮
 - (void)setHidePlayerIconWithItem:(CQAssetsDisplayItem *)item andLoadImageOk:(BOOL)loadImageOK {
     
-    BOOL videoPlayBtnHidden = [item.cell valueForKey:@"videoUrl"] != nil ? NO : YES;
+    BOOL videoPlayBtnHidden = item.cell.videoUrl != nil ? NO : YES;
     if (videoPlayBtnHidden) {
         
         if (loadImageOK) {
@@ -774,9 +748,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)loadImageDataWithItem:(CQAssetsDisplayItem *)item andCompletion:(void(^)(BOOL))callback {
     
     CQAssetsDisplayCell *cell = item.cell;
-    NSString *imageURLStr = [cell valueForKey:@"imageURL"];
-    UIImage *placeHolder = [cell valueForKey: @"placeHolder"];
-    UIImageView *imageView = [cell valueForKey:@"imageView"];
+    NSString *imageURLStr = cell.imageURL;
+    UIImage *placeHolder = cell.placeHolder;
+    UIImageView *imageView = cell.imageView;
     if (placeHolder) {
         imageView.image = placeHolder;
     }
@@ -841,7 +815,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     if (![scrollView isKindOfClass:[CQAssetsDisplayCell class]])
         return nil;
-    return [scrollView valueForKey:@"imageView"];
+    return ((CQAssetsDisplayCell *)scrollView).imageView;
 }
 
 //处理双击放大、缩小

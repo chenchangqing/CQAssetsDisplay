@@ -8,6 +8,7 @@
 
 #import "CQAssetsDisplayItem.h"
 #import "MCDownloadManager.h"
+#import "CQAssetsDisplayCellPrivate.h"
 
 @interface CQAssetsDisplayItem ()<CQVideoPlayerDelegate>
 
@@ -68,7 +69,7 @@
 - (void)getVideoURL:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress// 下载资源(实现先下载，后播放)
 {
     
-    NSString *downloadURL = [_cell valueForKey:@"videoUrl"];
+    NSString *downloadURL = _cell.videoUrl;
     MCDownloadReceipt *receipt = [[MCDownloadManager defaultInstance] downloadReceiptForURL:downloadURL];
     
     if (receipt.state == MCDownloadStateDownloading) {// 正在下载
@@ -111,7 +112,7 @@
 - (void)videoPlayerFinishToPlay:(CQVideoPlayer *)videoPlayer {
     
     _cell.hidden = NO;
-    if ([_cell valueForKey:@"videoUrl"]) {// 避免播放显示错误
+    if (_cell.videoUrl) {// 避免播放显示错误
         
         _videoPlayBtn.hidden = NO;
     } else {
@@ -142,7 +143,7 @@
 - (void)suspendDownload {
     
     
-    NSString *downloadURL = [_cell valueForKey:@"videoUrl"];
+    NSString *downloadURL = _cell.videoUrl;
     if (downloadURL) {
         
         MCDownloadReceipt *receipt = [[MCDownloadManager defaultInstance] downloadReceiptForURL:downloadURL];
