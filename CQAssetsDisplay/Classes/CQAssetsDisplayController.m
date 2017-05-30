@@ -583,9 +583,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [tempArray addObject:cell];
             
             // item属性重置
-            UIImageView *imageView = cell.imageView;
-            [imageView yy_cancelCurrentImageRequest];
-            imageView.image = nil;
+            
+            [cell.imageView yy_cancelCurrentImageRequest];
+            cell.imageView.image = nil;
+            cell.videoPlayBtn.hidden = YES;
             [cell suspendDownload];
             [cell setVideoUrl:nil];
             [cell setImageURL:nil];
