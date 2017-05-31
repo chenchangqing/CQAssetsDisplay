@@ -78,6 +78,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         _animateShowBlock();
         _animateShowBlock = nil;
     }
+    
+    //禁止左滑动返回
+    if ([self.navigationController respondsToSelector:@selector(interactivePopGestureRecognizer)]) {
+        self.navigationController.interactivePopGestureRecognizer.enabled = NO;
+    }
 }
 
 - (BOOL)shouldAutorotate{
