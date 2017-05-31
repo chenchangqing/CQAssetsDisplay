@@ -8,6 +8,7 @@
 #import "ESPictureProgressView.h"
 #import "CQVideoPlayer.h"
 #import "CQVideoPlayerView.h"
+#import "CQVideoControlView.h"
 
 @interface CQAssetsDisplayCell ()
 
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) CQVideoPlayer         *videoPlayer;           // 播放器
 @property (weak, nonatomic) CQVideoPlayerView       *videoPlayerView;       // 播放视频
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
+@property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;              // 左边距约束
 @property (nonatomic, copy, readonly) NSString *reuseIdentifier;            // 重用id

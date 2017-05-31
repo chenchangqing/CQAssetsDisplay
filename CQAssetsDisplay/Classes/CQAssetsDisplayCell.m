@@ -394,6 +394,9 @@
     
     [_contentView removeFromSuperview];
     _contentView = nil;
+    
+    [_videoControlView removeFromSuperview];
+    _videoControlView = nil;
 }
 
 @end
