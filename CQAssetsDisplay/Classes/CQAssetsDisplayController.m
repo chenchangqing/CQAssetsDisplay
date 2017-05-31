@@ -20,8 +20,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 @interface CQAssetsDisplayController ()<UIScrollViewDelegate> {
     
-    BOOL _isFromScrollViewDidScroll;// 当载scrollViewDidScroll方法中设置当前页，不需要改变contentoffset
-    BOOL _isFiting;// 正在适配
 }
 
 @property (nonatomic, weak) UIScrollView       *scrollView;                 // scrollView控件
@@ -101,7 +99,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 初始化数组、字典及其他
     _alreadyShowCells = [AssetsDisplayCells array];
     _prepareShowCells = [AssetsDisplayCells array];
-    _isFromScrollViewDidScroll = NO;
     
     // scrollView控件
     UIScrollView *scrollView = [UIScrollView new];
@@ -247,8 +244,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 适配旋转
 - (void)fitOrientation:(CGAffineTransform) transform {
     
-    _isFiting = YES;
-    
     CGFloat duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
     [UIView animateWithDuration:duration animations:^{
         
@@ -273,9 +268,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
         [cell fix];
     }
-    [self scrollToCurrentPage];
     
-    _isFiting = NO;
+    [self scrollToCurrentPage];
 }
 
 // MARK: - 显示 or 退出
@@ -351,7 +345,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 重置contentSize
         [weakSelf resetScrollViewContentSize];
-        [weakSelf setCurrentPage:currentPage andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK) {
+        [weakSelf setCurrentPage:currentPage andIsScrollToCurrentPage:YES andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK) {
             
             UIImageView *imageView = weakSelf.currentCell.imageView;
             CGRect frame = imageView.frame;
@@ -486,8 +480,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             NSInteger willGoPage = _currentPage-1;
             if (willGoPage >=0) {
                 
-                _isFromScrollViewDidScroll = YES;
-                self.currentPage = willGoPage;
+                [self setCurrentPage:willGoPage andIsScrollToCurrentPage:NO andCallback:^(CQAssetsDisplayCell *cell, BOOL loadImageOk) {
+                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk];
+                }];
             }
         }
         
@@ -496,8 +491,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             NSInteger willGoPage = _currentPage+1;
             if (willGoPage < self.numberOfCells) {
                 
-                _isFromScrollViewDidScroll = YES;
-                self.currentPage = willGoPage;
+                [self setCurrentPage:willGoPage andIsScrollToCurrentPage:NO andCallback:^(CQAssetsDisplayCell *cell, BOOL loadImageOk) {
+                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk];
+                }];
             }
         }
     }
@@ -506,14 +502,16 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 设置当前页
 - (void)setCurrentPage:(NSInteger)currentPage{
     __weak typeof(self) weakSelf = self;
-    [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
+    [self setCurrentPage:currentPage andIsScrollToCurrentPage:YES andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
         [item setHidePlayerIconWithLoadImageOk:loadImageOK];
     }];
 }
 
 
 // 设置当前页
-- (void)setCurrentPage:(NSInteger)currentPage andCallback:(void(^)(CQAssetsDisplayCell *,BOOL loadImageOk))callback {
+- (void)setCurrentPage:(NSInteger)currentPage
+    andIsScrollToCurrentPage:(BOOL)isScrollToCurrentPage/* 当载scrollViewDidScroll方法中设置当前页，不需要改变*/
+    andCallback:(void(^)(CQAssetsDisplayCell *,BOOL loadImageOk))callback {
     
     // 延迟设置
     __weak typeof(self) weakSelf = self;
@@ -559,17 +557,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         }
         
         // 滑动到当前页
-        [self scrollToCurrentPage];
+        if (isScrollToCurrentPage) {
+            
+            [self scrollToCurrentPage];
+        }
     }
 }
 
 // 滑动到当前页
 - (void)scrollToCurrentPage {
-    
-    if (_isFromScrollViewDidScroll) {
-        _isFromScrollViewDidScroll = NO;
-        return;
-    }
     
     CGFloat width = _scrollViewContentView.frame.size.width/self.numberOfCells;
     [_scrollView setContentOffset:CGPointMake(width*_currentPage, 0) animated:NO];
