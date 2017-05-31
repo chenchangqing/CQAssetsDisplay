@@ -526,8 +526,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self.currentCell changeAssetViewToInitialState];
         _currentPage = currentPage;
         
-        if (isScrollToCurrentPage) {// 已经加载过，不需要继续加载
-            
+        AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage]];
+        if (exists.count==0) {
             CQAssetsDisplayCell *citem = [self setCellForIndex:_currentPage];
             __weak typeof(citem) weakCitem = citem;
             [weakCitem loadImageDataWithCompletion:^(BOOL loadImageOK){
@@ -537,20 +537,30 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
-            CQAssetsDisplayCell *ritem = [self setCellForIndex:currentPage + 1];
-            __weak typeof(ritem) weakRitem = ritem;
-            [weakRitem loadImageDataWithCompletion:^(BOOL loadImageOK){
-                [weakRitem setHidePlayerIconWithLoadImageOk:loadImageOK];
-            }];
+            
+            AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage+1]];
+            if (exists.count==0) {
+                
+                CQAssetsDisplayCell *ritem = [self setCellForIndex:currentPage + 1];
+                __weak typeof(ritem) weakRitem = ritem;
+                [weakRitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+                    [weakRitem setHidePlayerIconWithLoadImageOk:loadImageOK];
+                }];
+            }
         }
         
         // 设置左边的视图
         if (currentPage > 0) {
-            CQAssetsDisplayCell *litem = [self setCellForIndex:currentPage - 1];
-            __weak typeof(litem) weakLitem = litem;
-            [weakLitem loadImageDataWithCompletion:^(BOOL loadImageOK){
-                [weakLitem setHidePlayerIconWithLoadImageOk:loadImageOK];
-            }];
+            
+            AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage-1]];
+            if (exists.count==0) {
+                
+                CQAssetsDisplayCell *litem = [self setCellForIndex:currentPage - 1];
+                __weak typeof(litem) weakLitem = litem;
+                [weakLitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+                    [weakLitem setHidePlayerIconWithLoadImageOk:loadImageOK];
+                }];
+            }
         }
         
         // 滑动到当前页
@@ -590,12 +600,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 // 设置cell
 - (CQAssetsDisplayCell * )setCellForIndex:(NSInteger)index {
-    
-    // 已经设置过
-    AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", index]];
-    if (exists.count!=0) {
-        return exists[0];
-    }
     
     // 设置重用
     [self removeCellToReUse];
