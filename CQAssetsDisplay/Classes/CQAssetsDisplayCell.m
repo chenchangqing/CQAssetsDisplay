@@ -60,14 +60,7 @@
 }
 
 - (void)dealloc {
-    
-    if (_videoPlayer) {
-        
-        [_videoPlayer free];
-        _videoPlayer = nil;
-    }
-    [self suspendDownload];
-    [_imageView removeObserver:self forKeyPath:@"image"];
+    [self free];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
@@ -378,6 +371,32 @@
         
         [self.videoPlayer stop];
     }
+}
+// 释放
+- (void)free {
+    
+    [self suspendDownload];
+    [self.imageView yy_cancelCurrentImageRequest];
+    
+    [_imageView removeObserver:self forKeyPath:@"image"];
+    
+    [_placeView removeFromSuperview];
+    _placeView = nil;
+    
+    [_progressView removeFromSuperview];
+    _progressView = nil;
+    
+    [_videoPlayer free];
+    _videoPlayer = nil;
+    
+    [_videoPlayerView removeFromSuperview];
+    _videoPlayerView = nil;
+    
+    [_videoPlayBtn removeFromSuperview];
+    _videoPlayBtn = nil;
+    
+    [_contentView removeFromSuperview];
+    _contentView = nil;
 }
 
 @end

@@ -137,26 +137,8 @@
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
-    if (index == 1
-        || index == 2
-        || index == 4
-        || index == 5
-        || index == 7) {
-        
-        [cell setImageUrl:photoStr andPlaceHolder:nil];
-    }
-
-    if (index == 1
-        || index == 3
-        || index == 5
-        || index == 7
-        || index == 11) {
-        
-        [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
-    } else {
-        
-        [cell setVideoUrl:nil];
-    }
+//    [cell setImageUrl:photoStr andPlaceHolder:nil];
+    [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
     
     return cell;
 }

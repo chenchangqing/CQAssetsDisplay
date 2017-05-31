@@ -28,9 +28,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 @property (nonatomic, strong) AssetsDisplayCells    *alreadyShowCells;      // 正在 显示的cell数组（最多3个）
 @property (nonatomic, strong) AssetsDisplayCells    *prepareShowCells;      // 准备 显示的cell数组(复用)
-@property (nonatomic, weak)   CQAssetsDisplayCell   *preCell;// 前一个cell
+@property (nonatomic, weak)   CQAssetsDisplayCell   *preCell;               // 前一个cell
 @property (nonatomic, weak)   CQAssetsDisplayCell   *currentCell;           // 当前cell
-@property (nonatomic, weak)   CQAssetsDisplayCell   *nextCell;// 后一个cell
+@property (nonatomic, weak)   CQAssetsDisplayCell   *nextCell;              // 后一个cell
 
 @property (nonatomic, strong) DelayBlock scrollToPageBlock;                 // scrollview还没加载，延迟设置当前页
 @property (nonatomic, strong) DelayBlock animateShowBlock;                  // 动画显示
@@ -180,18 +180,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     // 清除正在显示的cells
     for (CQAssetsDisplayCell *cell in _alreadyShowCells) {
         [cell removeFromSuperview];
-        [cell.placeView removeFromSuperview];
-        [cell.progressView removeFromSuperview];
-        [cell.contentView removeFromSuperview];
     }
     [_alreadyShowCells removeAllObjects];
     
     // 清除准备显示的cells
     for (CQAssetsDisplayCell *cell in _prepareShowCells) {
         [cell removeFromSuperview];
-        [cell.placeView removeFromSuperview];
-        [cell.progressView removeFromSuperview];
-        [cell.contentView removeFromSuperview];
     }
     [_prepareShowCells removeAllObjects];
 }
