@@ -316,7 +316,12 @@
     }
 }
 
-- (void)setHidePlayerIconWithLoadImageOk:(BOOL)loadImageOK {
+- (void)setHidePlayerIconWithLoadImageOk:(BOOL)loadImageOK andIndex:(NSInteger)page{
+    
+    // 解决复用问题
+    if (page != _index) {
+        return;
+    }
     
     BOOL videoPlayBtnHidden = self.videoUrl != nil ? NO : YES;
     if (videoPlayBtnHidden) {

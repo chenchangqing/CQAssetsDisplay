@@ -356,11 +356,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 } completion:^(BOOL finished) {
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
-                    [item setHidePlayerIconWithLoadImageOk:loadImageOK];
+                    [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
                 }];
             } else {
                 
-                [item setHidePlayerIconWithLoadImageOk:loadImageOK];
+                [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
             }
         }];
     };
@@ -472,7 +472,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             if (willGoPage >=0) {
                 
                 [self setCurrentPage:willGoPage andIsScrollToCurrentPage:NO andCallback:^(CQAssetsDisplayCell *cell, BOOL loadImageOk) {
-                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk];
+                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk andIndex:willGoPage];
                 }];
             }
         }
@@ -483,7 +483,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             if (willGoPage < self.numberOfCells) {
                 
                 [self setCurrentPage:willGoPage andIsScrollToCurrentPage:NO andCallback:^(CQAssetsDisplayCell *cell, BOOL loadImageOk) {
-                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk];
+                    [cell setHidePlayerIconWithLoadImageOk:loadImageOk andIndex:willGoPage];
                 }];
             }
         }
@@ -494,7 +494,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)setCurrentPage:(NSInteger)currentPage{
     __weak typeof(self) weakSelf = self;
     [self setCurrentPage:currentPage andIsScrollToCurrentPage:YES andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
-        [item setHidePlayerIconWithLoadImageOk:loadImageOK];
+        [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
     }];
 }
 
@@ -535,13 +535,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
             
-            AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage+1]];
+            exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage+1]];
             if (exists.count==0) {
                 
                 CQAssetsDisplayCell *ritem = [self setCellForIndex:currentPage + 1];
                 __weak typeof(ritem) weakRitem = ritem;
                 [weakRitem loadImageDataWithCompletion:^(BOOL loadImageOK){
-                    [weakRitem setHidePlayerIconWithLoadImageOk:loadImageOK];
+                    [weakRitem setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage + 1];
                 }];
             }
         }
@@ -549,13 +549,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 设置左边的视图
         if (currentPage > 0) {
             
-            AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage-1]];
+            exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", currentPage-1]];
             if (exists.count==0) {
                 
                 CQAssetsDisplayCell *litem = [self setCellForIndex:currentPage - 1];
                 __weak typeof(litem) weakLitem = litem;
                 [weakLitem loadImageDataWithCompletion:^(BOOL loadImageOK){
-                    [weakLitem setHidePlayerIconWithLoadImageOk:loadImageOK];
+                    [weakLitem setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage - 1];
                 }];
             }
         }
