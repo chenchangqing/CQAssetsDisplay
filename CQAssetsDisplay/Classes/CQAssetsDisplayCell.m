@@ -96,19 +96,9 @@
         _fixView = nil;
         [self layoutImageView:self.bounds.size];
     }
-    
-    //NSLog(@"%@", NSStringFromCGRect(self.frame));
 }
 
-// 更新图片布局
-//- (void)setFrame:(CGRect)frame {
-//    [super setFrame:frame];
-//    [self layoutImageView:frame.size];
-//}
-
 - (void)layoutImageView:(CGSize)size {
-    
-//    NSLog(@"ImageViewSize:%@",NSStringFromCGSize(size));
     
     if (!_imageView.image) {
         return;
