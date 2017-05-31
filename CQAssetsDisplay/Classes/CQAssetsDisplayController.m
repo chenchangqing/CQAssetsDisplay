@@ -344,7 +344,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             UIImageView *imageView = weakSelf.currentCell.imageView;
             CGRect frame = imageView.frame;
             CGRect startFrame = [fromView convertRect:fromView.bounds toView:[UIApplication sharedApplication].keyWindow];
-            if (!CGRectEqualToRect(frame, CGRectZero)) {
+            if (!CGRectEqualToRect(frame, CGRectZero) && weakSelf.currentPage == currentPage/**滑动后，判断当前页**/) {
                 
                 imageView.frame = startFrame;
                 [UIApplication sharedApplication].delegate.window.userInteractionEnabled = NO;
@@ -428,25 +428,22 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 - (CQAssetsDisplayCell *)currentCell {
     
-    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage]];
-    if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0];
-    }
-    return nil;
+    return [self cellForIndex:_currentPage];
 }
 
 - (CQAssetsDisplayCell *)preCell {
     
-    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage-1]];
-    if (currentShowCellByFilter.count > 0) {
-        return currentShowCellByFilter[0];
-    }
-    return nil;
+    return [self cellForIndex:_currentPage - 1];
 }
 
 - (CQAssetsDisplayCell *)nextCell {
     
-    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", _currentPage+1]];
+    return [self cellForIndex:_currentPage + 1];
+}
+
+- (CQAssetsDisplayCell *)cellForIndex:(NSInteger) page {
+    
+    AssetsDisplayCells *currentShowCellByFilter = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", page]];
     if (currentShowCellByFilter.count > 0) {
         return currentShowCellByFilter[0];
     }
