@@ -31,8 +31,14 @@
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;
 
 - (void)playVideo;
-
-- (void)suspendDownload;
+// 加载图片
+- (void)loadImageDataWithCompletion:(void(^)(BOOL))callback;
+// 设置播放按钮
+- (void)setHidePlayerIconWithLoadImageOk:(BOOL)loadImageOK;
+// 变为重用
+- (void)changeToReuse;
+// 恢复没有缩放
+- (void)changeAssetViewToInitialState;
 
 @end
 

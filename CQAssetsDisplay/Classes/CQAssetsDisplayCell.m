@@ -9,6 +9,7 @@
 #import "CQAssetsDisplayCell.h"
 #import "CQAssetsDisplayCellPrivate.h"
 #import "MCDownloadManager.h"
+#import <YYWebImage/YYWebImage.h>
 
 @interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate>
 
@@ -285,6 +286,97 @@
         if (receipt.state == MCDownloadStateDownloading) {
             [[MCDownloadManager defaultInstance] suspendWithDownloadReceipt:receipt];
         }
+    }
+}
+
+- (void)loadImageDataWithCompletion:(void (^)(BOOL))callback {
+    
+    NSString *imageURLStr = self.imageURL;
+    UIImage *placeHolder = self.placeHolder;
+    UIImageView *imageView = self.imageView;
+    if (placeHolder) {
+        imageView.image = placeHolder;
+    }
+    if (imageURLStr) {
+        
+        self.videoPlayBtn.hidden = YES;
+        self.progressView.hidden = NO;
+        self.progressView.progress = 0.01;
+        NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
+        __weak typeof(self) weakSelf = self;
+        [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+            
+            weakSelf.progressView.progress = (CGFloat)receivedSize / expectedSize ;
+        } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
+            
+            if (error) {
+                callback(NO);
+                [weakSelf.progressView showError];
+            } else {
+                
+                if (stage == YYWebImageStageFinished) {
+                    
+                    if (image != nil) {
+                        weakSelf.progressView.progress = 1;
+                        weakSelf.progressView.hidden = YES;
+                        callback(YES);
+                    } else {
+                        callback(NO);
+                    }
+                } else {
+                    callback(NO);
+                }
+            }
+        }];
+    } else {
+        callback(NO);
+    }
+}
+
+- (void)setHidePlayerIconWithLoadImageOk:(BOOL)loadImageOK {
+    
+    BOOL videoPlayBtnHidden = self.videoUrl != nil ? NO : YES;
+    if (videoPlayBtnHidden) {
+        
+        if (loadImageOK) {
+            self.progressView.hidden = YES;
+        } else {
+            [self.progressView showError];
+            self.progressView.hidden = NO;
+        }
+        
+        self.videoPlayBtn.hidden = YES;
+    } else {
+        
+        self.progressView.progress = 0.01;
+        self.progressView.hidden = YES;
+        self.videoPlayBtn.hidden = NO;
+    }
+}
+
+// 变为重用
+- (void)changeToReuse {
+    
+    [self.imageView yy_cancelCurrentImageRequest];
+    self.imageView.image = nil;
+    self.videoPlayBtn.hidden = YES;
+    self.progressView.hidden = YES;
+    [self suspendDownload];
+    [self setVideoUrl:nil];
+    [self setImageURL:nil];
+}
+// 恢复没有缩放
+- (void)changeAssetViewToInitialState {
+    
+    if (self.zoomScale >= 1 + FLT_EPSILON) {
+        self.scrollEnabled = NO;
+        [self setZoomScale:1.0 animated:NO];
+        self.scrollEnabled = YES;
+    }
+    
+    if (self.videoPlayer) {
+        
+        [self.videoPlayer stop];
     }
 }
 

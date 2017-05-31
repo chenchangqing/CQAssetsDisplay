@@ -9,7 +9,6 @@
 #import "CQAssetsDisplayController.h"
 #import "CQAssetsDisplayCellPrivate.h"
 #import "CQAssetsDisplayCell.h"
-#import <YYWebImage/YYWebImage.h>
 
 //默认动画时间，单位秒
 #define DEFAULT_DURATION 0.25
@@ -369,11 +368,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                 } completion:^(BOOL finished) {
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
-                    [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
+                    [item setHidePlayerIconWithLoadImageOk:loadImageOK];
                 }];
             } else {
                 
-                [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
+                [item setHidePlayerIconWithLoadImageOk:loadImageOK];
             }
         }];
     };
@@ -508,7 +507,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)setCurrentPage:(NSInteger)currentPage{
     __weak typeof(self) weakSelf = self;
     [self setCurrentPage:currentPage andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
-        [weakSelf setHidePlayerIconWithItem:item andLoadImageOk:loadImageOK];
+        [item setHidePlayerIconWithLoadImageOk:loadImageOK];
     }];
 }
 
@@ -532,27 +531,30 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         && currentPage >= 0
         && _scrollView) {
         
-        [self changeAssetViewToInitialState:self.currentCell];
+        [self.currentCell changeAssetViewToInitialState];
         _currentPage = currentPage;
         
         CQAssetsDisplayCell *citem = [self setCellForIndex:_currentPage];
-        [self loadImageDataWithItem:citem andCompletion:^(BOOL loadImageOK){
-            callback(citem,loadImageOK);
+        __weak typeof(citem) weakCitem = citem;
+        [weakCitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+            callback(weakCitem,loadImageOK);
         }];
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
             CQAssetsDisplayCell *ritem = [self setCellForIndex:currentPage + 1];
-            [self loadImageDataWithItem:ritem andCompletion:^(BOOL loadImageOK){
-                [weakSelf setHidePlayerIconWithItem:ritem andLoadImageOk:loadImageOK];
+            __weak typeof(ritem) weakRitem = ritem;
+            [weakRitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+                [weakRitem setHidePlayerIconWithLoadImageOk:loadImageOK];
             }];
         }
         
         // 设置左边的视图
         if (currentPage > 0) {
             CQAssetsDisplayCell *litem = [self setCellForIndex:currentPage - 1];
-            [self loadImageDataWithItem:litem andCompletion:^(BOOL loadImageOK){
-                [weakSelf setHidePlayerIconWithItem:litem andLoadImageOk:loadImageOK];
+            __weak typeof(litem) weakLitem = litem;
+            [weakLitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+                [weakLitem setHidePlayerIconWithLoadImageOk:loadImageOK];
             }];
         }
         
@@ -583,13 +585,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [tempArray addObject:cell];
             
             // item属性重置
-            
-            [cell.imageView yy_cancelCurrentImageRequest];
-            cell.imageView.image = nil;
-            cell.videoPlayBtn.hidden = YES;
-            [cell suspendDownload];
-            [cell setVideoUrl:nil];
-            [cell setImageURL:nil];
+            [cell changeToReuse];
             
             // 增加重用
             [_prepareShowCells addObject:cell];
@@ -718,72 +714,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     return cell;
 }
 
-// 设置播放按钮
-- (void)setHidePlayerIconWithItem:(CQAssetsDisplayCell *)cell andLoadImageOk:(BOOL)loadImageOK {
-    
-    BOOL videoPlayBtnHidden = cell.videoUrl != nil ? NO : YES;
-    if (videoPlayBtnHidden) {
-        
-        if (loadImageOK) {
-            cell.progressView.hidden = YES;
-        } else {
-            [cell.progressView showError];
-            cell.progressView.hidden = NO;
-        }
-        
-        cell.videoPlayBtn.hidden = YES;
-    } else {
-        
-        cell.progressView.progress = 0.01;
-        cell.progressView.hidden = YES;
-        cell.videoPlayBtn.hidden = NO;
-    }
-}
-
-// 加载图片
-- (void)loadImageDataWithItem:(CQAssetsDisplayCell *)cell andCompletion:(void(^)(BOOL))callback {
-    
-    NSString *imageURLStr = cell.imageURL;
-    UIImage *placeHolder = cell.placeHolder;
-    UIImageView *imageView = cell.imageView;
-    if (placeHolder) {
-        imageView.image = placeHolder;
-    }
-    if (imageURLStr) {
-        
-        cell.videoPlayBtn.hidden = YES;
-        cell.progressView.hidden = NO;
-        cell.progressView.progress = 0.01;
-        NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
-        [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-            
-            cell.progressView.progress = (CGFloat)receivedSize / expectedSize ;
-        } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {
-            
-            if (error) {
-                callback(NO);
-                [cell.progressView showError];
-            } else {
-                
-                if (stage == YYWebImageStageFinished) {
-                    
-                    if (image != nil) {
-                        cell.progressView.progress = 1;
-                        cell.progressView.hidden = YES;
-                        callback(YES);
-                    } else {
-                        callback(NO);
-                    }
-                } else {
-                    callback(NO);
-                }
-            }
-        }];
-    } else {
-        callback(NO);
-    }
-}
-
 // MARK: - 资源
 
 - (NSBundle *)assetsBundle
@@ -846,32 +776,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     }
     
     zoomImageView.frame = frame;
-    
-}
-
-// 恢复没有缩放
-- (void)changeAssetViewToInitialState:(CQAssetsDisplayCell *)assetsDisplayCell {
-    
-    if (assetsDisplayCell.zoomScale >= 1 + FLT_EPSILON) {
-        assetsDisplayCell.scrollEnabled = NO;
-        [assetsDisplayCell setZoomScale:1.0 animated:NO];
-        assetsDisplayCell.scrollEnabled = YES;
-    }
-    
-    if (assetsDisplayCell.videoPlayer) {
-        
-        [assetsDisplayCell.videoPlayer stop];
-//        [item.videoPlayer free];
-//        item.videoPlayer = nil;
-    }
-    
-    // 已经设置过
-    AssetsDisplayCells *exists = [_alreadyShowCells filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"index == %d", assetsDisplayCell.index]];
-    if (exists.count!=0) {
-        return ;
-    }
-    
-    assetsDisplayCell.progressView.hidden = YES;
     
 }
 
