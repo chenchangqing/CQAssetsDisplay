@@ -352,6 +352,8 @@
     
     [self.imageView yy_cancelCurrentImageRequest];
     self.imageView.image = nil;
+    [_videoPlayer free];
+    _videoPlayer = nil;
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
     [self suspendDownload];

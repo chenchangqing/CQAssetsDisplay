@@ -526,11 +526,14 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [self.currentCell changeAssetViewToInitialState];
         _currentPage = currentPage;
         
-        CQAssetsDisplayCell *citem = [self setCellForIndex:_currentPage];
-        __weak typeof(citem) weakCitem = citem;
-        [weakCitem loadImageDataWithCompletion:^(BOOL loadImageOK){
-            callback(weakCitem,loadImageOK);
-        }];
+        if (isScrollToCurrentPage) {// 已经加载过，不需要继续加载
+            
+            CQAssetsDisplayCell *citem = [self setCellForIndex:_currentPage];
+            __weak typeof(citem) weakCitem = citem;
+            [weakCitem loadImageDataWithCompletion:^(BOOL loadImageOK){
+                callback(weakCitem,loadImageOK);
+            }];
+        }
         
         // 设置右边的视图
         if (currentPage + 1 < self.numberOfCells) {
