@@ -25,6 +25,7 @@
 		A6EE9C6DAE8298E7F6C04C28 /* Pods_CQAssetsDisplay_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB77227B46F25AACAA4F6DF /* Pods_CQAssetsDisplay_Example.framework */; };
 		F073458B1ED417E20023D15D /* album.plist in Resources */ = {isa = PBXBuildFile; fileRef = F073458A1ED417E20023D15D /* album.plist */; };
 		F073458E1ED41AEA0023D15D /* CQCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F073458D1ED41AEA0023D15D /* CQCollectionViewCell.m */; };
+		F0D7E8B71EE00C2100124928 /* video.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E8B61EE00C2100124928 /* video.plist */; };
 		F322A0D8C31EE412529CF8B9 /* Pods_CQAssetsDisplay_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE03C7758CE2B36FF2527DF /* Pods_CQAssetsDisplay_Tests.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 		F073458A1ED417E20023D15D /* album.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = album.plist; sourceTree = "<group>"; };
 		F073458C1ED41AEA0023D15D /* CQCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQCollectionViewCell.h; sourceTree = "<group>"; };
 		F073458D1ED41AEA0023D15D /* CQCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQCollectionViewCell.m; sourceTree = "<group>"; };
+		F0D7E8B61EE00C2100124928 /* video.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = video.plist; sourceTree = "<group>"; };
 		FD3C1A68E7201241BEEF9C68 /* Pods-CQAssetsDisplay_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CQAssetsDisplay_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CQAssetsDisplay_Tests/Pods-CQAssetsDisplay_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -160,6 +162,7 @@
 				6003F599195388D20070C39A /* main.m */,
 				6003F59B195388D20070C39A /* CQAssetsDisplay-Prefix.pch */,
 				F073458A1ED417E20023D15D /* album.plist */,
+				F0D7E8B61EE00C2100124928 /* video.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0D7E8B71EE00C2100124928 /* video.plist in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,

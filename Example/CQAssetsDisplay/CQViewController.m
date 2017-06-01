@@ -20,12 +20,14 @@
 #define kAlbumCellColumnSpacing  5                                          // 列间距
 #define kAlbumSectionSpacing     5                                          // 节外边距
 #define kAlbumPlistName          @"album.plist"                             // 图片数组
+#define kVideoPlistName          @"video.plist"                             // 视频数组
 #define kAssetsDisplayCell       @"assetsDisplayCell"                       // 图片浏览器cell key
 
 @interface CQViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,CQAssetsDisplayControllerDataSource>
 
 @property (weak, nonatomic) UICollectionView *album;
 @property (strong, nonatomic) NSArray *albumArray;
+@property (strong, nonatomic) NSArray *videoArray;
 
 @end
 
@@ -59,6 +61,7 @@
     
     // 加载数据
     [self loadAlbumArray];
+    [self loadVideoArray];
     
     // 清除缓存
     [self clearImagesCache];
@@ -75,6 +78,15 @@
     NSString *albumDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kAlbumPlistName];
     NSArray *albumArray = [[NSArray alloc] initWithContentsOfFile:albumDataFilePath];
     _albumArray = albumArray;
+    
+}
+
+// 加载视频数据
+- (void)loadVideoArray {
+    
+    NSString *videoDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kVideoPlistName];
+    NSArray *videoArray = [[NSArray alloc] initWithContentsOfFile:videoDataFilePath];
+    _videoArray = videoArray;
     
 }
 
@@ -138,7 +150,10 @@
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
     [cell setImageUrl:photoStr andPlaceHolder:nil];
-    [cell setVideoUrl:@"http://olaxmae4w.bkt.clouddn.com/avthumb/mp4/dynamic/201705/Fi-C5_lnMmrIyCijc5tlwiZjRVbX.mp4"];
+    if (index < _videoArray.count) {
+        
+        [cell setVideoUrl:_videoArray[index]];
+    }
     
     return cell;
 }
