@@ -178,16 +178,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     [self.currentCell resetTimer];
     
-//    NSMutableArray *marray = [[NSMutableArray alloc] initWithCapacity:0];
-//    if (self.currentCell.navigationBar) {
-//        [marray addObject:self.currentCell.navigationBar];
-//    }
-//    
-//    if (self.currentCell.toolBar) {
-//        [marray addObject:self.currentCell.toolBar];
-//    }
-//    return ![marray containsObject:touch.view]
-//    && ![marray containsObject:touch.view.superview];
+    NSMutableArray *marray = [[NSMutableArray alloc] initWithCapacity:0];
+    if (!self.currentCell.videoControlView.hidden) {
+        
+        [marray addObject:self.currentCell.videoControlView];
+        return ![marray containsObject:touch.view]
+            && ![marray containsObject:touch.view.superview];
+    }
     return YES;
 }
 

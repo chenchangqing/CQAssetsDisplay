@@ -378,7 +378,6 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     }
     
     self.lastPlaybackRate = self.avPlayer.rate;
-    NSLog(@"self.lastPlaybackRate:%f",self.lastPlaybackRate);
     [self.avPlayer pause];
 }
 
