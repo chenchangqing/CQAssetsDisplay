@@ -148,6 +148,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
     tapGR.numberOfTapsRequired = 1;
     tapGR.numberOfTouchesRequired = 1;
+    tapGR.delegate = self;
     [self.view addGestureRecognizer:tapGR];
     
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleZoom:)];
@@ -161,7 +162,33 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 响应单击
 - (void)handleTapGesture:(UITapGestureRecognizer *)tap {
 
-    [self exit];
+    if (self.currentCell.videoUrl) {
+        if (self.currentCell.videoPlayBtn.hidden && self.currentCell.progressView.hidden) {
+            
+            [self.currentCell toggleControls];
+        } else {
+            
+            [self exit];
+        }
+    } else {
+        [self exit];
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    [self.currentCell resetTimer];
+    
+//    NSMutableArray *marray = [[NSMutableArray alloc] initWithCapacity:0];
+//    if (self.currentCell.navigationBar) {
+//        [marray addObject:self.currentCell.navigationBar];
+//    }
+//    
+//    if (self.currentCell.toolBar) {
+//        [marray addObject:self.currentCell.toolBar];
+//    }
+//    return ![marray containsObject:touch.view]
+//    && ![marray containsObject:touch.view.superview];
+    return YES;
 }
 
 // MARK: - 刷新
@@ -651,10 +678,25 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
+        // 关闭按钮
+        UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        closeBtn.hidden = YES;
+        closeBtn.tintColor = [UIColor whiteColor];
+        [closeBtn setImage:[self videoCloseImage] forState:UIControlStateNormal];
+        [closeBtn addTarget:self action:@selector(exit) forControlEvents:UIControlEventTouchUpInside];
+        closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        [_scrollViewContentView addSubview:closeBtn];
+        cell.closeBtn = closeBtn;
+        
+        views = NSDictionaryOfVariableBindings(closeBtn,placeView);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+        
         // 视频控制区
         CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
         videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
         videoControlView.delegate = cell;
+        videoControlView.hidden = YES;
         [_scrollViewContentView addSubview:videoControlView];
         cell.videoControlView = videoControlView;
         
@@ -662,7 +704,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(60)]-0-|" options:0 metrics:nil views:views]];
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-        
         
         // 增加cell
         [_scrollViewContentView addSubview:cell];
@@ -742,6 +783,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     UIImage *arrowImage = nil;
     if (arrowImage == nil) {
         arrowImage = [[UIImage imageWithContentsOfFile:[[self assetsBundle] pathForResource:@"video_play@3x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    }
+    return arrowImage;
+}
+
+- (UIImage *)videoCloseImage
+{
+    UIImage *arrowImage = nil;
+    if (arrowImage == nil) {
+        arrowImage = [[UIImage imageWithContentsOfFile:[[self assetsBundle] pathForResource:@"video_close@3x" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     return arrowImage;
 }

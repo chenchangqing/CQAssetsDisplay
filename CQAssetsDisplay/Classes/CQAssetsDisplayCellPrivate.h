@@ -25,6 +25,7 @@
 @property (weak, nonatomic) CQVideoPlayerView       *videoPlayerView;       // 播放视频
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
 @property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
+@property (weak, nonatomic) UIButton                *closeBtn;              // 关闭按钮
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;              // 左边距约束
 @property (nonatomic, copy, readonly) NSString *reuseIdentifier;            // 重用id
@@ -41,5 +42,9 @@
 - (void)changeAssetViewToInitialState;
 // imageView适配cell
 - (void)fix;
+// 单击事件
+- (void)toggleControls;
+// 重置计时器
+- (void)resetTimer;
 
 @end

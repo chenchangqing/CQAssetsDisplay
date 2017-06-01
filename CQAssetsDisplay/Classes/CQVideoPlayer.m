@@ -378,22 +378,13 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     }
     
     self.lastPlaybackRate = self.avPlayer.rate;
+    NSLog(@"self.lastPlaybackRate:%f",self.lastPlaybackRate);
     [self.avPlayer pause];
-//    if ([self.toolBar respondsToSelector:@selector(setToPlaying:)]
-//        && self.isCanChangeVideoControlView) {
-//        
-////        [self.toolBar setToPlaying:NO];
-//    }
 }
 
 - (void)stop {
     
     [self.avPlayer setRate:0.0f];
-//    if ([self.toolBar respondsToSelector:@selector(playbackComplete)]
-//        && self.isCanChangeVideoControlView) {
-//        
-////        [self.toolBar playbackComplete];
-//    }
     if([_delegate respondsToSelector:@selector(videoPlayerStop:)]) {
         [_delegate videoPlayerStop:self];
     }
@@ -401,8 +392,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (void)scrubbingDidStart {
     
-    self.lastPlaybackRate = self.avPlayer.rate;
-    [self.avPlayer pause];
+    [self pause];
     [self.avPlayer removeTimeObserver:self.timeObserver];
 }
 
@@ -416,7 +406,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     
     [self addPlayerItemTimeObserver];
     if (self.lastPlaybackRate > 0.0f) {
-        [self.avPlayer play];
+        [self play];
     }
 }
 

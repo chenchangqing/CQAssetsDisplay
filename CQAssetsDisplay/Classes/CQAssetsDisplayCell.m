@@ -10,10 +10,12 @@
 #import "CQAssetsDisplayCellPrivate.h"
 #import "MCDownloadManager.h"
 #import <YYWebImage/YYWebImage.h>
+#import "NSTimer+Additions.h"
 
 @interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate>
 
 @property (strong, nonatomic) UIView *fixView;
+@property (strong, nonatomic) NSTimer *timer;// 计时器
 
 @end
 
@@ -60,7 +62,7 @@
 }
 
 - (void)dealloc {
-    [self free];
+//    [self free];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
@@ -156,6 +158,31 @@
     _videoPlayer = [CQVideoPlayer new];
     _videoPlayer.delegate = self;
     [_videoPlayer play];
+}
+
+// 单击事件
+- (void)toggleControls {
+    
+    _videoControlView.hidden = !_videoControlView.hidden;
+    _closeBtn.hidden = !_closeBtn.hidden;
+}
+
+- (void)resetTimer {
+    [self.timer invalidate];
+    self.timer = nil;
+    if (!self.videoControlView.scrubbing) {
+        __weak typeof(self) weakSelf = self;
+        self.timer = [NSTimer scheduledTimerWithTimeInterval:3.0 firing:^{
+            if (weakSelf.timer.isValid && !_videoControlView.hidden) {
+                [weakSelf toggleControls];
+            }
+        }];
+    }
+}
+
+- (void)removeFromSuperview {
+    [self free];
+    [super removeFromSuperview];
 }
 
 // MARK: - CQVideoPlayerDelegate
@@ -387,6 +414,7 @@
     _videoPlayer = nil;
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
+    self.videoControlView.hidden = YES;
     [self suspendDownload];
     [self setVideoUrl:nil];
     [self setImageURL:nil];
@@ -433,6 +461,9 @@
     
     [_videoControlView removeFromSuperview];
     _videoControlView = nil;
+    
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 // MARK: - CQVideoControlViewDelegate
@@ -447,6 +478,7 @@
 }
 - (void)scrubbingDidStart// 开始滑动进度条
 {
+    [self resetTimer];
     [self.videoPlayer scrubbingDidStart];
 }
 - (void)scrubbedToTime:(NSTimeInterval)time// 正在滑动进度条
@@ -455,6 +487,7 @@
 }
 - (void)scrubbingDidEnd// 结束滑动进度条
 {
+    [self resetTimer];
     [self.videoPlayer scrubbingDidEnd];
 }
 - (BOOL)isDidLoadAssetSuccess// 是否成功加载资源

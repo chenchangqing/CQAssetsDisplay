@@ -135,8 +135,6 @@
 - (void)scrubbingDidStart {
     
     self.scrubbing = YES;
-//    [self.horizontalView resetTimer];
-//    [self.videoPlayer scrubbingDidStart];
     if ([_delegate respondsToSelector:@selector(scrubbingDidStart)]) {
         [_delegate scrubbingDidStart];
     }
@@ -147,14 +145,7 @@
     NSTimeInterval currentTime = self.scrubberSlider.value;
     NSTimeInterval duration = self.scrubberSlider.maximumValue;
     [self setCurrentTime:currentTime duration:duration];
-    
-//    if (self.videoPlayer.player) {
-//        
-//        [self.videoPlayer scrubbedToTime:currentTime];
-//    } else {
-//        
-//        _scrubberSlider.value = 0;
-//    }
+
     BOOL isDidLoadAssetSuccess = NO;
     if ([_delegate respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
         isDidLoadAssetSuccess = [_delegate isDidLoadAssetSuccess];
@@ -172,8 +163,6 @@
 - (void)scrubbingDidEnd {
     
     self.scrubbing = NO;
-//    [self.horizontalView resetTimer];
-    //    [self.videoPlayer scrubbingDidEnd];
     if ([_delegate respondsToSelector:@selector(scrubbingDidEnd)]) {
         [_delegate scrubbingDidEnd];
     }
