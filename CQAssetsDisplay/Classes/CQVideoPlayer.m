@@ -33,7 +33,6 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 @property (strong, nonatomic) AVAsset *asset;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
-@property (strong, nonatomic) AVPlayer *player;
 
 @property (weak, nonatomic) id timeObserver;
 @property (weak, nonatomic) id itemEndObserver;
@@ -99,13 +98,13 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
         return;
     }
     
-    if (_player) {
+    if (_avPlayer) {
         
         if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
             
-            if ([self.delegate respondsToSelector:@selector(videoPlayerSuccessToPlay:)]) {
+            if ([self.delegate respondsToSelector:@selector(videoPlayerPreparePlay:)]) {
                 
-                [self.delegate videoPlayerSuccessToPlay:self];
+                [self.delegate videoPlayerPreparePlay:self];
             }
         }
         return;
@@ -116,9 +115,9 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
         return;
     }
     
-    if ([_delegate respondsToSelector:@selector(videoPlayerPrepareToLoadAsset:)]) {
+    if ([_delegate respondsToSelector:@selector(videoPlayerWillLoadAsset:)]) {
         
-        [_delegate videoPlayerPrepareToLoadAsset:self];
+        [_delegate videoPlayerWillLoadAsset:self];
     }
     
     if (self.asset) {
@@ -140,23 +139,23 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
                     
                 } else {
                     
-                    if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerFailureToPlay:)]) {
+                    if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerDidLoadAsset:andSuccess:)]) {
                         
-                        [weakSelf.delegate videoPlayerFailureToPlay:weakSelf];
+                        [weakSelf.delegate videoPlayerDidLoadAsset:weakSelf andSuccess:NO];
                     }
                 }
             } withProgress:^(double progress) {
                 
-                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerProgressToLoadAsset:withProgress:)]) {
-                    [weakSelf.delegate videoPlayerProgressToLoadAsset:weakSelf withProgress:progress];
+                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerLoadingAsset:withProgress:)]) {
+                    [weakSelf.delegate videoPlayerLoadingAsset:weakSelf withProgress:progress];
                 }
                 
             }];
         } else {
             
-            if ([_delegate respondsToSelector:@selector(videoPlayerFailureToPlay:)]) {
+            if ([self.delegate respondsToSelector:@selector(videoPlayerDidLoadAsset:anndSuccess:)]) {
                 
-                [_delegate videoPlayerFailureToPlay:self];
+                [self.delegate videoPlayerDidLoadAsset:self andSuccess:NO];
             }
         }
     }
@@ -193,11 +192,11 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
                          options:0
                          context:&PlayerItemStatusContext];
     _isAddObserverStatusKeyPath = YES;
-    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+    self.avPlayer = [AVPlayer playerWithPlayerItem:self.playerItem];
     
-    if ([_delegate respondsToSelector:@selector(videoPlayerPrepareToPlay:andAVPlayer:)]) {
+    if ([_delegate respondsToSelector:@selector(videoPlayerDidLoadAsset:andSuccess:)]) {
         
-        [_delegate videoPlayerPrepareToPlay:self andAVPlayer:self.player];
+        [_delegate videoPlayerDidLoadAsset:self andSuccess:YES];
     }
 }
 
@@ -219,9 +218,8 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
             
             if (weakSelf.playerItem.status == AVPlayerItemStatusReadyToPlay) {
                 
-                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerSuccessToPlay:)]) {
-                    
-                    [weakSelf.delegate videoPlayerSuccessToPlay:weakSelf];
+                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerPreparePlay:)]) {
+                    [weakSelf.delegate videoPlayerPreparePlay:weakSelf];
                 }
                 
                 [self->_playerItem addOutput:self->videoOutput];
@@ -234,22 +232,18 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
                 CMTime duration = weakSelf.playerItem.duration;
                 
                 // Synchronize the time display
+                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerPlaying:andCurrentTime:duratoin:)]) {
+                    weakSelf.totalDuration = CMTimeGetSeconds(duration);
+                    [weakSelf.delegate videoPlayerPlaying:weakSelf andCurrentTime:CMTimeGetSeconds(kCMTimeZero) duratoin:CMTimeGetSeconds(duration)];
+                }
                 
-//                if ([weakSelf.toolBar respondsToSelector:@selector(setCurrentTime:duration:)]
-//                    && weakSelf.isCanChangeVideoControlView) {
-//                    
-//                    weakSelf.totalDuration = CMTimeGetSeconds(duration);
-//                    [weakSelf.toolBar setCurrentTime:CMTimeGetSeconds(kCMTimeZero)
-//                                                 duration:CMTimeGetSeconds(duration)];
-//                }
-                
-                [weakSelf.player play];
+                [weakSelf.avPlayer play];
                 
             } else {
                 
-                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerFailureToPlay:)]) {
+                if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerDidPlay:andSuccess:)]) {
                     
-                    [weakSelf.delegate videoPlayerFailureToPlay:self];
+                    [weakSelf.delegate videoPlayerDidPlay:weakSelf andSuccess:NO];
                 }
             }
         });
@@ -273,15 +267,15 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc removeObserver:self.itemEndObserver
                       name:AVPlayerItemDidPlayToEndTimeNotification
-                    object:self.player.currentItem];
+                    object:self.avPlayer.currentItem];
         self.itemEndObserver = nil;
     }
     
     if (self.timeObserver) {
         
-        [self.player removeTimeObserver:self.timeObserver];
+        [self.avPlayer removeTimeObserver:self.timeObserver];
     }
-    [self.player replaceCurrentItemWithPlayerItem:nil];
+    [self.avPlayer replaceCurrentItemWithPlayerItem:nil];
     
     // 处理videoOutput代理
     [videoOutput setDelegate:nil queue:videoOutputQueue];
@@ -295,11 +289,6 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 }
 
 /// MARK: - Override Getters/Setters
-
-- (AVPlayer *)player {
-    
-    return _player;
-}
 
 - (BOOL)isCanChangeVideoControlView {
     
@@ -325,13 +314,16 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 //            && weakSelf.isCanChangeVideoControlView) {
 //            
 ////            [weakSelf.toolBar setCurrentTime:weakSelf.currentTime duration:weakSelf.totalDuration];
-//        }
+        //        }
+        if ([weakSelf.delegate respondsToSelector:@selector(videoPlayerPlaying:andCurrentTime:duratoin:)]) {
+            [weakSelf.delegate videoPlayerPlaying:weakSelf andCurrentTime:weakSelf.currentTime duratoin:weakSelf.totalDuration];
+        }
 
     };
     
     // Add observer and store pointer for future use
     self.timeObserver =
-    [self.player addPeriodicTimeObserverForInterval:interval
+    [self.avPlayer addPeriodicTimeObserverForInterval:interval
                                               queue:queue
                                          usingBlock:callback];
 }
@@ -344,7 +336,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
     
     __weak CQVideoPlayer *weakSelf = self;
     void (^callback)(NSNotification *note) = ^(NSNotification *notification) {
-        [weakSelf.player seekToTime:kCMTimeZero
+        [weakSelf.avPlayer seekToTime:kCMTimeZero
                   completionHandler:^(BOOL finished) {
 //                      if ([weakSelf.toolBar respondsToSelector:@selector(playbackComplete)]
 //                          && self.isCanChangeVideoControlView) {
@@ -362,8 +354,8 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 }
 
 - (void)playerItemDidReachEnd {
-    if ([_delegate respondsToSelector:@selector(videoPlayerFinishToPlay:)]) {
-        [_delegate videoPlayerFinishToPlay:self];
+    if ([_delegate respondsToSelector:@selector(videoPlayerDidPlay:andSuccess:)]) {
+        [_delegate videoPlayerDidPlay:self andSuccess:YES];
     }
 }
 
@@ -371,19 +363,22 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (void)play {
     
+    if ([self.delegate respondsToSelector:@selector(videoPlayerWillPlay:)]) {
+        [self.delegate videoPlayerWillPlay:self];
+    }
+    
     [self prepareToPlay];
-    [self.player play];
-//    if ([self.toolBar respondsToSelector:@selector(setToPlaying:)]
-//        && self.isCanChangeVideoControlView) {
-//        
-////        [self.toolBar setToPlaying:YES];
-//    }
+    [self.avPlayer play];
 }
 
 - (void)pause {
     
-    self.lastPlaybackRate = self.player.rate;
-    [self.player pause];
+    if ([self.delegate respondsToSelector:@selector(videoPlayerPause:)]) {
+        [self.delegate videoPlayerPause:self];
+    }
+    
+    self.lastPlaybackRate = self.avPlayer.rate;
+    [self.avPlayer pause];
 //    if ([self.toolBar respondsToSelector:@selector(setToPlaying:)]
 //        && self.isCanChangeVideoControlView) {
 //        
@@ -393,7 +388,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (void)stop {
     
-    [self.player setRate:0.0f];
+    [self.avPlayer setRate:0.0f];
 //    if ([self.toolBar respondsToSelector:@selector(playbackComplete)]
 //        && self.isCanChangeVideoControlView) {
 //        
@@ -404,27 +399,27 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (void)scrubbingDidStart {
     
-    self.lastPlaybackRate = self.player.rate;
-    [self.player pause];
-    [self.player removeTimeObserver:self.timeObserver];
+    self.lastPlaybackRate = self.avPlayer.rate;
+    [self.avPlayer pause];
+    [self.avPlayer removeTimeObserver:self.timeObserver];
 }
 
 - (void)scrubbedToTime:(NSTimeInterval)time {
     
     [self.playerItem cancelPendingSeeks];
-    [self.player seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+    [self.avPlayer seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
 }
 
 - (void)scrubbingDidEnd {
     
     [self addPlayerItemTimeObserver];
     if (self.lastPlaybackRate > 0.0f) {
-        [self.player play];
+        [self.avPlayer play];
     }
 }
 
 - (void)jumpedToTime:(NSTimeInterval)time {
-    [self.player seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
+    [self.avPlayer seekToTime:CMTimeMakeWithSeconds(time, NSEC_PER_SEC)];
 }
 
 - (CVPixelBufferRef)getPixelBuffer {
@@ -436,7 +431,7 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 
 - (BOOL)isPlaying {
     
-    return _player.rate == 1;
+    return _avPlayer.rate == 1;
 }
 
 @end

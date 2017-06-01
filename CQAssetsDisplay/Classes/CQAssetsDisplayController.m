@@ -654,6 +654,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         // 视频控制区
         CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
         videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
+        videoControlView.delegate = cell;
         [_scrollViewContentView addSubview:videoControlView];
         cell.videoControlView = videoControlView;
         

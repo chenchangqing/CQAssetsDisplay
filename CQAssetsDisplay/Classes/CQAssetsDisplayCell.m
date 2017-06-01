@@ -11,7 +11,7 @@
 #import "MCDownloadManager.h"
 #import <YYWebImage/YYWebImage.h>
 
-@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate>
+@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate>
 
 @property (strong, nonatomic) UIView *fixView;
 
@@ -160,30 +160,63 @@
 
 // MARK: - CQVideoPlayerDelegate
 
-- (void)videoPlayerPrepareToLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)
+- (void)videoPlayerWillLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)
 {
     _videoPlayBtn.hidden = YES;
     _progressView.hidden = NO;
     _progressView.progress = 0.01;
 }
-- (void)videoPlayerProgressToLoadAsset:(CQVideoPlayer *)videoPlayer withProgress:(double)progress// 下载进度（更新下载进度）
+- (void)videoPlayerLoadingAsset:(CQVideoPlayer *)videoPlayer withProgress:(double)progress// 下载进度（更新下载进度）
 {
     _progressView.progress = progress ;
 }
-- (void)videoPlayerPrepareToPlay:(CQVideoPlayer *)videoPlayer andAVPlayer:(AVPlayer *)avPlayer// 准备播放（开始设置avPlayer）
+- (void)videoPlayerDidLoadAsset:(CQVideoPlayer *)videoPlayer andSuccess:(BOOL)success// 准备播放（开始设置avPlayer）
 {
-    [_videoPlayerView setAVPlayer:avPlayer];
+    if (success) {
+        
+        [_videoPlayerView setAVPlayer:videoPlayer.avPlayer];
+    } else {
+        [self videoPlayerDidPlay:videoPlayer andSuccess:NO];
+    }
 }
-- (void)videoPlayerSuccessToPlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
+
+- (void)videoPlayerWillPlay:(CQVideoPlayer *)videoPlayer// 将要播放
+{
+    [self.videoControlView setToPlaying:YES];
+}
+
+- (void)videoPlayerPreparePlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
 {
     self.hidden = YES;
     _progressView.hidden = YES;
     _progressView.progress = 1;
     
 }
-- (void)videoPlayerFailureToPlay:(CQVideoPlayer *)videoPlayer// 失败播放（显示错误提示）
+
+- (void)videoPlayerPlaying:(CQVideoPlayer *)videoPlayer andCurrentTime:(NSTimeInterval)time duratoin:(NSTimeInterval)duration {
+    [self.videoControlView setCurrentTime:time duration:duration];
+}
+
+- (void)videoPlayerPause:(CQVideoPlayer *)videoPlayer {
+    [self.videoControlView setToPlaying:NO];
+}
+
+- (void)videoPlayerDidPlay:(CQVideoPlayer *)videoPlayer andSuccess:(BOOL)success
 {
-    [_progressView showError];
+    if (success) {
+        
+        self.hidden = NO;
+        if (self.videoUrl) {// 避免播放显示错误
+            
+            _videoPlayBtn.hidden = NO;
+        } else {
+            
+            _videoPlayBtn.hidden = YES;
+        }
+    } else {
+        
+        [_progressView showError];
+    }
 }
 - (void)getVideoURL:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress// 下载资源(实现先下载，后播放)
 {
@@ -228,18 +261,6 @@
     }
 }
 
-- (void)videoPlayerFinishToPlay:(CQVideoPlayer *)videoPlayer {
-    
-    self.hidden = NO;
-    if (self.videoUrl) {// 避免播放显示错误
-        
-        _videoPlayBtn.hidden = NO;
-    } else {
-        
-        _videoPlayBtn.hidden = YES;
-    }
-}
-
 // MARK: - 下载
 
 // 开始下载
@@ -271,6 +292,8 @@
         }
     }
 }
+
+// MARK: -
 
 - (void)loadImageDataWithCompletion:(void (^)(BOOL))callback {
     
@@ -397,6 +420,33 @@
     
     [_videoControlView removeFromSuperview];
     _videoControlView = nil;
+}
+
+// MARK: - CQVideoControlViewDelegate
+
+- (void)play// 播放
+{
+    [self.videoPlayer play];
+}
+- (void)pause// 暂停
+{
+    [self.videoPlayer pause];
+}
+- (void)scrubbingDidStart// 开始滑动进度条
+{
+    [self.videoPlayer scrubbingDidStart];
+}
+- (void)scrubbedToTime:(NSTimeInterval)time// 正在滑动进度条
+{
+    [self.videoPlayer scrubbedToTime:time];
+}
+- (void)scrubbingDidEnd// 结束滑动进度条
+{
+    [self.videoPlayer scrubbingDidEnd];
+}
+- (BOOL)isDidLoadAssetSuccess// 是否成功加载资源
+{
+    return self.videoPlayer.avPlayer;
 }
 
 @end

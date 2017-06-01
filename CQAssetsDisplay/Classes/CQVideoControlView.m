@@ -48,6 +48,7 @@
     [togglePlaybackButton setImage:[self videoStopSmallImage] forState:UIControlStateSelected];
     togglePlaybackButton.translatesAutoresizingMaskIntoConstraints = NO;
     togglePlaybackButton.tintColor = [UIColor whiteColor];
+    [togglePlaybackButton addTarget:self action:@selector(togglePlayback:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:togglePlaybackButton];
     _togglePlaybackButton = togglePlaybackButton;
     
@@ -60,6 +61,13 @@
     scrubberSlider.minimumValue = 0;
     scrubberSlider.maximumValue = 1;
     scrubberSlider.translatesAutoresizingMaskIntoConstraints = NO;
+    
+    [scrubberSlider addTarget:self action:@selector(scrubbingDidStart) forControlEvents:UIControlEventTouchDown];
+    [scrubberSlider addTarget:self action:@selector(scrubing) forControlEvents:UIControlEventValueChanged];
+    [scrubberSlider addTarget:self action:@selector(scrubbingDidEnd) forControlEvents:UIControlEventTouchUpInside];
+    [scrubberSlider addTarget:self action:@selector(scrubbingDidEnd) forControlEvents:UIControlEventTouchUpOutside];
+    [scrubberSlider addTarget:self action:@selector(scrubbingDidEnd) forControlEvents:UIControlEventTouchCancel];
+    
     [self addSubview:scrubberSlider];
     _scrubberSlider = scrubberSlider;
     
@@ -120,6 +128,109 @@
         arrowImage = [[UIImage imageWithContentsOfFile:[[self assetsBundle] pathForResource:@"toolbar_bg" ofType:@"png"]] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
     }
     return arrowImage;
+}
+
+// MARK: - Actions
+
+- (void)scrubbingDidStart {
+    
+    self.scrubbing = YES;
+//    [self.horizontalView resetTimer];
+//    [self.videoPlayer scrubbingDidStart];
+    if ([_delegate respondsToSelector:@selector(scrubbingDidStart)]) {
+        [_delegate scrubbingDidStart];
+    }
+}
+
+- (void)scrubing {
+    
+    NSTimeInterval currentTime = self.scrubberSlider.value;
+    NSTimeInterval duration = self.scrubberSlider.maximumValue;
+    [self setCurrentTime:currentTime duration:duration];
+    
+//    if (self.videoPlayer.player) {
+//        
+//        [self.videoPlayer scrubbedToTime:currentTime];
+//    } else {
+//        
+//        _scrubberSlider.value = 0;
+//    }
+    BOOL isDidLoadAssetSuccess = NO;
+    if ([_delegate respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
+        isDidLoadAssetSuccess = [_delegate isDidLoadAssetSuccess];
+    }
+    if (isDidLoadAssetSuccess) {
+        
+        if ([_delegate respondsToSelector:@selector(scrubbedToTime:)]) {
+            [_delegate scrubbedToTime:currentTime];
+        }
+    } else {
+        _scrubberSlider.value = 0;
+    }
+}
+
+- (void)scrubbingDidEnd {
+    
+    self.scrubbing = NO;
+//    [self.horizontalView resetTimer];
+    //    [self.videoPlayer scrubbingDidEnd];
+    if ([_delegate respondsToSelector:@selector(scrubbingDidEnd)]) {
+        [_delegate scrubbingDidEnd];
+    }
+}
+
+- (void)togglePlayback:(UIButton *)sender {
+    sender.selected = !sender.selected;
+    
+    if (sender.selected) {
+        
+        if ([_delegate respondsToSelector:@selector(play)]) {
+            [_delegate play];
+        }
+    } else {
+        
+        if ([_delegate respondsToSelector:@selector(pause)]) {
+            [_delegate pause];
+        }
+    }
+}
+
+// MARK: - Public
+
+- (void)setCurrentTime:(NSTimeInterval)time duration:(NSTimeInterval)duration {// 更新播放进度
+    
+    // 错误处理
+    time = isnan(time) ? 0.0 : time;
+    duration = isnan(duration) ? 0.0 :duration;
+    
+    time = time > duration ? duration : time;
+    //    double remainingTime = duration - time;
+    self.timeLabel.text = [NSString stringWithFormat:@"%@/%@",[self formatSeconds:ceilf(time)],[self formatSeconds:ceilf(duration)]];
+    self.scrubberSlider.minimumValue = 0.0f;
+    self.scrubberSlider.maximumValue = duration;
+    self.scrubberSlider.value = time;
+}
+
+- (NSString *)formatSeconds:(NSInteger)value {
+    NSInteger seconds = value % 60;
+    NSInteger minutes = value / 60;
+    return [NSString stringWithFormat:@"%02ld:%02ld", (long) minutes, (long) seconds];
+}
+
+-(void)playbackComplete {// 处理播放完成
+    
+    self.scrubberSlider.value = 0.0f;
+    self.togglePlaybackButton.selected = NO;
+//    CQContentView *contentView = (CQContentView *)self.cell.contentView;
+//    contentView.playBtn.hidden = NO;
+//    self.hidden = YES;
+//    CQPictureCell *cell = (CQPictureCell *)self.cell;
+//    cell.imageView.hidden = NO;
+}
+
+-(void)setToPlaying:(BOOL) isPlaying {// 处理播放暂停
+    
+    self.togglePlaybackButton.selected = isPlaying;
 }
 
 @end
