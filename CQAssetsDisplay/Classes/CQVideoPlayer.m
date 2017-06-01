@@ -394,7 +394,9 @@ typedef NS_ENUM(NSInteger, CQVPWillChangeStatus) {
 //        
 ////        [self.toolBar playbackComplete];
 //    }
-    [self playerItemDidReachEnd];
+    if([_delegate respondsToSelector:@selector(videoPlayerStop:)]) {
+        [_delegate videoPlayerStop:self];
+    }
 }
 
 - (void)scrubbingDidStart {

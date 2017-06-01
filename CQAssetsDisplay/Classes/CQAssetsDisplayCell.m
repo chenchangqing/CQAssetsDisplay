@@ -201,12 +201,25 @@
     [self.videoControlView setToPlaying:NO];
 }
 
+- (void)videoPlayerStop:(CQVideoPlayer *)videoPlayer {
+    [self suspendDownload];
+    self.progressView.hidden = YES;
+    self.hidden = NO;
+    if (self.videoUrl) {// 避免播放显示错误(复用回调)
+        
+        _videoPlayBtn.hidden = NO;
+    } else {
+        
+        _videoPlayBtn.hidden = YES;
+    }
+}
+
 - (void)videoPlayerDidPlay:(CQVideoPlayer *)videoPlayer andSuccess:(BOOL)success
 {
     if (success) {
         
         self.hidden = NO;
-        if (self.videoUrl) {// 避免播放显示错误
+        if (self.videoUrl) {// 避免播放显示错误(复用回调)
             
             _videoPlayBtn.hidden = NO;
         } else {

@@ -22,6 +22,7 @@
 - (void)videoPlayerPreparePlay:(CQVideoPlayer *)videoPlayer;// 准备播放
 - (void)videoPlayerPlaying:(CQVideoPlayer *)videoPlayer andCurrentTime:(NSTimeInterval)time duratoin:(NSTimeInterval)duration;// 正在播放
 - (void)videoPlayerPause:(CQVideoPlayer *)videoPlayer;// 播放暂停
+- (void)videoPlayerStop:(CQVideoPlayer *)videoPlayer;// 播放停止
 - (void)videoPlayerDidPlay:(CQVideoPlayer *)videoPlayer andSuccess:(BOOL)success;// 播放完成
 
 @end
