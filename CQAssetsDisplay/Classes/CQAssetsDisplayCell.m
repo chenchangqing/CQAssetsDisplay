@@ -414,6 +414,7 @@
 //    _videoPlayer = nil;
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
+    self.closeBtn.hidden = YES;
     self.videoControlView.hidden = YES;
     [self suspendDownload];
     [self setVideoUrl:nil];
@@ -432,6 +433,8 @@
         
         [self.videoPlayer stop];
     }
+    self.closeBtn.hidden = YES;
+    self.videoControlView.hidden = YES;
 }
 // 释放
 - (void)free {
