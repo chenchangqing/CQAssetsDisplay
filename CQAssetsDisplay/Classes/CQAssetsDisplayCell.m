@@ -411,7 +411,7 @@
     [self.imageView yy_cancelCurrentImageRequest];
     self.imageView.image = nil;
 //    [_videoPlayer free]; 减少卡顿
-    _videoPlayer = nil;
+//    _videoPlayer = nil;
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
     self.videoControlView.hidden = YES;
