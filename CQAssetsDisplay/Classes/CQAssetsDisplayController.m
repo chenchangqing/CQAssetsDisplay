@@ -702,12 +702,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:cell attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         // 内容视图
-        UIView *contentView = [UIView new];
+        UIView *contentView = cell.contentView;
         contentView.userInteractionEnabled = NO;
         contentView.translatesAutoresizingMaskIntoConstraints = NO;
         contentView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:contentView];
-        cell.contentView = contentView;
         
         views = @{@"contentView":contentView};
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];

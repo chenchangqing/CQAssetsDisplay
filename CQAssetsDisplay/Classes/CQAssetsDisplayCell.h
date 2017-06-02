@@ -15,7 +15,7 @@
 
 @interface CQAssetsDisplayCell : UIScrollView
 
-@property (weak, nonatomic) UIView *contentView;
+@property (strong, nonatomic) UIView *contentView;
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;// 初始化
 - (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder;// 设置远程图片和占位图

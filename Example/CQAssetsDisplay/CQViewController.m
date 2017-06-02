@@ -9,6 +9,7 @@
 #import "CQViewController.h"
 #import "CQCollectionViewCell.h"
 #import "CQAssetsDisplayController.h"
+#import "CQCustomAssetsDisplayCell.h"
 #import <YYWebImage/YYWebImage.h>
 
 #define kAlbumY                  64                                         // 相册上边距
@@ -142,10 +143,10 @@
 
 - (CQAssetsDisplayCell *)assetsDisplayController:(CQAssetsDisplayController *)controller cellForIndex:(NSInteger)index {
     
-    CQAssetsDisplayCell *cell = [controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
+    CQCustomAssetsDisplayCell *cell = (CQCustomAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
     if (cell == nil) {
         
-        cell = [[CQAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
+        cell = [[CQCustomAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
@@ -154,6 +155,8 @@
         
         [cell setVideoUrl:_videoArray[index]];
     }
+    
+    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",index];
     
     return cell;
 }

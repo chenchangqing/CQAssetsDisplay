@@ -23,6 +23,7 @@
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		A6EE9C6DAE8298E7F6C04C28 /* Pods_CQAssetsDisplay_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FB77227B46F25AACAA4F6DF /* Pods_CQAssetsDisplay_Example.framework */; };
+		F05CCB631EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F05CCB621EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.m */; };
 		F073458B1ED417E20023D15D /* album.plist in Resources */ = {isa = PBXBuildFile; fileRef = F073458A1ED417E20023D15D /* album.plist */; };
 		F073458E1ED41AEA0023D15D /* CQCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F073458D1ED41AEA0023D15D /* CQCollectionViewCell.m */; };
 		F0D7E8B71EE00C2100124928 /* video.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E8B61EE00C2100124928 /* video.plist */; };
@@ -69,6 +70,8 @@
 		9BC1D31A80D4D9B9A6D44356 /* Pods-CQAssetsDisplay_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CQAssetsDisplay_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-CQAssetsDisplay_Example/Pods-CQAssetsDisplay_Example.release.xcconfig"; sourceTree = "<group>"; };
 		9EF36580525EEDA65B48CA5B /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		D121E4FF01586BA667E2B752 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		F05CCB611EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQCustomAssetsDisplayCell.h; sourceTree = "<group>"; };
+		F05CCB621EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQCustomAssetsDisplayCell.m; sourceTree = "<group>"; };
 		F073458A1ED417E20023D15D /* album.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = album.plist; sourceTree = "<group>"; };
 		F073458C1ED41AEA0023D15D /* CQCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CQCollectionViewCell.h; sourceTree = "<group>"; };
 		F073458D1ED41AEA0023D15D /* CQCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CQCollectionViewCell.m; sourceTree = "<group>"; };
@@ -146,6 +149,8 @@
 				6003F5A6195388D20070C39A /* CQViewController.m */,
 				F073458C1ED41AEA0023D15D /* CQCollectionViewCell.h */,
 				F073458D1ED41AEA0023D15D /* CQCollectionViewCell.m */,
+				F05CCB611EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.h */,
+				F05CCB621EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -410,6 +415,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F05CCB631EE11B3C00CBA786 /* CQCustomAssetsDisplayCell.m in Sources */,
 				F073458E1ED41AEA0023D15D /* CQCollectionViewCell.m in Sources */,
 				6003F59E195388D20070C39A /* CQAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* CQViewController.m in Sources */,

@@ -189,6 +189,14 @@
     [super removeFromSuperview];
 }
 
+- (UIView *)contentView {
+    
+    if (!_contentView) {
+        _contentView = [UIView new];
+    }
+    return _contentView;
+}
+
 // MARK: - CQVideoPlayerDelegate
 
 - (void)videoPlayerWillLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)
