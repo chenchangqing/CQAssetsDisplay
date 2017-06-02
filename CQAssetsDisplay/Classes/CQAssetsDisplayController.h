@@ -30,7 +30,13 @@
 @property (nonatomic, assign) NSInteger currentPage;                                // 当前页数
 
 - (void)reloadData;                                                                 // 刷新
-- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage;    // 显示
+
+// 显示
+- (void)showWithFromView:(UIView *)fromView
+          andCellPadding:(CGFloat)cellPadding
+          andCurrentPage:(NSInteger)currentPage
+andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo;
+
 - (void)exit;                                                                       // 退出
 - (CQAssetsDisplayCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // 得到可复用视图
 

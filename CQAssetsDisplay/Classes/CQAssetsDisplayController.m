@@ -39,6 +39,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @property (nonatomic, strong) UIViewController *currentVC;                  // 当前控制器
 @property (nonatomic, weak) UIView *fromView;                               // 来自哪个view
 @property (nonatomic, assign) CGFloat cellPadding;                          // cell之间的间隔
+@property (nonatomic, assign) BOOL showCloseBtnWhenVideo;                   // 当为视频时是否显示关闭按钮
 
 @end
 
@@ -346,7 +347,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 显示
-- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage{
+- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo{
 
     if ([self.currentVC isKindOfClass:[UINavigationController class]]) {
         
@@ -362,6 +363,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     _cellPadding = cellPadding > 0 ? cellPadding : 0;
     _fromView = fromView;
+    _showCloseBtnWhenVideo = showCloseBtnWhenVideo;
     
     __weak typeof(self) weakSelf = self;
     _animateShowBlock = ^() {
@@ -740,18 +742,21 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:100]];
         
         // 关闭按钮
-        UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        closeBtn.hidden = YES;
-        closeBtn.tintColor = [UIColor whiteColor];
-        [closeBtn setImage:[self videoCloseImage] forState:UIControlStateNormal];
-        [closeBtn addTarget:self action:@selector(exit) forControlEvents:UIControlEventTouchUpInside];
-        closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
-        [_scrollViewContentView addSubview:closeBtn];
-        cell.closeBtn = closeBtn;
-        
-        views = NSDictionaryOfVariableBindings(closeBtn,placeView);
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+        if (_showCloseBtnWhenVideo) {
+            
+            UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            closeBtn.hidden = YES;
+            closeBtn.tintColor = [UIColor whiteColor];
+            [closeBtn setImage:[self videoCloseImage] forState:UIControlStateNormal];
+            [closeBtn addTarget:self action:@selector(exit) forControlEvents:UIControlEventTouchUpInside];
+            closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
+            [_scrollViewContentView addSubview:closeBtn];
+            cell.closeBtn = closeBtn;
+            
+            views = NSDictionaryOfVariableBindings(closeBtn,placeView);
+            [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+            [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+        }
     }
     
     // 属性重置
