@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CQAssetsDisplay'
-  s.version          = '0.1.1'
-  s.summary          = '图片浏览器'
+  s.version          = '0.1.2'
+  s.summary          = '视频、图片浏览器'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: 像tableView一样，使用非常简单的图片浏览器
+TODO: 像tableView一样，使用非常简单的视频、图片浏览器
                        DESC
 
   s.homepage         = 'https://github.com/chenchangqing/CQAssetsDisplay'
