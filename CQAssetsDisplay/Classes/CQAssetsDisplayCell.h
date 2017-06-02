@@ -21,4 +21,13 @@
 - (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder;// 设置远程图片和占位图
 - (void)setVideoUrl:(NSString *)videoUrl;// 设置视频播放地址
 
+// 变为重用
+- (void)changeToReuse;
+// 恢复没有缩放
+- (void)changeAssetViewToInitialState;
+// 单击事件
+- (void)toggleControls;
+// 播放
+- (void)playVideo;
+
 @end

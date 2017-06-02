@@ -30,20 +30,12 @@
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;              // 左边距约束
 @property (nonatomic, copy, readonly) NSString *reuseIdentifier;            // 重用id
 
-// 播放
-- (void)playVideo;
 // 加载图片
 - (void)loadImageDataWithCompletion:(void(^)(BOOL))callback;
 // 设置播放按钮
 - (void)setHidePlayerIconWithLoadImageOk:(BOOL)loadImageOK andIndex:(NSInteger)page;
-// 变为重用
-- (void)changeToReuse;
-// 恢复没有缩放
-- (void)changeAssetViewToInitialState;
 // imageView适配cell
 - (void)fix;
-// 单击事件
-- (void)toggleControls;
 // 重置计时器
 - (void)resetTimer;
 

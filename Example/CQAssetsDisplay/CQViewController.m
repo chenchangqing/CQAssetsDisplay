@@ -156,7 +156,7 @@
         [cell setVideoUrl:_videoArray[index]];
     }
     
-    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",index];
+    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",(long)index];
     
     return cell;
 }

@@ -388,12 +388,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
                     [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
-                    if (isAutoPlay) { [item playVideo]; }
+                    if (isAutoPlay && item.videoUrl) { [item playVideo]; }
                 }];
             } else {
                 
                 [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
-                if (isAutoPlay) { [item playVideo]; }
+                if (isAutoPlay && item.videoUrl) { [item playVideo]; }
             }
         }];
     };
