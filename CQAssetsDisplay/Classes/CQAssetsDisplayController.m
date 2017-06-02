@@ -267,6 +267,11 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 适配旋转
 - (void)fitOrientation:(CGAffineTransform) transform {
     
+    if (CGAffineTransformEqualToTransform([UIApplication sharedApplication].keyWindow.transform, transform)) {// 防止滑动无效
+        
+        return;
+    }
+    
     CGFloat duration = [UIApplication sharedApplication].statusBarOrientationAnimationDuration;
     [UIView animateWithDuration:duration animations:^{
         
