@@ -347,7 +347,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 }
 
 // 显示
-- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo{
+- (void)showWithFromView:(UIView *)fromView andCellPadding:(CGFloat)cellPadding andCurrentPage:(NSInteger)currentPage andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo andIsAutoPlay:(BOOL)isAutoPlay{
 
     if ([self.currentVC isKindOfClass:[UINavigationController class]]) {
         
@@ -388,10 +388,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
                     [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
+                    if (isAutoPlay) { [item playVideo]; }
                 }];
             } else {
                 
                 [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
+                if (isAutoPlay) { [item playVideo]; }
             }
         }];
     };

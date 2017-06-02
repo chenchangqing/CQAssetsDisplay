@@ -32,10 +32,11 @@
 - (void)reloadData;                                                                 // 刷新
 
 // 显示
-- (void)showWithFromView:(UIView *)fromView
-          andCellPadding:(CGFloat)cellPadding
-          andCurrentPage:(NSInteger)currentPage
-andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo;
+- (void)showWithFromView:(UIView *)fromView// 被点击的视图
+          andCellPadding:(CGFloat)cellPadding// 单元格间距
+          andCurrentPage:(NSInteger)currentPage// 当前页
+andShowCloseBtnWhenVideo:(BOOL)showCloseBtnWhenVideo// 当显示视频是否显示关闭按钮
+           andIsAutoPlay:(BOOL)isAutoPlay;// 当点击视频时，是否自动播放
 
 - (void)exit;                                                                       // 退出
 - (CQAssetsDisplayCell *)dequeueReusableCellWithIdentifier:(NSString *)identifier;  // 得到可复用视图

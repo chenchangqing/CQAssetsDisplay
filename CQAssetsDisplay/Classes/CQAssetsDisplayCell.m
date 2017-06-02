@@ -149,6 +149,10 @@
 
 - (void)playVideo {
     
+    if (!_videoUrl) {
+        return;
+    }
+    
     if (_videoPlayer) {
         
         [_videoPlayer free];
