@@ -155,6 +155,10 @@
         _videoPlayer = nil;
     }
     
+    // 重置关闭按钮、toolbar
+    _videoControlView.hidden = YES;
+    _closeBtn.hidden = YES;
+    
     _videoPlayer = [CQVideoPlayer new];
     _videoPlayer.delegate = self;
     [_videoPlayer play];

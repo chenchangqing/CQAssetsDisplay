@@ -10,7 +10,7 @@
 
 @interface CQVideoControlView()
 
-@property (weak, nonatomic) UIImageView *bgView;// 背景图
+//@property (weak, nonatomic) UIImageView *bgView;// 背景图
 @property (weak, nonatomic) UIButton *togglePlaybackButton;// 播放/暂停按钮
 @property (weak, nonatomic) UISlider *scrubberSlider;// 播放进度
 @property (weak, nonatomic) UILabel *timeLabel;// 当前时间／总时间
@@ -29,18 +29,20 @@
 
 - (void)setupUI {
     
-    UIImageView *bgView;// 背景图
-    bgView = [UIImageView new];
-    bgView.contentMode = UIViewContentModeScaleAspectFill;
-    bgView.image = [self toolbarBgImage];
-    bgView.translatesAutoresizingMaskIntoConstraints = NO;
-    bgView.tintColor = [UIColor blackColor];
-    [self addSubview:bgView];
-    _bgView = bgView;
+    NSDictionary *views;
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(bgView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bgView]-0-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-30)-[bgView]-0-|" options:0 metrics:nil views:views]];
+//    UIImageView *bgView;// 背景图
+//    bgView = [UIImageView new];
+//    bgView.contentMode = UIViewContentModeScaleAspectFill;
+//    bgView.image = [self toolbarBgImage];
+//    bgView.translatesAutoresizingMaskIntoConstraints = NO;
+//    bgView.tintColor = [UIColor blackColor];
+//    [self addSubview:bgView];
+//    _bgView = bgView;
+//    
+//    views = NSDictionaryOfVariableBindings(bgView);
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[bgView]-0-|" options:0 metrics:nil views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-30)-[bgView]-0-|" options:0 metrics:nil views:views]];
     
     UIButton *togglePlaybackButton;// 播放/暂停按钮
     togglePlaybackButton = [UIButton buttonWithType:UIButtonTypeCustom];

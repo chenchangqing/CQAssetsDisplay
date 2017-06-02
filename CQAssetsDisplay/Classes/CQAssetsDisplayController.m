@@ -163,13 +163,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (void)handleTapGesture:(UITapGestureRecognizer *)tap {
 
     if (self.currentCell.videoUrl) {
-        if (self.currentCell.videoPlayBtn.hidden && self.currentCell.progressView.hidden) {
-            
-            [self.currentCell toggleControls];
-        } else {
-            
-            [self exit];
-        }
+        
+        [self.currentCell toggleControls];
     } else {
         [self exit];
     }
@@ -680,20 +675,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
-        // 关闭按钮
-        UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        closeBtn.hidden = YES;
-        closeBtn.tintColor = [UIColor whiteColor];
-        [closeBtn setImage:[self videoCloseImage] forState:UIControlStateNormal];
-        [closeBtn addTarget:self action:@selector(exit) forControlEvents:UIControlEventTouchUpInside];
-        closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
-        [_scrollViewContentView addSubview:closeBtn];
-        cell.closeBtn = closeBtn;
-        
-        views = NSDictionaryOfVariableBindings(closeBtn,placeView);
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
-        
         // 视频控制区
         CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
         videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -758,6 +739,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:contentView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:100]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoPlayBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:100]];
+        
+        // 关闭按钮
+        UIButton *closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        closeBtn.hidden = YES;
+        closeBtn.tintColor = [UIColor whiteColor];
+        [closeBtn setImage:[self videoCloseImage] forState:UIControlStateNormal];
+        [closeBtn addTarget:self action:@selector(exit) forControlEvents:UIControlEventTouchUpInside];
+        closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        [_scrollViewContentView addSubview:closeBtn];
+        cell.closeBtn = closeBtn;
+        
+        views = NSDictionaryOfVariableBindings(closeBtn,placeView);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
     }
     
     // 属性重置
