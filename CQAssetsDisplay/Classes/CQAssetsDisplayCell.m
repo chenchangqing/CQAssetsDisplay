@@ -366,7 +366,7 @@
         self.progressView.progress = 0.01;
         NSURL *imageURL = [[NSURL alloc] initWithString:imageURLStr];
         __weak typeof(self) weakSelf = self;
-        [imageView yy_setImageWithURL:imageURL placeholder:nil options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        [imageView yy_setImageWithURL:imageURL placeholder:placeHolder options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
             
             weakSelf.progressView.progress = (CGFloat)receivedSize / expectedSize ;
         } transform:nil completion:^(UIImage * _Nullable image, NSURL * _Nonnull url, YYWebImageFromType from, YYWebImageStage stage, NSError * _Nullable error) {

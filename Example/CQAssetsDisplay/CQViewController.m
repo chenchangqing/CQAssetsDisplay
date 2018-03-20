@@ -116,7 +116,8 @@
     NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
     
     [photoCell.imageView yy_cancelCurrentImageRequest];
-    [photoCell.imageView yy_setImageWithURL:photoURL placeholder:nil];
+    UIImage *plahod = [UIImage imageNamed:@"placeholder"];
+    [photoCell.imageView yy_setImageWithURL:photoURL placeholder:plahod];
     
     return photoCell;
 }
@@ -126,7 +127,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // 清除缓存
-//    [self clearImagesCache];
+    [self clearImagesCache];
     
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
@@ -150,7 +151,8 @@
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
-    [cell setImageUrl:photoStr andPlaceHolder:nil];
+    UIImage *plahod = [UIImage imageNamed:@"placeholder"];
+    [cell setImageUrl:photoStr andPlaceHolder:plahod];
     if (index < _videoArray.count) {
         
         [cell setVideoUrl:_videoArray[index]];
