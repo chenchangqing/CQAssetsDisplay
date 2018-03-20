@@ -164,7 +164,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 响应单击
 - (void)handleTapGesture:(UITapGestureRecognizer *)tap {
 
-    if (self.currentCell.videoUrl) {
+    if (self.currentCell.videoUrl||self.currentCell.localVidUrl) {
         
         [self.currentCell toggleControls];
     } else {
@@ -391,12 +391,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
                      
                     [UIApplication sharedApplication].delegate.window.userInteractionEnabled = YES;
                     [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
-                    if (isAutoPlay && item.videoUrl) { [item playVideo]; }
+                    if (isAutoPlay && (item.videoUrl || item.localVidUrl)) { [item playVideo]; }
                 }];
             } else {
                 
                 [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
-                if (isAutoPlay && item.videoUrl) { [item playVideo]; }
+                if (isAutoPlay &&  (item.videoUrl || item.localVidUrl)) { [item playVideo]; }
             }
         }];
     };
@@ -807,6 +807,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView {
     if (![scrollView isKindOfClass:[CQAssetsDisplayCell class]])
         return nil;
+    if (self.currentCell.videoUrl || self.currentCell.localVidUrl) {
+        return nil;
+    }
     return ((CQAssetsDisplayCell *)scrollView).imageView;
 }
 
@@ -844,6 +847,10 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     zoomImageView.frame = frame;
     
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 @end
