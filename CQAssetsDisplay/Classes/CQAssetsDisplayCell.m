@@ -408,8 +408,12 @@
         if (loadImageOK) {
             self.progressView.hidden = YES;
         } else {
-            [self.progressView showError];
-            self.progressView.hidden = NO;
+            if (_imageURL) {
+                [self.progressView showError];
+                self.progressView.hidden = NO;
+            } else {
+                self.progressView.hidden = YES;
+            }
         }
         
         self.videoPlayBtn.hidden = YES;

@@ -54,11 +54,13 @@
     circleLayer.strokeColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8].CGColor;
     circleLayer.fillColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.2].CGColor;
     circleLayer.path = [self circlePath].CGPath;
+    circleLayer.hidden = YES;
     [self.layer addSublayer:circleLayer];
     self.circleLayer = circleLayer;
     
     CAShapeLayer *fanshapedLayer = [CAShapeLayer layer];
     fanshapedLayer.fillColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8].CGColor;
+    fanshapedLayer.hidden = true;
     [self.layer addSublayer:fanshapedLayer];
     self.fanshapedLayer = fanshapedLayer;
     
@@ -68,6 +70,7 @@
     errorLayer.affineTransform = CGAffineTransformMakeRotation(M_PI_4);
     errorLayer.fillColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8].CGColor;
     errorLayer.path = [self errorPath].CGPath;
+    errorLayer.hidden = YES;
     [self.layer addSublayer:errorLayer];
     self.errorLayer = errorLayer;
     

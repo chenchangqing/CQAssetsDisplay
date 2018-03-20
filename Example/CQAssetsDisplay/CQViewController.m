@@ -127,7 +127,7 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     // 清除缓存
-    [self clearImagesCache];
+//    [self clearImagesCache];
     
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];

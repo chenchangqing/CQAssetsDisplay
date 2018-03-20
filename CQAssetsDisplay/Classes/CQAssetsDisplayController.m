@@ -736,6 +736,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         videoPlayBtn.tintColor = [UIColor whiteColor];
         [videoPlayBtn addTarget:cell action:@selector(playVideo) forControlEvents:UIControlEventTouchUpInside];
         videoPlayBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        videoPlayBtn.hidden = YES;
         [videoPlayBtn setImage:[self videoPlayImage] forState:UIControlStateNormal];
         [_scrollViewContentView addSubview:videoPlayBtn];
         cell.videoPlayBtn = videoPlayBtn;
