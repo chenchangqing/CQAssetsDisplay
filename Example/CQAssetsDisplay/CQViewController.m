@@ -22,7 +22,10 @@
 #define kAlbumSectionSpacing     5                                          // 节外边距
 #define kAlbumPlistName          @"album.plist"                             // 图片数组
 #define kVideoPlistName          @"video.plist"                             // 视频数组
+#define kLocalAlbumPlistName     @"album_local.plist"                       // 本地图片数组
+#define kLocalVideoPlistName     @"video_local.plist"                       // 本地视频数组
 #define kAssetsDisplayCell       @"assetsDisplayCell"                       // 图片浏览器cell key
+#define kUseLocal                1                                          // 是否使用本地图片作为资源
 
 @interface CQViewController ()<UICollectionViewDataSource,UICollectionViewDelegate,CQAssetsDisplayControllerDataSource>
 
@@ -76,7 +79,7 @@
 // 加载相册数据
 - (void)loadAlbumArray {
     
-    NSString *albumDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kAlbumPlistName];
+    NSString *albumDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kUseLocal ? kLocalAlbumPlistName :  kAlbumPlistName];
     NSArray *albumArray = [[NSArray alloc] initWithContentsOfFile:albumDataFilePath];
     _albumArray = albumArray;
     
@@ -85,7 +88,7 @@
 // 加载视频数据
 - (void)loadVideoArray {
     
-    NSString *videoDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kVideoPlistName];
+    NSString *videoDataFilePath = [[NSBundle mainBundle].bundlePath stringByAppendingPathComponent:kUseLocal ? kLocalVideoPlistName :  kVideoPlistName];
     NSArray *videoArray = [[NSArray alloc] initWithContentsOfFile:videoDataFilePath];
     _videoArray = videoArray;
     
@@ -113,11 +116,14 @@
     photoCell.imageView.backgroundColor = [UIColor blackColor];
     
     NSString *photoStr = [_albumArray objectAtIndex:indexPath.row];
-    NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
-    
-    [photoCell.imageView yy_cancelCurrentImageRequest];
-    UIImage *plahod = [UIImage imageNamed:@"placeholder"];
-    [photoCell.imageView yy_setImageWithURL:photoURL placeholder:plahod];
+    if (kUseLocal) {
+        photoCell.imageView.image = [UIImage imageNamed:photoStr];
+    } else {
+        NSURL *photoURL = [[NSURL alloc] initWithString:photoStr];
+        [photoCell.imageView yy_cancelCurrentImageRequest];
+        UIImage *plahod = [UIImage imageNamed:@"placeholder"];
+        [photoCell.imageView yy_setImageWithURL:photoURL placeholder:plahod];
+    }
     
     return photoCell;
 }
@@ -151,11 +157,22 @@
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
-    UIImage *plahod = [UIImage imageNamed:@"placeholder"];
-    [cell setImageUrl:photoStr andPlaceHolder:plahod];
-    if (index < _videoArray.count) {
+    
+    if (kUseLocal) {
+        [cell setImageUrl:nil andPlaceHolder:[UIImage imageNamed:photoStr]];
         
-        [cell setVideoUrl:_videoArray[index]];
+        if (index < _videoArray.count) {
+            NSString *loc = [[NSBundle mainBundle] pathForResource:_videoArray[index] ofType:nil];
+            NSURL *url = [NSURL fileURLWithPath:loc];
+            [cell setLocalVideoUrl:url];
+        }
+    } else {
+        UIImage *plahod = [UIImage imageNamed:@"placeholder"];
+        [cell setImageUrl:photoStr andPlaceHolder:plahod];
+        
+        if (index < _videoArray.count) {
+            [cell setVideoUrl:_videoArray[index]];
+        }
     }
     
     cell.pageLabel.text = [NSString stringWithFormat:@"%ld",(long)index];

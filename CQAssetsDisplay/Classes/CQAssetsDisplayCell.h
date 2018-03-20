@@ -19,7 +19,8 @@
 
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier;// 初始化
 - (void)setImageUrl:(NSString *)remoteUrl andPlaceHolder:(UIImage *)placeHolder;// 设置远程图片和占位图
-- (void)setVideoUrl:(NSString *)videoUrl;// 设置视频播放地址
+- (void)setVideoUrl:(NSString *)videoUrl;// 设置视频播放地址(远程地址)
+- (void)setLocalVideoUrl:(NSURL *)localVideoUrl;// 设置视频播放地址(本地地址)
 
 // 变为重用
 - (void)changeToReuse;

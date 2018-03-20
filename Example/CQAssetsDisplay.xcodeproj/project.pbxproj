@@ -46,6 +46,8 @@
 		F08EEAD52060FEB600A4D10C /* vid_07.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F08EEACC2060FEB600A4D10C /* vid_07.mp4 */; };
 		F08EEAD62060FEB600A4D10C /* vid_08.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F08EEACD2060FEB600A4D10C /* vid_08.mp4 */; };
 		F08EEAD72060FEB600A4D10C /* vid_09.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F08EEACE2060FEB600A4D10C /* vid_09.mp4 */; };
+		F08EEAD920610EBE00A4D10C /* album_local.plist in Resources */ = {isa = PBXBuildFile; fileRef = F08EEAD820610EBE00A4D10C /* album_local.plist */; };
+		F08EEADB20610EEA00A4D10C /* video_local.plist in Resources */ = {isa = PBXBuildFile; fileRef = F08EEADA20610EEA00A4D10C /* video_local.plist */; };
 		F0D7E8B71EE00C2100124928 /* video.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E8B61EE00C2100124928 /* video.plist */; };
 		F322A0D8C31EE412529CF8B9 /* Pods_CQAssetsDisplay_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE03C7758CE2B36FF2527DF /* Pods_CQAssetsDisplay_Tests.framework */; };
 /* End PBXBuildFile section */
@@ -115,6 +117,8 @@
 		F08EEACC2060FEB600A4D10C /* vid_07.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = vid_07.mp4; sourceTree = "<group>"; };
 		F08EEACD2060FEB600A4D10C /* vid_08.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = vid_08.mp4; sourceTree = "<group>"; };
 		F08EEACE2060FEB600A4D10C /* vid_09.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = vid_09.mp4; sourceTree = "<group>"; };
+		F08EEAD820610EBE00A4D10C /* album_local.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = album_local.plist; sourceTree = "<group>"; };
+		F08EEADA20610EEA00A4D10C /* video_local.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = video_local.plist; sourceTree = "<group>"; };
 		F0D7E8B61EE00C2100124928 /* video.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = video.plist; sourceTree = "<group>"; };
 		FD3C1A68E7201241BEEF9C68 /* Pods-CQAssetsDisplay_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CQAssetsDisplay_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CQAssetsDisplay_Tests/Pods-CQAssetsDisplay_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -210,6 +214,8 @@
 				6003F59B195388D20070C39A /* CQAssetsDisplay-Prefix.pch */,
 				F073458A1ED417E20023D15D /* album.plist */,
 				F0D7E8B61EE00C2100124928 /* video.plist */,
+				F08EEAD820610EBE00A4D10C /* album_local.plist */,
+				F08EEADA20610EEA00A4D10C /* video_local.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -379,6 +385,7 @@
 				F0D7E8B71EE00C2100124928 /* video.plist in Resources */,
 				F08EEABA2060FDBE00A4D10C /* pic_01.jpg in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
+				F08EEAD920610EBE00A4D10C /* album_local.plist in Resources */,
 				F08EEABB2060FDBE00A4D10C /* pic_07.jpg in Resources */,
 				F08EEABC2060FDBE00A4D10C /* pic_08.jpg in Resources */,
 				F08EEABD2060FDBE00A4D10C /* pic_09.jpg in Resources */,
@@ -389,6 +396,7 @@
 				F08EEAC22060FDBE00A4D10C /* pic_05.jpeg in Resources */,
 				F08EEAD32060FEB600A4D10C /* vid_05.mp4 in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
+				F08EEADB20610EEA00A4D10C /* video_local.plist in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				F08EEAC02060FDBE00A4D10C /* pic_04.jpg in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,

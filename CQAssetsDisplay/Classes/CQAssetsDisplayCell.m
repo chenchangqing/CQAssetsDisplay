@@ -83,6 +83,10 @@
     _videoUrl = videoUrl;
 }
 
+- (void)setLocalVideoUrl:(NSURL *)localVideoUrl {
+    _localVidUrl = localVideoUrl;
+}
+
 - (void)fix {
     
     _fixView = [UIView new];
@@ -149,7 +153,7 @@
 
 - (void)playVideo {
     
-    if (!_videoUrl) {
+    if (!_videoUrl && !_localVidUrl) {
         return;
     }
     
@@ -248,7 +252,7 @@
     [self suspendDownload];
     self.progressView.hidden = YES;
     self.hidden = NO;
-    if (self.videoUrl) {// 避免播放显示错误(复用回调)
+    if (self.videoUrl || self.localVidUrl) {// 避免播放显示错误(复用回调)
         
         _videoPlayBtn.hidden = NO;
     } else {
@@ -262,7 +266,7 @@
     if (success) {
         
         self.hidden = NO;
-        if (self.videoUrl) {// 避免播放显示错误(复用回调)
+        if (self.videoUrl||self.localVidUrl) {// 避免播放显示错误(复用回调)
             
             _videoPlayBtn.hidden = NO;
         } else {
@@ -276,6 +280,11 @@
 }
 - (void)getVideoURL:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress// 下载资源(实现先下载，后播放)
 {
+    
+    if (_localVidUrl) {
+        completion(_localVidUrl);
+        return;
+    }
     
     NSString *downloadURL = self.videoUrl;
     MCDownloadReceipt *receipt = [[MCDownloadManager defaultInstance] downloadReceiptForURL:downloadURL];
@@ -402,7 +411,7 @@
         return;
     }
     
-    BOOL videoPlayBtnHidden = self.videoUrl != nil ? NO : YES;
+    BOOL videoPlayBtnHidden = (self.videoUrl != nil || self.localVidUrl != nil) ? NO : YES;
     if (videoPlayBtnHidden) {
         
         if (loadImageOK) {
@@ -438,6 +447,7 @@
     self.videoControlView.hidden = YES;
     [self suspendDownload];
     [self setVideoUrl:nil];
+    [self setLocalVideoUrl:nil];
     [self setImageURL:nil];
 }
 // 恢复没有缩放

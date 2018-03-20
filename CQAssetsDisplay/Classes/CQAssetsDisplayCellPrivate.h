@@ -14,6 +14,7 @@
 
 @property (nonatomic, weak) UIImageView     *imageView;     // 显示图片
 @property (copy, nonatomic) NSString        *videoUrl;      // 视频地址
+@property (strong, nonatomic) NSURL         *localVidUrl;   // 本地地址
 @property (copy, nonatomic) NSString        *imageURL;      // 图片地址
 @property (strong, nonatomic) UIImage       *placeHolder;   // 占位图片
 
