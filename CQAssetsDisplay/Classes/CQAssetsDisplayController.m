@@ -40,6 +40,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 @property (nonatomic, weak) UIView *fromView;                               // 来自哪个view
 @property (nonatomic, assign) CGFloat cellPadding;                          // cell之间的间隔
 @property (nonatomic, assign) BOOL showCloseBtnWhenVideo;                   // 当为视频时是否显示关闭按钮
+@property (nonatomic, assign) BOOL isRoting;                                // 是否正在旋转
 
 @end
 
@@ -234,6 +235,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 处理旋转
 - (void)orientationChanged:(NSNotification *)note  {
     
+    _isRoting = YES;
     UIDeviceOrientation o = [[UIDevice currentDevice] orientation];
     switch (o) {
         case UIDeviceOrientationPortrait:            // Device oriented vertically, home button on the bottom
@@ -258,6 +260,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             
             break;
     }
+    _isRoting = NO;
 }
 
 // 适配旋转
@@ -487,7 +490,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    if (_scrollView == scrollView) {
+    if (_scrollView == scrollView && !_isRoting) {
         
         CGPoint centerPoint = CGPointMake(scrollView.frame.size.width/2, scrollView.frame.size.height/2);
         CGPoint point = [self.view convertPoint:centerPoint toView:self.scrollView];
@@ -525,7 +528,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 
 // 设置当前页
 - (void)setCurrentPage:(NSInteger)currentPage{
-    __weak typeof(self) weakSelf = self;
     [self setCurrentPage:currentPage andIsScrollToCurrentPage:YES andCallback:^(CQAssetsDisplayCell *item, BOOL loadImageOK){
         [item setHidePlayerIconWithLoadImageOk:loadImageOK andIndex:currentPage];
     }];
