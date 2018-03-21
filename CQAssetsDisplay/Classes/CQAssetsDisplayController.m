@@ -405,34 +405,46 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // MARK: -
 
 //获取当前屏幕显示的 View Controller
-- (UIViewController *)currentVC
-{
-    if (!_currentVC) {
-        UIViewController *result = nil;
-        UIWindow * window        = [[UIApplication sharedApplication] keyWindow];
-        if (window.windowLevel != UIWindowLevelNormal) {
-            NSArray *windows = [[UIApplication sharedApplication] windows];
-            for(UIWindow * tmpWin in windows) {
-                if (tmpWin.windowLevel == UIWindowLevelNormal) {
-                    window = tmpWin;
-                    break;
-                }
-            }
-        }
-        
-        UIView *frontView = [[window subviews] objectAtIndex:0];
-        id nextResponder  = [frontView nextResponder];
-        
-        if ([nextResponder isKindOfClass:[UIViewController class]])
-            result = nextResponder;
-        else
-            result = window.rootViewController;
-        
-        _currentVC = result;
-        //    _currentVC = [TopVC shared].top;
-    }
+//- (UIViewController *)currentVC
+//{
+//    if (!_currentVC) {
+//        UIViewController *result = nil;
+//        UIWindow * window        = [[UIApplication sharedApplication] keyWindow];
+//        if (window.windowLevel != UIWindowLevelNormal) {
+//            NSArray *windows = [[UIApplication sharedApplication] windows];
+//            for(UIWindow * tmpWin in windows) {
+//                if (tmpWin.windowLevel == UIWindowLevelNormal) {
+//                    window = tmpWin;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        UIView *frontView = [[window subviews] objectAtIndex:0];
+//        id nextResponder  = [frontView nextResponder];
+//
+//        if ([nextResponder isKindOfClass:[UIViewController class]])
+//            result = nextResponder;
+//        else
+//            result = window.rootViewController;
+//
+//        _currentVC = result;
+//        //    _currentVC = [TopVC shared].top;
+//    }
+//
+//    return _currentVC;
+//}
+
+- (UIViewController *)currentVC {
+    UIViewController *topRootViewController = [[UIApplication  sharedApplication] keyWindow].rootViewController;
     
-    return _currentVC;
+    // 在这里加一个这个样式的循环
+    while (topRootViewController.presentedViewController)
+    {
+        // 这里固定写法
+        topRootViewController = topRootViewController.presentedViewController;
+    }
+    return  topRootViewController;
 }
 
 // 得到可复用视图
