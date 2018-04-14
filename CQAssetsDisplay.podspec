@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CQAssetsDisplay'
-  s.version          = '0.1.5'
+  s.version          = '1.0.0.100'
   s.summary          = '视频、图片浏览器'
 
 # This description is used to generate tags and improve search results.
