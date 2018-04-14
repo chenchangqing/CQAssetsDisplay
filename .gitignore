@@ -18,6 +18,8 @@ profile
 DerivedData
 *.hmap
 *.ipa
+CQAssetsDisplay/img
+CQAssetsDisplay/video
 
 # Bundler
 .bundle
