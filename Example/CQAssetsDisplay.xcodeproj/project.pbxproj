@@ -349,7 +349,8 @@
 				ORGANIZATIONNAME = "chenchangqing198@126.com";
 				TargetAttributes = {
 					6003F589195388D20070C39A = {
-						DevelopmentTeam = GVY2W5C59W;
+						DevelopmentTeam = FY86F394R5;
+						ProvisioningStyle = Manual;
 					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
@@ -651,13 +652,16 @@
 			baseConfigurationReference = 5BB1364877C62B5AB9F7FDB6 /* Pods-CQAssetsDisplay_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = GVY2W5C59W;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FY86F394R5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CQAssetsDisplay/CQAssetsDisplay-Prefix.pch";
 				INFOPLIST_FILE = "CQAssetsDisplay/CQAssetsDisplay-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "7a4c297a-6b25-4d7e-abed-f291eb104516";
+				PROVISIONING_PROFILE_SPECIFIER = 20180329_dev_provision;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -667,13 +671,17 @@
 			baseConfigurationReference = 9BC1D31A80D4D9B9A6D44356 /* Pods-CQAssetsDisplay_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = GVY2W5C59W;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = FY86F394R5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CQAssetsDisplay/CQAssetsDisplay-Prefix.pch";
 				INFOPLIST_FILE = "CQAssetsDisplay/CQAssetsDisplay-Info.plist";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "c3814a67-e867-47a9-bce7-a11bd5330019";
+				PROVISIONING_PROFILE_SPECIFIER = 20180329_dis_provision;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
