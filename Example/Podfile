@@ -1,4 +1,6 @@
+inhibit_all_warnings!
 use_frameworks!
+platform :ios, '8.0'
 
 target 'CQAssetsDisplay_Example' do
   pod 'CQAssetsDisplay', :path => '../'
