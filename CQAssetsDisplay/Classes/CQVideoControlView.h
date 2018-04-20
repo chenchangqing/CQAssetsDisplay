@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <CQVRPlayer/CQVideoControlView_VR.h>
 
-
 // 视频播放控制
 
 @interface CQVideoControlView : UIView<CQVideoControlViewProtocol>

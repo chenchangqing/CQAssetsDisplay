@@ -137,6 +137,31 @@
 
 // MARK: - Actions
 
+- (void)setTitle:(NSString *)title// 设置视频标题
+{
+    
+}
+
+- (void)fitScreenDirection:(BOOL)isHorizontalScreenDirection // 适配方向
+{
+    
+}
+
+- (void)selectedSwitchRenderBtn:(BOOL)selected // 是否选中2d
+{
+    
+}
+
+- (void)selectedZhongliBtn:(BOOL)selected // 是否选中陀螺仪
+{
+    
+}
+
+- (void)selectedHalfScreenBtn:(BOOL)selected // 是否分屏
+{
+    
+}
+
 - (void)scrubbingDidStart {
     
     self.scrubbing = YES;

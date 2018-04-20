@@ -590,6 +590,7 @@
         CQScene *scene = (CQScene *)[vrRenderView dequeueReusableSceneWithIdentifier:identifier];
         if (scene == nil) {
             scene = [[CQScene alloc] initWithReuseIdentifier:identifier];
+            scene.is2dPerspective = YES;
         }
         return scene;
     }

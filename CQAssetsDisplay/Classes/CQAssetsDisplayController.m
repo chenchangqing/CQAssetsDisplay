@@ -685,6 +685,8 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];
+        playerView.delegate = cell;
+        playerView.dataSource = cell;
         [_scrollViewContentView addSubview:playerView];
         cell.videoPlayerView = playerView;
         
