@@ -2,6 +2,7 @@ use_frameworks!
 
 target 'CQAssetsDisplay_Example' do
   pod 'CQAssetsDisplay', :path => '../'
+  pod 'CQVRPlayer', :path => '../../CQVRPlayer'
 
   target 'CQAssetsDisplay_Tests' do
     inherit! :search_paths
