@@ -40,4 +40,5 @@ TODO: 像tableView一样，使用非常简单的视频、图片浏览器
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'YYWebImage','~>1.0.5'
   s.dependency 'MCDownloadManager','~>1.0.3'
+  s.dependency 'CQVRPlayer'
 end

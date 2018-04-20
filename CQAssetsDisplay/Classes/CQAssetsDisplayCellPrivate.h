@@ -6,7 +6,7 @@
 //
 //
 #import "ESPictureProgressView.h"
-#import "CQVideoPlayer.h"
+#import <CQVRPlayer/CQVideoPlayer.h>
 #import "CQVideoPlayerView.h"
 #import "CQVideoControlView.h"
 

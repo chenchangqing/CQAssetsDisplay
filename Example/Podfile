@@ -3,8 +3,8 @@ use_frameworks!
 platform :ios, '8.0'
 
 target 'CQAssetsDisplay_Example' do
-  pod 'CQAssetsDisplay', :path => '../'
-  pod 'CQVRPlayer', :path => '../../CQVRPlayer'
+    pod 'CQVRPlayer', :path => '../../CQVRPlayer'
+    pod 'CQAssetsDisplay', :path => '../'
 
   target 'CQAssetsDisplay_Tests' do
     inherit! :search_paths

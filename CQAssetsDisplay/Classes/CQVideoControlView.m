@@ -18,6 +18,9 @@
 @end
 
 @implementation CQVideoControlView
+@synthesize delegate=_delegate;
+@synthesize dataSource=_dataSource;
+@synthesize scrubbing=_scrubbing;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -149,8 +152,8 @@
     [self setCurrentTime:currentTime duration:duration];
 
     BOOL isDidLoadAssetSuccess = NO;
-    if ([_delegate respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
-        isDidLoadAssetSuccess = [_delegate isDidLoadAssetSuccess];
+    if ([_dataSource respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
+        isDidLoadAssetSuccess = [_dataSource isDidLoadAssetSuccess];
     }
     if (isDidLoadAssetSuccess) {
         

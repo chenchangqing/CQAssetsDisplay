@@ -12,7 +12,7 @@
 #import <YYWebImage/YYWebImage.h>
 #import "NSTimer+Additions.h"
 
-@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate>
+@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate,CQVideoControlViewDataSource>
 
 @property (strong, nonatomic) UIView *fixView;
 @property (strong, nonatomic) NSTimer *timer;// 计时器
@@ -221,7 +221,7 @@
 {
     if (success) {
         
-        [_videoPlayerView setAVPlayer:videoPlayer.avPlayer];
+//        [_videoPlayerView setAVPlayer:videoPlayer.avPlayer];
     } else {
         [self videoPlayerDidPlay:videoPlayer andSuccess:NO];
     }
@@ -523,9 +523,16 @@
     [self resetTimer];
     [self.videoPlayer scrubbingDidEnd];
 }
+
+// MARK: - CQVideoControlViewDataSource
+
 - (BOOL)isDidLoadAssetSuccess// 是否成功加载资源
 {
-    return self.videoPlayer.avPlayer;
+    return [self.videoPlayer isDidLoadAssetSuccess];
+}
+
+- (BOOL)getIsHorizontalScreenDirection {
+    return YES;
 }
 
 @end
