@@ -681,7 +681,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         cell.placeViewWith = placeViewWith;
         
         // 增加playerView
-        CQVideoPlayerView *playerView = [CQVideoPlayerView new];
+        CQVRRenderView *playerView = [CQVRRenderView new];
         playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];

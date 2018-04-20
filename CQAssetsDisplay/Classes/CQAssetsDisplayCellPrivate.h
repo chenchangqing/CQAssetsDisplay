@@ -7,10 +7,10 @@
 //
 #import "ESPictureProgressView.h"
 #import <CQVRPlayer/CQVideoPlayer.h>
-#import "CQVideoPlayerView.h"
+#import <CQVRPlayer/CQVRRenderView.h>
 #import "CQVideoControlView.h"
 
-@interface CQAssetsDisplayCell ()
+@interface CQAssetsDisplayCell ()<CQVRRenderViewDelegate,CQVRRenderViewDataSource>
 
 @property (nonatomic, weak) UIImageView     *imageView;     // 显示图片
 @property (copy, nonatomic) NSString        *videoUrl;      // 视频地址
@@ -23,7 +23,7 @@
 @property (weak, nonatomic) UIView                  *placeView;             // 约束cell做边距的视图
 @property (weak, nonatomic) ESPictureProgressView   *progressView;          // 进度
 @property (strong, nonatomic) CQVideoPlayer         *videoPlayer;           // 播放器
-@property (weak, nonatomic) CQVideoPlayerView       *videoPlayerView;       // 播放视频
+@property (weak, nonatomic) CQVRRenderView          *videoPlayerView;       // 播放视频
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
 @property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
 @property (weak, nonatomic) UIButton                *closeBtn;              // 关闭按钮
