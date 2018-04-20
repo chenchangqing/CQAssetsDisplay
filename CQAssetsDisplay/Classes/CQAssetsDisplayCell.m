@@ -569,7 +569,7 @@
 
 - (NSInteger)numberOfScenesInVRPlayer:(CQVRRenderView *)vrRenderView {
     
-    if (_videoPlayer) {
+    if (_videoUrl || _localVidUrl) {
         return 1;
     }
     return 0;
@@ -577,7 +577,7 @@
 
 - (NSInteger)vrRenderView:(CQVRRenderView *)vrRenderView numberOfModelsInScene:(NSInteger)sceneIndex {
     
-    if (_videoPlayer) {
+    if (_videoUrl || _localVidUrl) {
         return 2;
     }
     return 0;
@@ -626,7 +626,7 @@
 //返回播放器
 
 - (id<CQVideoPlayerProtocol>)vrRenderView:(id<CQVRRenderViewProtocol>)vrRenderView playerForSceneAtIndex:(NSInteger)sceneIndex {
-    NSString *identifier = [NSString stringWithFormat:@"player%ld",sceneIndex];
+    NSString *identifier = [NSString stringWithFormat:@"player%ld",_index];
     id<CQVideoPlayerProtocol> player = [vrRenderView dequeueReusablePlayerWithIdentifier:identifier];
     if (sceneIndex == 0) {
         if (player == nil) {

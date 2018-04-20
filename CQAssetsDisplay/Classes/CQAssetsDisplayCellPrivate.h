@@ -22,7 +22,7 @@
 
 @property (weak, nonatomic) UIView                  *placeView;             // 约束cell做边距的视图
 @property (weak, nonatomic) ESPictureProgressView   *progressView;          // 进度
-@property (strong, nonatomic) CQVideoPlayer         *videoPlayer;           // 播放器
+@property (weak, nonatomic) CQVideoPlayer         *videoPlayer;           // 播放器
 @property (weak, nonatomic) CQVRRenderView          *videoPlayerView;       // 播放视频
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
 @property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
