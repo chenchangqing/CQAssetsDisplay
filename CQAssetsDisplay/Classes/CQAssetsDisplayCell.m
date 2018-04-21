@@ -160,12 +160,6 @@
         return;
     }
     
-    if (_videoPlayer) {
-        
-        [_videoPlayer free];
-        _videoPlayer = nil;
-    }
-    
     // 重置关闭按钮、toolbar
     _videoControlView.hidden = YES;
     _closeBtn.hidden = YES;
@@ -238,6 +232,7 @@
 - (void)videoPlayerPreparePlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
 {
     self.hidden = YES;
+    _videoPlayBtn.hidden = YES;
     _progressView.hidden = YES;
     _progressView.progress = 1;
     
@@ -441,8 +436,7 @@
     
     [self.imageView yy_cancelCurrentImageRequest];
     self.imageView.image = nil;
-//    [_videoPlayer free]; 减少卡顿
-//    _videoPlayer = nil;
+    [_videoPlayer free];
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
     self.closeBtn.hidden = YES;
