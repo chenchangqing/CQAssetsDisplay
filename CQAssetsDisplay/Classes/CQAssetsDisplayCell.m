@@ -633,6 +633,7 @@
             player = [[CQVideoPlayer alloc] initWithReuseIdentifier:identifier];
             player.remoteVidUrlStr = _videoUrl;
             player.localVidUrl = _localVidUrl;
+            player.willChangeStatus = CQVPWillChangeStatusPause;// 这句话会影响播放器按钮显示
         }
     }
     return player;
