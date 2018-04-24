@@ -150,10 +150,10 @@
 
 - (CQAssetsDisplayCell *)assetsDisplayController:(CQAssetsDisplayController *)controller cellForIndex:(NSInteger)index {
     
-    CQCustomAssetsDisplayCell *cell = (CQCustomAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
+    CQAssetsDisplayCell *cell = (CQAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
     if (cell == nil) {
         
-        cell = [[CQCustomAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
+        cell = [[CQAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
@@ -174,8 +174,6 @@
             [cell setVideoUrl:_videoArray[index]];
         }
     }
-    
-    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",(long)index];
     
     return cell;
 }

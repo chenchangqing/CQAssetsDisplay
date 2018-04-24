@@ -8,6 +8,7 @@
 #import "ESPictureProgressView.h"
 #import <CQVRPlayer/CQVideoPlayer.h>
 #import <CQVRPlayer/CQVRRenderView.h>
+#import "CQVideoControlView_VR.h"
 #import "CQVideoControlView.h"
 
 @interface CQAssetsDisplayCell ()<CQVRRenderViewDelegate,CQVRRenderViewDataSource>
@@ -25,7 +26,7 @@
 @property (weak, nonatomic) CQVideoPlayer         *videoPlayer;           // 播放器
 @property (weak, nonatomic) CQVRRenderView          *videoPlayerView;       // 播放视频
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
-@property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
+@property (weak, nonatomic) CQVideoControlView_VR      *videoControlView;      // 视频控制区
 @property (weak, nonatomic) UIButton                *closeBtn;              // 关闭按钮
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;              // 左边距约束
