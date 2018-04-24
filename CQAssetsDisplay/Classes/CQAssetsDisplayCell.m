@@ -541,7 +541,15 @@
     CQScene *currentScene = [self vrRenderView:vrRenderView sceneAtIndex:vrRenderView.currentSceneIndex];
     [_videoControlView selectedZhongliBtn:currentScene.gyroscopeEnabled];
     [_videoControlView selectedHalfScreenBtn:currentScene.duralScreenEnabled];
-    [_videoControlView selectedSwitchRenderBtn:currentScene.sceneType == CQSceneTypePlane];
+    if (currentScene.sceneType == CQSceneTypeSphere) {
+        [_videoControlView selectedSphereSceneType];
+    }
+    if (currentScene.sceneType == CQSceneTypeHalSphere) {
+        [_videoControlView selectedHalSphereSceneType];
+    }
+    if (currentScene.sceneType == CQSceneTypePlane) {
+        [_videoControlView selectedPlaneSceneType];
+    }
     
     // 更新当前播放器控制界面
     [_videoControlView setToPlaying:NO];

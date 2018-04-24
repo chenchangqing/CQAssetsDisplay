@@ -252,4 +252,16 @@
     self.togglePlaybackButton.selected = isPlaying;
 }
 
+- (void)selectedPlaneSceneType {
+    
+}
+
+- (void)selectedHalSphereSceneType {
+    
+}
+
+- (void)selectedSphereSceneType {
+    
+}
+
 @end
