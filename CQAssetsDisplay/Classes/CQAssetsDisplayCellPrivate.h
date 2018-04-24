@@ -8,7 +8,7 @@
 #import "ESPictureProgressView.h"
 #import <CQVRPlayer/CQVideoPlayer.h>
 #import <CQVRPlayer/CQVRRenderView.h>
-#import "CQVideoControlView_VR.h"
+//#import "CQVideoControlView_VR.h"
 #import "CQVideoControlView.h"
 
 @interface CQAssetsDisplayCell ()<CQVRRenderViewDelegate,CQVRRenderViewDataSource>
