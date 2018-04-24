@@ -208,18 +208,21 @@
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypePlane;
     currentScene.gyroscopeEnabled = NO;
+    [_videoPlayerView stopMotionManager];
 }
 
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypeHalSphere;
     currentScene.gyroscopeEnabled = YES;
+    [_videoPlayerView startMotionManager];
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypeSphere;
     currentScene.gyroscopeEnabled = YES;
+    [_videoPlayerView startMotionManager];
 }
 
 // MARK: - CQVideoPlayerDelegate
