@@ -795,7 +795,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         sceneTypeSeg.tintColor = [UIColor whiteColor];
         sceneTypeSeg.hidden = YES;
         sceneTypeSeg.translatesAutoresizingMaskIntoConstraints = NO;
-        sceneTypeSeg.selectedSegmentIndex = 0;
+        sceneTypeSeg.selectedSegmentIndex = 2;
         [sceneTypeSeg addTarget:self action:@selector(sceneTypeSegChange:) forControlEvents:UIControlEventValueChanged];
         [_scrollViewContentView addSubview:sceneTypeSeg];
         cell.sceneTypeSeg = sceneTypeSeg;
@@ -817,15 +817,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     if (sender.selectedSegmentIndex == 0) {
         [self.currentCell selectedSphereSceneType];
-        _scrollView.scrollEnabled = NO;
+//        _scrollView.scrollEnabled = NO;
     }
     if (sender.selectedSegmentIndex == 1) {
         [self.currentCell selectedHalSphereSceneType];
-        _scrollView.scrollEnabled = NO;
+//        _scrollView.scrollEnabled = NO;
     }
     if (sender.selectedSegmentIndex == 2) {
         [self.currentCell selectedPlaneSceneType];
-        _scrollView.scrollEnabled = YES;
+//        _scrollView.scrollEnabled = YES;
     }
 }
 
