@@ -541,7 +541,7 @@
     CQScene *currentScene = [self vrRenderView:vrRenderView sceneAtIndex:vrRenderView.currentSceneIndex];
     [_videoControlView selectedZhongliBtn:currentScene.gyroscopeEnabled];
     [_videoControlView selectedHalfScreenBtn:currentScene.duralScreenEnabled];
-    [_videoControlView selectedSwitchRenderBtn:currentScene.is2dPerspective];
+    [_videoControlView selectedSwitchRenderBtn:currentScene.sceneType == CQSceneTypePlane];
     
     // 更新当前播放器控制界面
     [_videoControlView setToPlaying:NO];
@@ -584,7 +584,7 @@
         CQScene *scene = (CQScene *)[vrRenderView dequeueReusableSceneWithIdentifier:identifier];
         if (scene == nil) {
             scene = [[CQScene alloc] initWithReuseIdentifier:identifier];
-            scene.is2dPerspective = YES;
+            scene.sceneType = CQSceneTypePlane;
         }
         return scene;
     }
