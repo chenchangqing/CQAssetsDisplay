@@ -48,6 +48,7 @@
 		F08EEAD72060FEB600A4D10C /* vid_09.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F08EEACE2060FEB600A4D10C /* vid_09.mp4 */; };
 		F08EEAD920610EBE00A4D10C /* album_local.plist in Resources */ = {isa = PBXBuildFile; fileRef = F08EEAD820610EBE00A4D10C /* album_local.plist */; };
 		F08EEADB20610EEA00A4D10C /* video_local.plist in Resources */ = {isa = PBXBuildFile; fileRef = F08EEADA20610EEA00A4D10C /* video_local.plist */; };
+		F0BF7F3B208B653E005E8310 /* vid_10.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F0BF7F3A208B653E005E8310 /* vid_10.mp4 */; };
 		F0D7E8B71EE00C2100124928 /* video.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0D7E8B61EE00C2100124928 /* video.plist */; };
 		F322A0D8C31EE412529CF8B9 /* Pods_CQAssetsDisplay_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CE03C7758CE2B36FF2527DF /* Pods_CQAssetsDisplay_Tests.framework */; };
 /* End PBXBuildFile section */
@@ -119,6 +120,7 @@
 		F08EEACE2060FEB600A4D10C /* vid_09.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = vid_09.mp4; sourceTree = "<group>"; };
 		F08EEAD820610EBE00A4D10C /* album_local.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = album_local.plist; sourceTree = "<group>"; };
 		F08EEADA20610EEA00A4D10C /* video_local.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = video_local.plist; sourceTree = "<group>"; };
+		F0BF7F3A208B653E005E8310 /* vid_10.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = vid_10.mp4; sourceTree = "<group>"; };
 		F0D7E8B61EE00C2100124928 /* video.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = video.plist; sourceTree = "<group>"; };
 		FD3C1A68E7201241BEEF9C68 /* Pods-CQAssetsDisplay_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CQAssetsDisplay_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CQAssetsDisplay_Tests/Pods-CQAssetsDisplay_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -281,6 +283,7 @@
 		F08EEAC52060FEB600A4D10C /* video */ = {
 			isa = PBXGroup;
 			children = (
+				F0BF7F3A208B653E005E8310 /* vid_10.mp4 */,
 				F08EEAC62060FEB600A4D10C /* vid_01.mp4 */,
 				F08EEAC72060FEB600A4D10C /* vid_02.mp4 */,
 				F08EEAC82060FEB600A4D10C /* vid_03.mp4 */,
@@ -306,7 +309,6 @@
 				6003F587195388D20070C39A /* Frameworks */,
 				6003F588195388D20070C39A /* Resources */,
 				906D6C475AEAF86D6FA9E1C3 /* [CP] Embed Pods Frameworks */,
-				22026F0C5276F0656CC205B1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -325,8 +327,6 @@
 				6003F5AA195388D20070C39A /* Sources */,
 				6003F5AB195388D20070C39A /* Frameworks */,
 				6003F5AC195388D20070C39A /* Resources */,
-				ED412E4D60C6C5DE5C2B57A5 /* [CP] Embed Pods Frameworks */,
-				BD516419130D15C4ECC5539D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -397,6 +397,7 @@
 				F08EEAC22060FDBE00A4D10C /* pic_05.jpeg in Resources */,
 				F08EEAD32060FEB600A4D10C /* vid_05.mp4 in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
+				F0BF7F3B208B653E005E8310 /* vid_10.mp4 in Resources */,
 				F08EEADB20610EEA00A4D10C /* video_local.plist in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				F08EEAC02060FDBE00A4D10C /* pic_04.jpg in Resources */,
@@ -423,34 +424,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		22026F0C5276F0656CC205B1 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CQAssetsDisplay_Example/Pods-CQAssetsDisplay_Example-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		6F46C93F1DBFA4CD85E63D35 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CQAssetsDisplay_Example-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		906D6C475AEAF86D6FA9E1C3 /* [CP] Embed Pods Frameworks */ = {
@@ -459,28 +448,26 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-CQAssetsDisplay_Example/Pods-CQAssetsDisplay_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CQAssetsDisplay/CQAssetsDisplay.framework",
+				"${BUILT_PRODUCTS_DIR}/CQVRPlayer/CQVRPlayer.framework",
+				"${BUILT_PRODUCTS_DIR}/MCDownloadManager/MCDownloadManager.framework",
+				"${BUILT_PRODUCTS_DIR}/YYCache/YYCache.framework",
+				"${BUILT_PRODUCTS_DIR}/YYImage/YYImage.framework",
+				"${BUILT_PRODUCTS_DIR}/YYWebImage/YYWebImage.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CQAssetsDisplay.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CQVRPlayer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MCDownloadManager.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYCache.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYWebImage.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CQAssetsDisplay_Example/Pods-CQAssetsDisplay_Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BD516419130D15C4ECC5539D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CQAssetsDisplay_Tests/Pods-CQAssetsDisplay_Tests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		EB2B4019CF662BAD00DF4C14 /* [CP] Check Pods Manifest.lock */ = {
@@ -489,28 +476,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-CQAssetsDisplay_Tests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		ED412E4D60C6C5DE5C2B57A5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CQAssetsDisplay_Tests/Pods-CQAssetsDisplay_Tests-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

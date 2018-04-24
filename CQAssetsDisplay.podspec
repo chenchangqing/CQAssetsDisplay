@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CQAssetsDisplay'
-  s.version          = '1.0.0.100'
+  s.version          = '1.0.2'
   s.summary          = '视频、图片浏览器'
 
 # This description is used to generate tags and improve search results.
@@ -40,4 +40,5 @@ TODO: 像tableView一样，使用非常简单的视频、图片浏览器
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'YYWebImage','~>1.0.5'
   s.dependency 'MCDownloadManager','~>1.0.3'
+  s.dependency 'CQVRPlayer'
 end

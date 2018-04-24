@@ -138,7 +138,7 @@
     CQCollectionViewCell *cell = (CQCollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     CQAssetsDisplayController *assetsDisplayController = [[CQAssetsDisplayController alloc] init];
     assetsDisplayController.dataSource = self;
-    [assetsDisplayController showWithFromView:cell andCellPadding:20 andCurrentPage:indexPath.row andShowCloseBtnWhenVideo:NO andIsAutoPlay:YES];
+    [assetsDisplayController showWithFromView:cell andCellPadding:20 andCurrentPage:indexPath.row andShowCloseBtnWhenVideo:YES andIsAutoPlay:YES];
 }
 
 // MARK: - CQAssetsDisplayControllerDataSource
@@ -150,10 +150,10 @@
 
 - (CQAssetsDisplayCell *)assetsDisplayController:(CQAssetsDisplayController *)controller cellForIndex:(NSInteger)index {
     
-    CQCustomAssetsDisplayCell *cell = (CQCustomAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
+    CQAssetsDisplayCell *cell = (CQAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
     if (cell == nil) {
         
-        cell = [[CQCustomAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
+        cell = [[CQAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];
@@ -175,7 +175,7 @@
         }
     }
     
-    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",(long)index];
+//    cell.pageLabel.text = [NSString stringWithFormat:@"%ld",(long)index];
     
     return cell;
 }

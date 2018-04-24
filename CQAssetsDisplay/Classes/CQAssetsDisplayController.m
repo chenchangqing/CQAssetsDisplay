@@ -681,10 +681,12 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         cell.placeViewWith = placeViewWith;
         
         // 增加playerView
-        CQVideoPlayerView *playerView = [CQVideoPlayerView new];
+        CQVRRenderView *playerView = [CQVRRenderView new];
         playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];
+        playerView.delegate = cell;
+        playerView.dataSource = cell;
         [_scrollViewContentView addSubview:playerView];
         cell.videoPlayerView = playerView;
         
@@ -697,14 +699,27 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
         videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
         videoControlView.delegate = cell;
+        videoControlView.dataSource = cell;
         videoControlView.hidden = YES;
         [_scrollViewContentView addSubview:videoControlView];
         cell.videoControlView = videoControlView;
-        
+
         views = @{@"videoControlView":videoControlView};
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(60)]-0-|" options:0 metrics:nil views:views]];
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        
+//        CQVideoControlView_VR *videoControlView = [[NSBundle mainBundle] loadNibNamed:@"Frameworks/CQVRPlayer.framework/CQVRPlayer.bundle/CQVideoControlView_VR" owner:nil options:nil].firstObject;
+//        videoControlView.delegate = cell;
+//        videoControlView.dataSource = cell;
+//        videoControlView.hidden = YES;
+//        [_scrollViewContentView addSubview:videoControlView];
+//        cell.videoControlView = videoControlView;
+//
+//        views = @{@"videoControlView":videoControlView};
+//        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(200)]-0-|" options:0 metrics:nil views:views]];
+//        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+//        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         // 增加cell
         [_scrollViewContentView addSubview:cell];
@@ -774,6 +789,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
             [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
         }
+        
+        // 切换场景
+        UISegmentedControl *sceneTypeSeg = [[UISegmentedControl alloc] initWithItems:@[@"360",@"180",@"2D"]];
+        sceneTypeSeg.tintColor = [UIColor whiteColor];
+        sceneTypeSeg.hidden = YES;
+        sceneTypeSeg.translatesAutoresizingMaskIntoConstraints = NO;
+        sceneTypeSeg.selectedSegmentIndex = 2;
+        [sceneTypeSeg addTarget:self action:@selector(sceneTypeSegChange:) forControlEvents:UIControlEventValueChanged];
+        [_scrollViewContentView addSubview:sceneTypeSeg];
+        cell.sceneTypeSeg = sceneTypeSeg;
+        
+        views = NSDictionaryOfVariableBindings(sceneTypeSeg,placeView);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(28)-[sceneTypeSeg(28)]" options:0 metrics:nil views:views]];
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(150)-[sceneTypeSeg(100)]" options:0 metrics:nil views:views]];
     }
     
     // 属性重置
@@ -782,6 +811,22 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     [_alreadyShowCells addObject:cell];
     
     return cell;
+}
+
+- (void)sceneTypeSegChange:(UISegmentedControl *)sender {
+    
+    if (sender.selectedSegmentIndex == 0) {
+        [self.currentCell selectedSphereSceneType];
+//        _scrollView.scrollEnabled = NO;
+    }
+    if (sender.selectedSegmentIndex == 1) {
+        [self.currentCell selectedHalSphereSceneType];
+//        _scrollView.scrollEnabled = NO;
+    }
+    if (sender.selectedSegmentIndex == 2) {
+        [self.currentCell selectedPlaneSceneType];
+//        _scrollView.scrollEnabled = YES;
+    }
 }
 
 // MARK: - 资源

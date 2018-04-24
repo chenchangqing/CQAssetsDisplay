@@ -11,8 +11,11 @@
 #import "MCDownloadManager.h"
 #import <YYWebImage/YYWebImage.h>
 #import "NSTimer+Additions.h"
+#import <CQVRPlayer/CQScene.h>
+#import <CQVRPlayer/CQSphere.h>
+#import <CQVRPlayer/CQPlane.h>
 
-@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate>
+@interface CQAssetsDisplayCell ()<CQVideoPlayerDelegate,CQVideoControlViewDelegate,CQVideoControlViewDataSource>
 
 @property (strong, nonatomic) UIView *fixView;
 @property (strong, nonatomic) NSTimer *timer;// 计时器
@@ -157,17 +160,12 @@
         return;
     }
     
-    if (_videoPlayer) {
-        
-        [_videoPlayer free];
-        _videoPlayer = nil;
-    }
-    
     // 重置关闭按钮、toolbar
     _videoControlView.hidden = YES;
     _closeBtn.hidden = YES;
+    _sceneTypeSeg.hidden = YES;
     
-    _videoPlayer = [CQVideoPlayer new];
+    _videoPlayer = [self vrRenderView:_videoPlayerView playerForSceneAtIndex:0];
     _videoPlayer.delegate = self;
     [_videoPlayer play];
 }
@@ -177,6 +175,7 @@
     
     _videoControlView.hidden = !_videoControlView.hidden;
     _closeBtn.hidden = !_closeBtn.hidden;
+    _sceneTypeSeg.hidden = !_sceneTypeSeg.hidden;
 }
 
 - (void)resetTimer {
@@ -205,6 +204,27 @@
     return _contentView;
 }
 
+- (void)selectedPlaneSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypePlane;
+    currentScene.gyroscopeEnabled = NO;
+    [_videoPlayerView stopMotionManager];
+}
+
+- (void)selectedHalSphereSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypeHalSphere;
+    currentScene.gyroscopeEnabled = YES;
+    [_videoPlayerView startMotionManager];
+}
+
+- (void)selectedSphereSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypeSphere;
+    currentScene.gyroscopeEnabled = YES;
+    [_videoPlayerView startMotionManager];
+}
+
 // MARK: - CQVideoPlayerDelegate
 
 - (void)videoPlayerWillLoadAsset:(CQVideoPlayer *)videoPlayer// 准备资源（开始loading)
@@ -221,7 +241,7 @@
 {
     if (success) {
         
-        [_videoPlayerView setAVPlayer:videoPlayer.avPlayer];
+//        [_videoPlayerView setAVPlayer:videoPlayer.avPlayer];
     } else {
         [self videoPlayerDidPlay:videoPlayer andSuccess:NO];
     }
@@ -235,6 +255,7 @@
 - (void)videoPlayerPreparePlay:(CQVideoPlayer *)videoPlayer// 成功播放（隐藏图片）
 {
     self.hidden = YES;
+    _videoPlayBtn.hidden = YES;
     _progressView.hidden = YES;
     _progressView.progress = 1;
     
@@ -278,8 +299,7 @@
         [_progressView showError];
     }
 }
-- (void)getVideoURL:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress// 下载资源(实现先下载，后播放)
-{
+- (void)videoPlayerGetVideoURL:(id<CQVideoPlayerProtocol>)videoPlayer andCompletion:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress {
     
     if (_localVidUrl) {
         completion(_localVidUrl);
@@ -439,11 +459,11 @@
     
     [self.imageView yy_cancelCurrentImageRequest];
     self.imageView.image = nil;
-//    [_videoPlayer free]; 减少卡顿
-//    _videoPlayer = nil;
+    [_videoPlayer free];
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
     self.closeBtn.hidden = YES;
+    self.sceneTypeSeg.hidden = YES;
     self.videoControlView.hidden = YES;
     [self suspendDownload];
     [self setVideoUrl:nil];
@@ -464,6 +484,7 @@
         [self.videoPlayer stop];
     }
     self.closeBtn.hidden = YES;
+    self.sceneTypeSeg.hidden = YES;
     self.videoControlView.hidden = YES;
 }
 // 释放
@@ -523,9 +544,152 @@
     [self resetTimer];
     [self.videoPlayer scrubbingDidEnd];
 }
+
+// MARK: - CQVideoControlViewDataSource
+
 - (BOOL)isDidLoadAssetSuccess// 是否成功加载资源
 {
-    return self.videoPlayer.avPlayer;
+    return [self.videoPlayer isDidLoadAssetSuccess];
+}
+
+- (BOOL)getIsHorizontalScreenDirection {
+    return YES;
+}
+
+
+
+#pragma mark - CQVRRenderViewDelegate
+
+- (void)vrRenderView:(id<CQVRRenderViewProtocol>)vrRenderView didDisplayingScene:(CQScene *)scene forSceneIndex:(NSInteger)sceneIndex {
+    
+    // 更新控制UI
+    CQScene *currentScene = [self vrRenderView:vrRenderView sceneAtIndex:vrRenderView.currentSceneIndex];
+    [_videoControlView selectedZhongliBtn:currentScene.gyroscopeEnabled];
+    [_videoControlView selectedHalfScreenBtn:currentScene.duralScreenEnabled];
+    if (currentScene.sceneType == CQSceneTypeSphere) {
+        [_videoControlView selectedSphereSceneType];
+    }
+    if (currentScene.sceneType == CQSceneTypeHalSphere) {
+        [_videoControlView selectedHalSphereSceneType];
+    }
+    if (currentScene.sceneType == CQSceneTypePlane) {
+        [_videoControlView selectedPlaneSceneType];
+    }
+    
+    // 更新当前播放器控制界面
+    [_videoControlView setToPlaying:NO];
+    [_videoControlView setCurrentTime:0 duration:0];
+    [_videoControlView setTitle:nil];
+    
+    id<CQVideoPlayerProtocol> player = [self vrRenderView:vrRenderView playerForSceneAtIndex:sceneIndex];
+    if (player) {
+        player.delegate = self;
+        if (player.willChangeStatus == CQVPWillChangeStatusPlaying) {
+            [player play];
+        }
+        [_videoControlView setTitle:player.videoTitle];
+        [_videoControlView setCurrentTime:player.currentTime duration:player.totalDuration];
+    }
+}
+
+#pragma mark - CQVRRenderViewDataSource
+
+- (NSInteger)numberOfScenesInVRPlayer:(CQVRRenderView *)vrRenderView {
+    
+    if (_videoUrl || _localVidUrl) {
+        return 1;
+    }
+    return 0;
+}
+
+- (NSInteger)vrRenderView:(CQVRRenderView *)vrRenderView numberOfModelsInScene:(NSInteger)sceneIndex {
+    
+    if (_videoUrl || _localVidUrl) {
+        return 2;
+    }
+    return 0;
+}
+
+- (CQScene *)vrRenderView:(CQVRRenderView *)vrRenderView sceneAtIndex:(NSInteger)sceneIndex {
+    
+    NSString *identifier = [NSString stringWithFormat:@"scene%ld",(long)sceneIndex];
+    if (sceneIndex == 0) {
+        CQScene *scene = (CQScene *)[vrRenderView dequeueReusableSceneWithIdentifier:identifier];
+        if (scene == nil) {
+            scene = [[CQScene alloc] initWithReuseIdentifier:identifier];
+            scene.sceneType = CQSceneTypePlane;
+        }
+        return scene;
+    }
+    return nil;
+}
+
+- (CQModel *)vrRenderView:(CQVRRenderView *)vrRenderView modelForSceneAtIndex:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section == 0) {
+        
+//        if (indexPath.row == 0) {
+//            
+//            NSString *identifier = [NSString stringWithFormat:@"scene%ld%ld",indexPath.section,indexPath.row];
+//            CQModel *model = [vrRenderView dequeueReusableModelWithIdentifier:identifier];
+//            if (model == nil) {
+//                
+//                CQPlane *toolbar = [[CQPlane alloc] initWithReuseIdentifier:identifier];
+//                toolbar.yaw = 0.0f;
+//                toolbar.pitch = 0.0f;
+//                toolbar.sx = 0.8f;
+//                toolbar.sy = 0.8f/6.0f;
+//                toolbar.sz = 1.0f;
+//                toolbar.tx = 0.0f;
+//                toolbar.ty = -0.8f;
+//                toolbar.tz = -1.0f;
+//                toolbar.rx = -85.0f;
+//                toolbar.ry = 0.0f;
+//                toolbar.rz = 0.0f;
+//                model = toolbar;
+//            }
+//            return model;
+//        }
+//        if (indexPath.row == 1) {
+//            
+//            NSString *identifier = [NSString stringWithFormat:@"scene%ld%ld",indexPath.section,indexPath.row ];
+//            CQModel *model = [vrRenderView dequeueReusableModelWithIdentifier:identifier];
+//            if (model == nil) {
+//                
+//                CQPlane *grid = [[CQPlane alloc] initWithReuseIdentifier:identifier];
+//                grid.yaw = 0.0f;
+//                grid.pitch = 0.0f;
+//                grid.sx = 1.0f;
+//                grid.sy = 9.0f/16.0f;
+//                grid.sz = 1.0f;
+//                grid.tx = 0.0f;
+//                grid.ty = 0.0f;
+//                grid.tz = -1.0f;
+//                grid.rx = 0.0f;
+//                grid.ry = 0.0f;
+//                grid.rz = 0.0f;
+//                model = grid;
+//            }
+//            return model;
+//        }
+    }
+    return nil;
+}
+
+//返回播放器
+
+- (id<CQVideoPlayerProtocol>)vrRenderView:(id<CQVRRenderViewProtocol>)vrRenderView playerForSceneAtIndex:(NSInteger)sceneIndex {
+    NSString *identifier = [NSString stringWithFormat:@"player%ld",_index];
+    id<CQVideoPlayerProtocol> player = [vrRenderView dequeueReusablePlayerWithIdentifier:identifier];
+    if (sceneIndex == 0) {
+        if (player == nil) {
+            player = [[CQVideoPlayer alloc] initWithReuseIdentifier:identifier];
+            player.remoteVidUrlStr = _videoUrl;
+            player.localVidUrl = _localVidUrl;
+            player.willChangeStatus = CQVPWillChangeStatusPause;// 这句话会影响播放器按钮显示
+        }
+    }
+    return player;
 }
 
 @end

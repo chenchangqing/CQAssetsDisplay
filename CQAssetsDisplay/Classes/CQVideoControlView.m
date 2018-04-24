@@ -18,6 +18,9 @@
 @end
 
 @implementation CQVideoControlView
+@synthesize delegate=_delegate;
+@synthesize dataSource=_dataSource;
+@synthesize scrubbing=_scrubbing;
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
@@ -134,6 +137,31 @@
 
 // MARK: - Actions
 
+- (void)setTitle:(NSString *)title// 设置视频标题
+{
+    
+}
+
+- (void)fitScreenDirection:(BOOL)isHorizontalScreenDirection // 适配方向
+{
+    
+}
+
+- (void)selectedSwitchRenderBtn:(BOOL)selected // 是否选中2d
+{
+    
+}
+
+- (void)selectedZhongliBtn:(BOOL)selected // 是否选中陀螺仪
+{
+    
+}
+
+- (void)selectedHalfScreenBtn:(BOOL)selected // 是否分屏
+{
+    
+}
+
 - (void)scrubbingDidStart {
     
     self.scrubbing = YES;
@@ -149,8 +177,8 @@
     [self setCurrentTime:currentTime duration:duration];
 
     BOOL isDidLoadAssetSuccess = NO;
-    if ([_delegate respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
-        isDidLoadAssetSuccess = [_delegate isDidLoadAssetSuccess];
+    if ([_dataSource respondsToSelector:@selector(isDidLoadAssetSuccess)]) {
+        isDidLoadAssetSuccess = [_dataSource isDidLoadAssetSuccess];
     }
     if (isDidLoadAssetSuccess) {
         
@@ -222,6 +250,18 @@
 -(void)setToPlaying:(BOOL) isPlaying {// 处理播放暂停
     
     self.togglePlaybackButton.selected = isPlaying;
+}
+
+- (void)selectedPlaneSceneType {
+    
+}
+
+- (void)selectedHalSphereSceneType {
+    
+}
+
+- (void)selectedSphereSceneType {
+    
 }
 
 @end
