@@ -28,6 +28,7 @@
 @property (weak, nonatomic) UIButton                *videoPlayBtn;          // 播放按钮
 @property (weak, nonatomic) CQVideoControlView      *videoControlView;      // 视频控制区
 @property (weak, nonatomic) UIButton                *closeBtn;              // 关闭按钮
+@property (weak, nonatomic) UISegmentedControl      *sceneTypeSeg;// 切换场景
 
 @property (weak, nonatomic) NSLayoutConstraint *placeViewWith;              // 左边距约束
 @property (nonatomic, copy, readonly) NSString *reuseIdentifier;            // 重用id

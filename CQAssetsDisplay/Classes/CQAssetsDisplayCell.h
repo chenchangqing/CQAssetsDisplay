@@ -31,4 +31,8 @@
 // 播放
 - (void)playVideo;
 
+- (void)selectedHalSphereSceneType;// 选中半球
+- (void)selectedSphereSceneType;// 选中全球
+- (void)selectedPlaneSceneType;// 选中平面
+
 @end

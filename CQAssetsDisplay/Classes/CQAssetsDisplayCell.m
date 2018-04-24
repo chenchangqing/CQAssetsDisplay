@@ -163,6 +163,7 @@
     // 重置关闭按钮、toolbar
     _videoControlView.hidden = YES;
     _closeBtn.hidden = YES;
+    _sceneTypeSeg.hidden = YES;
     
     _videoPlayer = [self vrRenderView:_videoPlayerView playerForSceneAtIndex:0];
     _videoPlayer.delegate = self;
@@ -174,6 +175,7 @@
     
     _videoControlView.hidden = !_videoControlView.hidden;
     _closeBtn.hidden = !_closeBtn.hidden;
+    _sceneTypeSeg.hidden = !_sceneTypeSeg.hidden;
 }
 
 - (void)resetTimer {
@@ -200,6 +202,21 @@
         _contentView = [UIView new];
     }
     return _contentView;
+}
+
+- (void)selectedPlaneSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypePlane;
+}
+
+- (void)selectedHalSphereSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypeHalSphere;
+}
+
+- (void)selectedSphereSceneType {
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    currentScene.sceneType = CQSceneTypeSphere;
 }
 
 // MARK: - CQVideoPlayerDelegate
@@ -440,6 +457,7 @@
     self.videoPlayBtn.hidden = YES;
     self.progressView.hidden = YES;
     self.closeBtn.hidden = YES;
+    self.sceneTypeSeg.hidden = YES;
     self.videoControlView.hidden = YES;
     [self suspendDownload];
     [self setVideoUrl:nil];
@@ -460,6 +478,7 @@
         [self.videoPlayer stop];
     }
     self.closeBtn.hidden = YES;
+    self.sceneTypeSeg.hidden = YES;
     self.videoControlView.hidden = YES;
 }
 // 释放

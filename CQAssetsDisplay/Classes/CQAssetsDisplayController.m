@@ -789,6 +789,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
             [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
             [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(-10)-[closeBtn(100)]" options:0 metrics:nil views:views]];
         }
+        
+        // 切换场景
+        UISegmentedControl *sceneTypeSeg = [[UISegmentedControl alloc] initWithItems:@[@"360",@"180",@"2D"]];
+        sceneTypeSeg.tintColor = [UIColor whiteColor];
+        sceneTypeSeg.hidden = YES;
+        sceneTypeSeg.translatesAutoresizingMaskIntoConstraints = NO;
+        sceneTypeSeg.selectedSegmentIndex = 0;
+        [sceneTypeSeg addTarget:self action:@selector(sceneTypeSegChange:) forControlEvents:UIControlEventValueChanged];
+        [_scrollViewContentView addSubview:sceneTypeSeg];
+        cell.sceneTypeSeg = sceneTypeSeg;
+        
+        views = NSDictionaryOfVariableBindings(sceneTypeSeg,placeView);
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(28)-[sceneTypeSeg(28)]" options:0 metrics:nil views:views]];
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[placeView]-(150)-[sceneTypeSeg(100)]" options:0 metrics:nil views:views]];
     }
     
     // 属性重置
@@ -797,6 +811,19 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     [_alreadyShowCells addObject:cell];
     
     return cell;
+}
+
+- (void)sceneTypeSegChange:(UISegmentedControl *)sender {
+    
+    if (sender.selectedSegmentIndex == 0) {
+        [self.currentCell selectedSphereSceneType];
+    }
+    if (sender.selectedSegmentIndex == 1) {
+        [self.currentCell selectedHalSphereSceneType];
+    }
+    if (sender.selectedSegmentIndex == 2) {
+        [self.currentCell selectedPlaneSceneType];
+    }
 }
 
 // MARK: - 资源
