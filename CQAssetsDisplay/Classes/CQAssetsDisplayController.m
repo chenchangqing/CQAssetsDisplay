@@ -9,6 +9,7 @@
 #import "CQAssetsDisplayController.h"
 #import "CQAssetsDisplayCellPrivate.h"
 #import "CQAssetsDisplayCell.h"
+#import "CQVideoControlView.h"
 
 //默认动画时间，单位秒
 #define DEFAULT_DURATION 0.25
