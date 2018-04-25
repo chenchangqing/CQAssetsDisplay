@@ -150,10 +150,10 @@
 
 - (CQAssetsDisplayCell *)assetsDisplayController:(CQAssetsDisplayController *)controller cellForIndex:(NSInteger)index {
     
-    CQAssetsDisplayCell *cell = (CQAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
+    CQCustomAssetsDisplayCell *cell = (CQCustomAssetsDisplayCell *)[controller dequeueReusableCellWithIdentifier:kAssetsDisplayCell];
     if (cell == nil) {
         
-        cell = [[CQAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
+        cell = [[CQCustomAssetsDisplayCell alloc] initWithReuseIdentifier:kAssetsDisplayCell];
     }
     
     NSString *photoStr = [_albumArray objectAtIndex:index];

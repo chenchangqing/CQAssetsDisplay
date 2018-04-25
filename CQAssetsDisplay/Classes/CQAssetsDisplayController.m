@@ -180,8 +180,9 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     if (!self.currentCell.videoControlView.hidden) {
         
         [marray addObject:self.currentCell.videoControlView];
-        return ![marray containsObject:touch.view]
-            && ![marray containsObject:touch.view.superview];
+        BOOL valid = ![marray containsObject:touch.view]
+        && ![marray containsObject:touch.view.superview];
+        return valid;
     }
     return YES;
 }
@@ -737,7 +738,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 内容视图
         UIView *contentView = cell.contentView;
-        contentView.userInteractionEnabled = NO;
+        contentView.userInteractionEnabled = YES;
         contentView.translatesAutoresizingMaskIntoConstraints = NO;
         contentView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:contentView];
