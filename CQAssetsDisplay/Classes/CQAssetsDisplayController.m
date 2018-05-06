@@ -684,7 +684,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 增加playerView
         CQVRRenderView *playerView = [CQVRRenderView new];
-        playerView.userInteractionEnabled = NO;
+        playerView.userInteractionEnabled = YES;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];
         playerView.delegate = cell;
@@ -819,15 +819,15 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
     
     if (sender.selectedSegmentIndex == 0) {
         [self.currentCell selectedSphereSceneType];
-//        _scrollView.scrollEnabled = NO;
+        _scrollView.scrollEnabled = NO;
     }
     if (sender.selectedSegmentIndex == 1) {
         [self.currentCell selectedHalSphereSceneType];
-//        _scrollView.scrollEnabled = NO;
+        _scrollView.scrollEnabled = NO;
     }
     if (sender.selectedSegmentIndex == 2) {
         [self.currentCell selectedPlaneSceneType];
-//        _scrollView.scrollEnabled = YES;
+        _scrollView.scrollEnabled = YES;
     }
 }
 
