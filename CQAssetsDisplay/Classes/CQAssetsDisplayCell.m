@@ -207,22 +207,22 @@
 - (void)selectedPlaneSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypePlane;
-    currentScene.gyroscopeEnabled = NO;
-    [_videoPlayerView stopMotionManager];
+    //currentScene.gyroscopeEnabled = NO;
+    //[_videoPlayerView stopMotionManager];
 }
 
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypeHalSphere;
-    currentScene.gyroscopeEnabled = YES;
-    [_videoPlayerView startMotionManager];
+    //currentScene.gyroscopeEnabled = YES;
+    //[_videoPlayerView startMotionManager];
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
     currentScene.sceneType = CQSceneTypeSphere;
-    currentScene.gyroscopeEnabled = YES;
-    [_videoPlayerView startMotionManager];
+    //currentScene.gyroscopeEnabled = YES;
+    //[_videoPlayerView startMotionManager];
 }
 
 // MARK: - CQVideoPlayerDelegate
@@ -625,54 +625,7 @@
 }
 
 - (CQModel *)vrRenderView:(CQVRRenderView *)vrRenderView modelForSceneAtIndex:(NSIndexPath *)indexPath {
-    
-    if (indexPath.section == 0) {
-        
-//        if (indexPath.row == 0) {
-//            
-//            NSString *identifier = [NSString stringWithFormat:@"scene%ld%ld",indexPath.section,indexPath.row];
-//            CQModel *model = [vrRenderView dequeueReusableModelWithIdentifier:identifier];
-//            if (model == nil) {
-//                
-//                CQPlane *toolbar = [[CQPlane alloc] initWithReuseIdentifier:identifier];
-//                toolbar.yaw = 0.0f;
-//                toolbar.pitch = 0.0f;
-//                toolbar.sx = 0.8f;
-//                toolbar.sy = 0.8f/6.0f;
-//                toolbar.sz = 1.0f;
-//                toolbar.tx = 0.0f;
-//                toolbar.ty = -0.8f;
-//                toolbar.tz = -1.0f;
-//                toolbar.rx = -85.0f;
-//                toolbar.ry = 0.0f;
-//                toolbar.rz = 0.0f;
-//                model = toolbar;
-//            }
-//            return model;
-//        }
-//        if (indexPath.row == 1) {
-//            
-//            NSString *identifier = [NSString stringWithFormat:@"scene%ld%ld",indexPath.section,indexPath.row ];
-//            CQModel *model = [vrRenderView dequeueReusableModelWithIdentifier:identifier];
-//            if (model == nil) {
-//                
-//                CQPlane *grid = [[CQPlane alloc] initWithReuseIdentifier:identifier];
-//                grid.yaw = 0.0f;
-//                grid.pitch = 0.0f;
-//                grid.sx = 1.0f;
-//                grid.sy = 9.0f/16.0f;
-//                grid.sz = 1.0f;
-//                grid.tx = 0.0f;
-//                grid.ty = 0.0f;
-//                grid.tz = -1.0f;
-//                grid.rx = 0.0f;
-//                grid.ry = 0.0f;
-//                grid.rz = 0.0f;
-//                model = grid;
-//            }
-//            return model;
-//        }
-    }
+
     return nil;
 }
 

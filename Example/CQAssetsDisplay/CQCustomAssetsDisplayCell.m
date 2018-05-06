@@ -83,6 +83,7 @@
     shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [shareBtn setImage:[UIImage imageNamed:@"share"] forState:UIControlStateNormal];
     shareBtn.translatesAutoresizingMaskIntoConstraints = NO;
+    [shareBtn addTarget:self action:@selector(shareAction) forControlEvents:UIControlEventTouchUpInside];
     [_navigationView addSubview:shareBtn];
     _shareBtn = shareBtn;
     
@@ -139,6 +140,10 @@
 - (void)playVideo {
     [super playVideo];
     _navigationView.hidden = YES;
+}
+
+- (void)shareAction {
+    NSLog(@"123shareAction");
 }
 
 @end
