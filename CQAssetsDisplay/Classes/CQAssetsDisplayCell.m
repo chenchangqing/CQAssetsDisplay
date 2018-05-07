@@ -205,22 +205,28 @@
 }
 
 - (void)selectedPlaneSceneType {
-    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypePlane;
+    self.hidden = NO;
+    _videoPlayerView.hidden = YES;
     //currentScene.gyroscopeEnabled = NO;
     //[_videoPlayerView stopMotionManager];
 }
 
 - (void)selectedHalSphereSceneType {
-    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeHalSphere;
+    self.hidden = YES;
+    _videoPlayerView.hidden = NO;
     //currentScene.gyroscopeEnabled = YES;
     //[_videoPlayerView startMotionManager];
 }
 
 - (void)selectedSphereSceneType {
-    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:_videoPlayerView.currentSceneIndex];
+    CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeSphere;
+    self.hidden = YES;
+    _videoPlayerView.hidden = NO;
     //currentScene.gyroscopeEnabled = YES;
     //[_videoPlayerView startMotionManager];
 }
@@ -599,7 +605,7 @@
     if (_videoUrl || _localVidUrl) {
         return 1;
     }
-    return 0;
+    return 1;
 }
 
 - (NSInteger)vrRenderView:(CQVRRenderView *)vrRenderView numberOfModelsInScene:(NSInteger)sceneIndex {
@@ -618,6 +624,7 @@
         if (scene == nil) {
             scene = [[CQScene alloc] initWithReuseIdentifier:identifier];
             scene.sceneType = CQSceneTypePlane;
+            scene.backgroundImg = self.placeHolder;
         }
         return scene;
     }

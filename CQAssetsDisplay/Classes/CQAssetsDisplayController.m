@@ -165,12 +165,13 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
 // 响应单击
 - (void)handleTapGesture:(UITapGestureRecognizer *)tap {
 
-    if (self.currentCell.videoUrl||self.currentCell.localVidUrl) {
-        
-        [self.currentCell toggleControls];
-    } else {
-        [self exit];
-    }
+//    if (self.currentCell.videoUrl||self.currentCell.localVidUrl) {
+//
+//        [self.currentCell toggleControls];
+//    } else {
+//        [self exit];
+//    }
+    [self.currentCell toggleControls];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
