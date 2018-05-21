@@ -207,21 +207,45 @@
 - (void)selectedPlaneSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypePlane;
-    self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    if (_videoPlayer.isPaused) {
+        self.hidden = YES;
+    } else {
+        if (_videoPlayer.isPlaying) {
+            self.hidden = YES;
+        } else {
+            self.hidden = NO;
+        }
+    }
     _videoPlayerView.userInteractionEnabled = NO;
 }
 
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeHalSphere;
-    self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    if (_videoPlayer.isPaused) {
+        self.hidden = YES;
+    } else {
+        if (_videoPlayer.isPlaying) {
+            self.hidden = YES;
+        } else {
+            self.hidden = NO;
+        }
+    }
     _videoPlayerView.userInteractionEnabled = YES;
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeSphere;
-    self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    if (_videoPlayer.isPaused) {
+        self.hidden = YES;
+    } else {
+        if (_videoPlayer.isPlaying) {
+            self.hidden = YES;
+        } else {
+            self.hidden = NO;
+        }
+    }
     _videoPlayerView.userInteractionEnabled = YES;
 }
 
