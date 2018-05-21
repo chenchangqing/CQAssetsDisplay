@@ -19,6 +19,7 @@
 
 @property (strong, nonatomic) UIView *fixView;
 @property (strong, nonatomic) NSTimer *timer;// 计时器
+@property (weak, nonatomic) UIPanGestureRecognizer *panGesture;
 
 @end
 
@@ -168,6 +169,8 @@
     _videoPlayer = [self vrRenderView:_videoPlayerView playerForSceneAtIndex:_index];
     _videoPlayer.delegate = self;
     [_videoPlayer play];
+    
+    [self setupGesture];
 }
 
 // 单击事件
@@ -200,10 +203,22 @@
     
     if (!_contentView) {
         _contentView = [UIView new];
-        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
-        [_contentView addGestureRecognizer:panGesture];
     }
     return _contentView;
+}
+
+- (void)setupGesture {
+    if (_sceneTypeSeg.selectedSegmentIndex != 2) {
+        if (!_panGesture) {
+            UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+            [_contentView addGestureRecognizer:panGesture];
+            _panGesture = panGesture;
+        }
+    }
+}
+
+- (void)removeGesture {
+    [_contentView removeGestureRecognizer:_panGesture];
 }
 
 - (void)panGesture:(UIPanGestureRecognizer *) panGesture {
@@ -243,7 +258,7 @@
             self.hidden = NO;
         }
     }
-    _videoPlayerView.userInteractionEnabled = NO;
+    [self removeGesture];
 }
 
 - (void)selectedHalSphereSceneType {
@@ -251,14 +266,16 @@
     currentScene.sceneType = CQSceneTypeHalSphere;
     if (_videoPlayer.isPaused) {
         self.hidden = YES;
+        [self setupGesture];
     } else {
         if (_videoPlayer.isPlaying) {
             self.hidden = YES;
+            [self setupGesture];
         } else {
             self.hidden = NO;
+            [self removeGesture];
         }
     }
-    _videoPlayerView.userInteractionEnabled = YES;
 }
 
 - (void)selectedSphereSceneType {
@@ -266,14 +283,16 @@
     currentScene.sceneType = CQSceneTypeSphere;
     if (_videoPlayer.isPaused) {
         self.hidden = YES;
+        [self setupGesture];
     } else {
         if (_videoPlayer.isPlaying) {
             self.hidden = YES;
+            [self setupGesture];
         } else {
             self.hidden = NO;
+            [self removeGesture];
         }
     }
-    _videoPlayerView.userInteractionEnabled = YES;
 }
 
 // MARK: - CQVideoPlayerDelegate
@@ -349,6 +368,7 @@
         
         [_progressView showError];
     }
+    [self removeGesture];
 }
 - (void)videoPlayerGetVideoURL:(id<CQVideoPlayerProtocol>)videoPlayer andCompletion:(void (^)(NSURL *))completion withProgress:(void (^)(double))progress {
     
