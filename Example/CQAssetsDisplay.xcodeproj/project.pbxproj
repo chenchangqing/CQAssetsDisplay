@@ -635,8 +635,8 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7a4c297a-6b25-4d7e-abed-f291eb104516";
-				PROVISIONING_PROFILE_SPECIFIER = 20180329_dev_provision;
+				PROVISIONING_PROFILE = "adfcf56b-790b-4069-b85a-aa9f5dbf9f10";
+				PROVISIONING_PROFILE_SPECIFIER = frank_180511_dev_provision;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -655,8 +655,8 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c3814a67-e867-47a9-bce7-a11bd5330019";
-				PROVISIONING_PROFILE_SPECIFIER = 20180329_dis_provision;
+				PROVISIONING_PROFILE = "99038055-994e-4c4f-8401-77bfd2b5e768";
+				PROVISIONING_PROFILE_SPECIFIER = frank_180511_dis_provision;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

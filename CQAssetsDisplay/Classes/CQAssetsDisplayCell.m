@@ -207,28 +207,19 @@
 - (void)selectedPlaneSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypePlane;
-    self.hidden = NO;
-    _videoPlayerView.hidden = YES;
-    //currentScene.gyroscopeEnabled = NO;
-    //[_videoPlayerView stopMotionManager];
+    self.hidden = _videoPlayer.isPlaying ? YES : NO;
 }
 
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeHalSphere;
-    self.hidden = YES;
-    _videoPlayerView.hidden = NO;
-    //currentScene.gyroscopeEnabled = YES;
-    //[_videoPlayerView startMotionManager];
+    self.hidden = _videoPlayer.isPlaying ? YES : NO;
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeSphere;
-    self.hidden = YES;
-    _videoPlayerView.hidden = NO;
-    //currentScene.gyroscopeEnabled = YES;
-    //[_videoPlayerView startMotionManager];
+    self.hidden = _videoPlayer.isPlaying ? YES : NO;
 }
 
 // MARK: - CQVideoPlayerDelegate

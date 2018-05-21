@@ -712,18 +712,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
-//        CQVideoControlView_VR *videoControlView = [[NSBundle mainBundle] loadNibNamed:@"Frameworks/CQVRPlayer.framework/CQVRPlayer.bundle/CQVideoControlView_VR" owner:nil options:nil].firstObject;
-//        videoControlView.delegate = cell;
-//        videoControlView.dataSource = cell;
-//        videoControlView.hidden = YES;
-//        [_scrollViewContentView addSubview:videoControlView];
-//        cell.videoControlView = videoControlView;
-//
-//        views = @{@"videoControlView":videoControlView};
-//        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(200)]-0-|" options:0 metrics:nil views:views]];
-//        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-//        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-        
         // 增加cell
         [_scrollViewContentView addSubview:cell];
         
