@@ -249,14 +249,18 @@
 - (void)selectedPlaneSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypePlane;
-    if (_videoPlayer.isPaused) {
-        self.hidden = YES;
-    } else {
-        if (_videoPlayer.isPlaying) {
+    if (_videoUrl || _localVidUrl) {
+        if (_videoPlayer.isPaused) {
             self.hidden = YES;
         } else {
-            self.hidden = NO;
+            if (_videoPlayer.isPlaying) {
+                self.hidden = YES;
+            } else {
+                self.hidden = NO;
+            }
         }
+    } else {
+        self.hidden = NO;
     }
     [self removeGesture];
 }
@@ -264,34 +268,46 @@
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeHalSphere;
-    if (_videoPlayer.isPaused) {
-        self.hidden = YES;
-        [self setupGesture];
-    } else {
-        if (_videoPlayer.isPlaying) {
+    
+    if (_videoUrl || _localVidUrl) {
+        if (_videoPlayer.isPaused) {
             self.hidden = YES;
             [self setupGesture];
         } else {
-            self.hidden = NO;
-            [self removeGesture];
+            if (_videoPlayer.isPlaying) {
+                self.hidden = YES;
+                [self setupGesture];
+            } else {
+                self.hidden = NO;
+                [self removeGesture];
+            }
         }
+    } else {
+        [self setupGesture];
+        self.hidden = YES;
     }
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeSphere;
-    if (_videoPlayer.isPaused) {
-        self.hidden = YES;
-        [self setupGesture];
-    } else {
-        if (_videoPlayer.isPlaying) {
+    
+    if (_videoUrl || _localVidUrl) {
+        if (_videoPlayer.isPaused) {
             self.hidden = YES;
             [self setupGesture];
         } else {
-            self.hidden = NO;
-            [self removeGesture];
+            if (_videoPlayer.isPlaying) {
+                self.hidden = YES;
+                [self setupGesture];
+            } else {
+                self.hidden = NO;
+                [self removeGesture];
+            }
         }
+    } else {
+        [self setupGesture];
+        self.hidden = YES;
     }
 }
 
