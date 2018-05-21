@@ -165,7 +165,7 @@
     _closeBtn.hidden = YES;
     _sceneTypeSeg.hidden = YES;
     
-    _videoPlayer = [self vrRenderView:_videoPlayerView playerForSceneAtIndex:0];
+    _videoPlayer = [self vrRenderView:_videoPlayerView playerForSceneAtIndex:_index];
     _videoPlayer.delegate = self;
     [_videoPlayer play];
 }
@@ -469,6 +469,9 @@
     [self setVideoUrl:nil];
     [self setLocalVideoUrl:nil];
     [self setImageURL:nil];
+    [self vrRenderView:_videoPlayerView sceneAtIndex:0].sceneType = CQSceneTypePlane;
+    _sceneTypeSeg.selectedSegmentIndex = 2;
+    _videoPlayerView.userInteractionEnabled = NO;
 }
 // 恢复没有缩放
 - (void)changeAssetViewToInitialState {
