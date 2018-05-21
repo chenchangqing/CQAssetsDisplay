@@ -200,8 +200,35 @@
     
     if (!_contentView) {
         _contentView = [UIView new];
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+        [_contentView addGestureRecognizer:panGesture];
     }
     return _contentView;
+}
+
+- (void)panGesture:(UIPanGestureRecognizer *) panGesture {
+    
+    CGPoint currentPoint = [panGesture locationInView:panGesture.view];
+    
+    switch (panGesture.state) {
+        case UIGestureRecognizerStateEnded: {
+            
+            break;
+        }
+        case UIGestureRecognizerStateBegan: {
+            
+            _videoPlayerView.velocityValue = NSStringFromCGPoint(CGPointZero);
+            break;
+        }
+        case UIGestureRecognizerStateChanged: {
+            
+            // 改变 yaw、pitch
+            _videoPlayerView.velocityValue = NSStringFromCGPoint([panGesture velocityInView:panGesture.view]);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 - (void)selectedPlaneSceneType {

@@ -698,20 +698,6 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:playerView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
-        // 视频控制区
-        CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
-        videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
-        videoControlView.delegate = cell;
-        videoControlView.dataSource = cell;
-        videoControlView.hidden = YES;
-        [_scrollViewContentView addSubview:videoControlView];
-        cell.videoControlView = videoControlView;
-
-        views = @{@"videoControlView":videoControlView};
-        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(60)]-0-|" options:0 metrics:nil views:views]];
-        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
-        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
-        
         // 增加cell
         [_scrollViewContentView addSubview:cell];
         
@@ -727,7 +713,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 内容视图
         UIView *contentView = cell.contentView;
-        contentView.userInteractionEnabled = NO;
+        contentView.userInteractionEnabled = YES;
         contentView.translatesAutoresizingMaskIntoConstraints = NO;
         contentView.backgroundColor = [UIColor clearColor];
         [_scrollViewContentView addSubview:contentView];
@@ -736,6 +722,20 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[contentView]-0-|" options:0 metrics:nil views:views]];
         [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
         [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
+        
+        // 视频控制区
+        CQVideoControlView *videoControlView = [[CQVideoControlView alloc] init];
+        videoControlView.translatesAutoresizingMaskIntoConstraints = NO;
+        videoControlView.delegate = cell;
+        videoControlView.dataSource = cell;
+        videoControlView.hidden = YES;
+        [_scrollViewContentView addSubview:videoControlView];
+        cell.videoControlView = videoControlView;
+        
+        views = @{@"videoControlView":videoControlView};
+        [_scrollViewContentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[videoControlView(60)]-0-|" options:0 metrics:nil views:views]];
+        [_scrollView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:_scrollView attribute:NSLayoutAttributeWidth multiplier:1 constant:-_cellPadding]];
+        [_scrollViewContentView addConstraint:[NSLayoutConstraint constraintWithItem:videoControlView attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:cell.placeView attribute:NSLayoutAttributeTrailing multiplier:1 constant:0]];
         
         // 进度视图
         ESPictureProgressView *progressView = [[ESPictureProgressView alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];

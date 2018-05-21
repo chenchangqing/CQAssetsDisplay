@@ -26,7 +26,7 @@
 - (instancetype)initWithReuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithReuseIdentifier:reuseIdentifier];
     if (self) {
-        //[self setupUI];
+        [self setupUI];
     }
     return self;
 }
