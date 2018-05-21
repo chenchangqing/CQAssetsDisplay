@@ -208,18 +208,21 @@
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypePlane;
     self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    _videoPlayerView.userInteractionEnabled = NO;
 }
 
 - (void)selectedHalSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeHalSphere;
     self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    _videoPlayerView.userInteractionEnabled = YES;
 }
 
 - (void)selectedSphereSceneType {
     CQScene *currentScene = [self vrRenderView:_videoPlayerView sceneAtIndex:0];
     currentScene.sceneType = CQSceneTypeSphere;
     self.hidden = _videoPlayer.isPlaying ? YES : NO;
+    _videoPlayerView.userInteractionEnabled = YES;
 }
 
 // MARK: - CQVideoPlayerDelegate

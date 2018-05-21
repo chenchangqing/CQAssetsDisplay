@@ -685,7 +685,7 @@ typedef NSMutableDictionary<NSString *, UIView *> LeftPlaceholdViewDic;
         
         // 增加playerView
         CQVRRenderView *playerView = [CQVRRenderView new];
-        playerView.userInteractionEnabled = YES;
+        playerView.userInteractionEnabled = NO;
         playerView.translatesAutoresizingMaskIntoConstraints = NO;
         playerView.backgroundColor = [UIColor clearColor];
         playerView.delegate = cell;
